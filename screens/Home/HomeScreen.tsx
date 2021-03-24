@@ -57,7 +57,6 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
             style={styles.input}
           ></TextInput>
         </View>
-        <MenuButton navigation={navigation} />
         <MapView
           initialRegion={{
             //@ts-ignore
@@ -74,6 +73,7 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
           showsMyLocationButton={true}
           style={styles.map}
         ></MapView>
+        <MenuButton navigation={navigation} />
         <FabButton />
       </SafeAreaView>
     );

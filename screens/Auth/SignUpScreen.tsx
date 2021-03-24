@@ -18,6 +18,7 @@ import "firebase/firestore";
 
 export default function SignUpScreen({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const handleSignUp = () => {
@@ -32,6 +33,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
           id: uid,
           email,
           fullName,
+          phoneNumber,
           createdAt: new Date().toDateString()
         };
         const usersRef = firebase.firestore().collection("users");
@@ -70,6 +72,17 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
             placeholder="First and Last Name"
             style={styles.textInput}
             onChangeText={(text) => setFullName(text)}
+            value={fullName}
+            autoCapitalize="none"
+          />
+        </View>
+        <Text style={styles.footer_text}>Phone Number</Text>
+        <View style={styles.inputContainer}>
+          <AntDesign name="phone" size={24} color="#151a21" />
+          <TextInput
+            placeholder="Your Phone Number"
+            style={styles.textInput}
+            onChangeText={(text) => setPhoneNumber(text)}
             value={fullName}
             autoCapitalize="none"
           />
