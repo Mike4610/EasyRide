@@ -1,11 +1,32 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, View, Text, Image } from "react-native";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FullButton from "../../components/Buttons/FullButton";
 import OutlinedButton from "../../components/Buttons/OutlinedButton";
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-community/async-storage";
 
 export default function ProfileScreen({ navigation }: { navigation: any }) {
+  const [fullName, setFullName] = useState("")
+  const [email, setEmail] = useState("");
+  const [createdAt, setCreatedAt] = useState("");
+  useEffect(() => {
+    getUserDetails();
+  }, []);
+  const getUserDetails = async () =>{
+    const fullName = await AsyncStorage.getItem("fullName")
+    if(fullName !==null){
+      console.log(fullName)
+      setFullName(fullName)
+    }
+    const email = await AsyncStorage.getItem("email")
+    if(email !==null){
+      console.log(email)
+      setEmail(email)
+    }
+    const createdAt = await AsyncStorage.getItem("createdAt");
+    setCreatedAt(createdAt?.slice(3, createdAt.length) || "");
+  }
   return (
     <SafeAreaView style={styles.container}>
       <MenuButton navigation={navigation} />
@@ -15,8 +36,8 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
           style={styles.profilePic}
           source={require("../../assets/images/avatar.png")}
         />
-        <Text style={styles.profileName}>Micael Vieira</Text>
-        <Text style={styles.memberSince}>Member since Mar 23 2021</Text>
+        <Text style={styles.profileName}>{fullName}</Text>
+        <Text style={styles.memberSince}>{createdAt}</Text>
       </View>
 
       <View style={styles.footer}>
@@ -30,7 +51,7 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
               size={28}
               color="#fd4d4d"
             />
-            <Text style={styles.footer_text}>mike22vieiraa@gmail.com</Text>
+            <Text style={styles.footer_text}>{email}</Text>
           </View>
         </View>
         <View style={styles.infoContainer}>
