@@ -113,7 +113,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   info: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
