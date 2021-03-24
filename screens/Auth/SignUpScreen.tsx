@@ -21,33 +21,32 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const handleSignUp = () => {
-    console.log(email);
-    console.log(password);
-    console.log(firebase.auth().currentUser);
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then((response: any) => {
         console.log(response);
         const uid = response.user.uid;
+        console.log(uid)
         const data = {
           id: uid,
           email,
           fullName,
+          createdAt: new Date().toDateString()
         };
         const usersRef = firebase.firestore().collection("users");
         usersRef
           .doc(uid)
           .set(data)
           .then(() => {
-            navigation.navigate("Home", { user: data });
+            navigation.navigate("SignIn");
           })
           .catch((error: any) => {
-            alert(error);
+            console.log(error);
           });
       })
       .catch((error: any) => {
-        alert(error);
+        console.log(error);
       });
   };
   return (

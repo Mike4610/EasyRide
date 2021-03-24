@@ -3,6 +3,7 @@ import { Text, TouchableOpacity, StyleSheet } from "react-native";
 
 export default function FullButton({text,  press} : {text: String, press: Function} ) {
   return (
+    //@ts-ignore
     <TouchableOpacity onPress={press} style={styles.btn}>
       <Text style={styles.btnTxt}>{text}</Text>
     </TouchableOpacity>

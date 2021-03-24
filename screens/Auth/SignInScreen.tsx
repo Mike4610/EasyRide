@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -13,17 +13,67 @@ import { UserContext } from "../../context/UserContext";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import AsyncStorage from "@react-native-community/async-storage";
+import { Snackbar } from "react-native-paper";
 import firebase from "firebase/app";
 import "firebase/auth";
+import "firebase/firestore";
 
 export default function SignInScreen({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { loggedIn, setLoggedIn } = useContext(UserContext);
+  // @ts-ignore
+  const { setLoggedIn } = useContext(UserContext);
+  const [visible, setVisible] = useState(false);
+  const [message, setMessage] = useState("");
+  const onDismissSnackBar = () => setVisible(false);
 
   const handleSignIn = () => {
-    setLoggedIn(true)
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then((response: any) => {
+        storeData(response.user.uid)
+      })
+      .catch((error: any) => {
+        console.log(error);
+        if (error.code === "auth/invalid-email") {
+          setMessage("Error. Invalid email address.");
+          setVisible(true);
+        }
+        if (error.code === "auth/wrong-password") {
+          setMessage("Error. Wrong password.");
+          setVisible(true);
+        }
+        if (error.code === "auth/user-not-found") {
+          setMessage("Error. User not found.");
+          setVisible(true);
+        }
+      });
   };
+
+  const storeData = async (uid : any) => {
+    try {
+      await AsyncStorage.setItem("uid", uid);
+      const usersRef = firebase.firestore().collection("users");
+      usersRef
+        .doc(uid)
+        .get()
+        .then(async (doc) => {
+          setLoggedIn(true);
+          navigation.navigate("Home");
+          //@ts-ignore
+          await AsyncStorage.setItem("fullName", doc.data().fullName )
+          //@ts-ignore
+          await AsyncStorage.setItem("createdAt", doc.data().createdAt)
+        })
+        .catch((error: any) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -70,7 +120,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
             navigation.navigate("ForgotPassword");
           }}
         >
-          <Text style={{marginTop: 10}}>
+          <Text style={{ marginTop: 10 }}>
             Forgot <Text style={{ color: "#fd4d4d" }}>password</Text>?
           </Text>
         </TouchableOpacity>
@@ -84,6 +134,20 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
           />
         </View>
       </View>
+      <Snackbar
+        duration={4000}
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        style={{ backgroundColor: "#151a21" }}
+        action={{
+          label: "",
+          onPress: () => {
+            setVisible(false);
+          },
+        }}
+      >
+        <Text style={{fontSize: 15, fontWeight: "bold"}}>{message}</Text>
+      </Snackbar>
     </View>
   );
 }
@@ -143,5 +207,5 @@ const styles = StyleSheet.create({
   },
   buttons: {
     marginTop: 30,
-  }
+  },
 });

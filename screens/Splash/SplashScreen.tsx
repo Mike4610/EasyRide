@@ -5,7 +5,8 @@ import FullButton from "../../components/Buttons/FullButton";
 import { UserContext } from "../../context/UserContext";
 
 export default function SplashScreen({ navigation }: { navigation: any }) {
-  const { loggedIn, setLoggedIn } = useContext(UserContext);
+  // @ts-ignore
+  const { setLoggedIn } = useContext(UserContext);
   useEffect(() => {
     setLoggedIn(false)
   }, [])
