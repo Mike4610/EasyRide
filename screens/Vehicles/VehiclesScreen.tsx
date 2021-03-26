@@ -6,35 +6,30 @@ import {
   Text,
   Image,
   ScrollView,
-  TextInput,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import { Dialog, Portal, Provider } from "react-native-paper";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FullButton from "../../components/Buttons/FullButton";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import GestureRecognizer from "react-native-swipe-gestures";
 import firebase from "firebase/app";
 import "firebase/firestore";
-
 import carList from "../../car-list.json";
 import AsyncStorage from "@react-native-community/async-storage";
+import AddVehiclePopUp from "../../components/PopUp/AddVehiclePopUp";
+import {AddVehicleContext} from "../../context/AddVehicleContext";
 
 export default function VehiclesScreen({ navigation }: { navigation: any }) {
   const [vehicles, setVehicles] = useState([]);
 
   //POPUP
   const [visible, setVisible] = useState(false);
-  const showDialog = () => setVisible(true);
-  const hideDialog = () => setVisible(false);
   //PICKER
-  const seatNumbers = ["2", "3", "4", "5"];
-  const [brand, setBrand] = useState(carList[0].brand);
-  const [model, setModel] = useState(carList[0].models[0]);
-  const [seats, setSeats] = useState("2");
-  const [licensePlate, setLicensePlate] = useState("");
-  const [modelList, setModelList] = useState(carList[0].models);
+  // const seatNumbers = ["2", "3", "4", "5"];
+  // const [brand, setBrand] = useState(carList[0].brand);
+  // const [model, setModel] = useState(carList[0].models[0]);
+  // const [seats, setSeats] = useState("2");
+  // const [licensePlate, setLicensePlate] = useState("");
+  // const [modelList, setModelList] = useState(carList[0].models);
   const config = {
     velocityThreshold: 0.3,
     directionalOffsetThreshold: 80,
@@ -68,7 +63,7 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
     setVehicles(JSON.parse(vehicles));
   };
 
-  const setUserVehicles = async () => {
+  const setUserVehicles = async (brand:any, model: any, seats: any, licensePlate: any) => {
     const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
     const uid = await AsyncStorage.getItem("uid");
     const usersRef = firebase.firestore().collection("users");
@@ -91,18 +86,19 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
       });
   };
 
-  const handleBrandChange = (itemValue: any) => {
-    carList.forEach(({ brand, models }) => {
-      if (brand === itemValue) {
-        setBrand(brand);
-        setModel(models[0]);
-        setModelList(models);
-      }
-    });
-  };
+  // const handleBrandChange = (itemValue: any) => {
+  //   carList.forEach(({ brand, models }) => {
+  //     if (brand === itemValue) {
+  //       setBrand(brand);
+  //       setModel(models[0]);
+  //       setModelList(models);
+  //     }
+  //   });
+  // };
 
-  const handleRegisterVehicle = () => {
-    setUserVehicles();
+  const handleRegisterVehicle = (brand: any, model: any, seats: any, licensePlate: any) => {
+    setUserVehicles(brand, model, seats, licensePlate);
+    setVisible(false)
   };
 
   const handleDeleteVehicle = async (vehicle: object) => {
@@ -123,145 +119,150 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
       });
   };
 
-  const VehiclePopUp = () => {
-    return (
-      <Provider>
-        <Portal>
-          <Dialog style={styles.popup} visible={visible} onDismiss={hideDialog}>
-            <Dialog.Content>
-              <KeyboardAwareScrollView style={{ height: 370 }}>
-                <View style={styles.pickerContainer}>
-                  <Text style={styles.popup_title}>Brand</Text>
-                  <Picker
-                    style={{ width: 250, height: 44 }}
-                    itemStyle={{ height: 44 }}
-                    selectedValue={brand}
-                    onValueChange={(itemValue) => handleBrandChange(itemValue)}
-                  >
-                    {carList.map(({ brand }) => {
-                      return (
-                        <Picker.Item key={brand} label={brand} value={brand} />
-                      );
-                    })}
-                  </Picker>
-                </View>
-                <View style={styles.pickerContainer}>
-                  <Text style={styles.popup_title}>Model</Text>
-                  <Picker
-                    style={{ width: 250, height: 44 }}
-                    itemStyle={{ height: 44 }}
-                    selectedValue={model}
-                    onValueChange={(itemValue) => setModel(itemValue)}
-                  >
-                    {modelList.map((item) => {
-                      return (
-                        <Picker.Item key={item} label={item} value={item} />
-                      );
-                    })}
-                  </Picker>
-                </View>
-                <View style={styles.pickerContainer}>
-                  <Text style={styles.popup_title}>Seat number</Text>
-                  <Picker
-                    style={{ width: 250, height: 44 }}
-                    itemStyle={{ height: 44 }}
-                    selectedValue={seats}
-                    onValueChange={(itemValue) => setSeats(itemValue)}
-                  >
-                    {seatNumbers.map((number) => {
-                      return (
-                        <Picker.Item
-                          key={number}
-                          label={number}
-                          value={number}
-                        />
-                      );
-                    })}
-                  </Picker>
-                </View>
-                <View style={styles.pickerContainer}>
-                  <Text style={styles.popup_title}>License Plate</Text>
-                  <TextInput
-                    placeholder="AA-00-11"
-                    placeholderTextColor="#151a21"
-                    onChangeText={(text) => setLicensePlate(text)}
-                    value={licensePlate}
-                    style={styles.textInput}
-                    autoCapitalize="none"
-                  />
-                </View>
-              </KeyboardAwareScrollView>
-              <View style={styles.buttons}>
-                <FullButton press={handleRegisterVehicle} text={"Add"} />
-              </View>
-            </Dialog.Content>
-          </Dialog>
-        </Portal>
-      </Provider>
-    );
-  };
+  // const VehiclePopUp = () => {
+  //   return (
+  //     <Provider>
+  //       <Portal>
+  //         <Dialog style={styles.popup} visible={visible} onDismiss={hideDialog}>
+  //           <Dialog.Content>
+  //             <KeyboardAwareScrollView style={{ height: 370 }}>
+  //               <View style={styles.pickerContainer}>
+  //                 <Text style={styles.popup_title}>Brand</Text>
+  //                 <Picker
+  //                   style={{ width: 250, height: 44 }}
+  //                   itemStyle={{ height: 44 }}
+  //                   selectedValue={brand}
+  //                   onValueChange={(itemValue) => handleBrandChange(itemValue)}
+  //                 >
+  //                   {carList.map(({ brand }) => {
+  //                     return (
+  //                       <Picker.Item key={brand} label={brand} value={brand} />
+  //                     );
+  //                   })}
+  //                 </Picker>
+  //               </View>
+  //               <View style={styles.pickerContainer}>
+  //                 <Text style={styles.popup_title}>Model</Text>
+  //                 <Picker
+  //                   style={{ width: 250, height: 44 }}
+  //                   itemStyle={{ height: 44 }}
+  //                   selectedValue={model}
+  //                   onValueChange={(itemValue) => setModel(itemValue)}
+  //                 >
+  //                   {modelList.map((item) => {
+  //                     return (
+  //                       <Picker.Item key={item} label={item} value={item} />
+  //                     );
+  //                   })}
+  //                 </Picker>
+  //               </View>
+  //               <View style={styles.pickerContainer}>
+  //                 <Text style={styles.popup_title}>Seat number</Text>
+  //                 <Picker
+  //                   style={{ width: 250, height: 44 }}
+  //                   itemStyle={{ height: 44 }}
+  //                   selectedValue={seats}
+  //                   onValueChange={(itemValue) => setSeats(itemValue)}
+  //                 >
+  //                   {seatNumbers.map((number) => {
+  //                     return (
+  //                       <Picker.Item
+  //                         key={number}
+  //                         label={number}
+  //                         value={number}
+  //                       />
+  //                     );
+  //                   })}
+  //                 </Picker>
+  //               </View>
+  //               <View style={styles.pickerContainer}>
+  //                 <Text style={styles.popup_title}>License Plate</Text>
+  //                 <TextInput
+  //                   placeholder="AA-00-11"
+  //                   placeholderTextColor="#151a21"
+  //                   onChangeText={(text) => setLicensePlate(text)}
+  //                   value={licensePlate}
+  //                   style={styles.textInput}
+  //                   autoCapitalize="none"
+  //                 />
+  //               </View>
+  //             </KeyboardAwareScrollView>
+  //             <View style={styles.buttons}>
+  //               <FullButton press={handleRegisterVehicle} text={"Add"} />
+  //             </View>
+  //           </Dialog.Content>
+  //         </Dialog>
+  //       </Portal>
+  //     </Provider>
+  //   );
+  // };
 
   return (
     // @ts-ignore
-
-    <SafeAreaView style={styles.container}>
-      <MenuButton navigation={navigation} />
-      <View style={styles.profileDetails}>
-        <Image
-          style={styles.profilePic}
-          source={require("../../assets/images/driver.png")}
-        />
-        <Text style={styles.profileName}>Registered vehicles</Text>
-        <Text style={styles.memberSince}>
-          Total of {vehicles.length} vehicles
-        </Text>
-      </View>
-
-      <View style={styles.footer}>
-        <ScrollView style={{ height: 280 }}>
-          {vehicles.map(({ brand, model, licensePlate, seats }) => {
-            return (
-              <GestureRecognizer
-                onSwipeLeft={() =>
-                  handleDeleteVehicle({
-                    brand,
-                    model,
-                    licensePlate,
-                    seats,
-                  })
-                }
-                config={config}
-              >
-                <View key={licensePlate} style={styles.infoContainer}>
-                  <View
-                    style={{
-                      marginTop: 20,
-                    }}
-                  >
-                    <Text style={styles.footer_title}>
-                      {brand} {model}
-                    </Text>
-                  </View>
-
-                  <View style={styles.info}>
-                    <AntDesign name="idcard" size={28} color="#fd4d4d" />
-                    <Text style={styles.footer_text}>{licensePlate}</Text>
-                  </View>
-                  <View style={styles.info}>
-                    <Ionicons name="person-outline" size={24} color="#fd4d4d" />
-                    <Text style={styles.footer_text}>{seats}</Text>
-                  </View>
-                </View>
-              </GestureRecognizer>
-            );
-          })}
-        </ScrollView>
-        <View style={styles.buttons}>
-          <FullButton press={showDialog} text={"Add a vehicle"} />
+    <AddVehicleContext.Provider value={{visible, setVisible}}>
+      <SafeAreaView style={styles.container}>
+        <MenuButton navigation={navigation} />
+        <View style={styles.profileDetails}>
+          <Image
+            style={styles.profilePic}
+            source={require("../../assets/images/driver.png")}
+          />
+          <Text style={styles.profileName}>Registered vehicles</Text>
+          <Text style={styles.memberSince}>
+            Total of {vehicles.length} vehicles
+          </Text>
         </View>
-      </View>
-      <VehiclePopUp />
-    </SafeAreaView>
+
+        <View style={styles.footer}>
+          <ScrollView style={{ height: 280 }}>
+            {vehicles.map(({ brand, model, licensePlate, seats }) => {
+              return (
+                <GestureRecognizer
+                  onSwipeLeft={() =>
+                    handleDeleteVehicle({
+                      brand,
+                      model,
+                      licensePlate,
+                      seats,
+                    })
+                  }
+                  config={config}
+                >
+                  <View key={licensePlate} style={styles.infoContainer}>
+                    <View
+                      style={{
+                        marginTop: 20,
+                      }}
+                    >
+                      <Text style={styles.footer_title}>
+                        {brand} {model}
+                      </Text>
+                    </View>
+
+                    <View style={styles.info}>
+                      <AntDesign name="idcard" size={28} color="#fd4d4d" />
+                      <Text style={styles.footer_text}>{licensePlate}</Text>
+                    </View>
+                    <View style={styles.info}>
+                      <Ionicons
+                        name="person-outline"
+                        size={24}
+                        color="#fd4d4d"
+                      />
+                      <Text style={styles.footer_text}>{seats}</Text>
+                    </View>
+                  </View>
+                </GestureRecognizer>
+              );
+            })}
+          </ScrollView>
+          <View style={styles.buttons}>
+            <FullButton press={()=>{setVisible(true)}} text={"Add a vehicle"} />
+          </View>
+        </View>
+        <AddVehiclePopUp handleRegisterVehicle={handleRegisterVehicle} />
+      </SafeAreaView>
+    </AddVehicleContext.Provider>
   );
 }
 

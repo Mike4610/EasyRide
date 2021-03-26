@@ -9,6 +9,8 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Dialog, Portal, Provider } from "react-native-paper";
+import RequestRidePopUp from "../../components/PopUp/RequestRidePopUp";
+import { RequestRideContext } from "../../context/RequestRideContext";
 import MapView from "react-native-maps";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FabButton from "../../components/Buttons/FabButton";
@@ -20,8 +22,6 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
 
   //POPUP
   const [visible, setVisible] = useState(false);
-  const showDialog = () => setVisible(true);
-  const hideDialog = () => setVisible(false);
 
   useEffect(() => {
     (async () => {
@@ -37,27 +37,6 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
     })();
   }, []);
 
-  const RidePopUp = () => {
-    return (
-      <Provider>
-        <Portal>
-          {/* @ts-ignore */}
-          <Dialog
-            style={{
-              backgroundColor: "white",
-              borderRadius: 30,
-              width: 300,
-              height: 450,
-              alignSelf: "center",
-            }}
-            visible={visible}
-            onDismiss={hideDialog}
-          ></Dialog>
-        </Portal>
-      </Provider>
-    );
-  };
-
   if (location === null) {
     return (
       <View style={styles.loadingScreen}>
@@ -72,15 +51,17 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
     );
   } else {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.searchBar}>
-          <TextInput
-            placeholder="Type a location"
-            placeholderTextColor="#151a21"
-            style={styles.input}
-          ></TextInput>
-        </View>
-        {/* <MapView
+      //@ts-ignore
+      <RequestRideContext.Provider value={{ visible, setVisible }}>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.searchBar}>
+            <TextInput
+              placeholder="Type a location"
+              placeholderTextColor="#151a21"
+              style={styles.input}
+            ></TextInput>
+          </View>
+          {/* <MapView
           initialRegion={{
             //@ts-ignore
             latitude: location.coords.latitude,
@@ -96,17 +77,18 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
           showsMyLocationButton={true}
           style={styles.map}
         ></MapView> */}
-        <MenuButton navigation={navigation} />
-        <FabButton
-          onGive={() => {
-            setVisible(true);
-          }}
-          onRequest={() => {
-            setVisible(true);
-          }}
-        />
-        <RidePopUp />
-      </SafeAreaView>
+          <MenuButton navigation={navigation} />
+          <FabButton
+            onGive={() => {
+              setVisible(true);
+            }}
+            onRequest={() => {
+              setVisible(true);
+            }}
+          />
+          <RequestRidePopUp />
+        </SafeAreaView>
+      </RequestRideContext.Provider>
     );
   }
 }
