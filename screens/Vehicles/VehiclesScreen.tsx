@@ -65,7 +65,10 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
   const getUserVehicles = async () => {
     const vehicles = await AsyncStorage.getItem("vehicles");
     //@ts-ignore
-    setVehicles(JSON.parse(vehicles));
+    if(vehicles!==null){
+      setVehicles(JSON.parse(vehicles));
+    }
+   
   };
 
   const setUserVehicles = async () => {
@@ -231,6 +234,7 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
                   })
                 }
                 config={config}
+                key={licensePlate}
               >
                 <View key={licensePlate} style={styles.infoContainer}>
                   <View
