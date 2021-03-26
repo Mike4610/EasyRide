@@ -15,6 +15,7 @@ import firebase from "firebase/app";
 import AsyncStorage from "@react-native-community/async-storage";
 import { AntDesign } from "@expo/vector-icons";
 import ProfileScreen from "./screens/Profile/ProfileScreen";
+import VehiclesScreen from "./screens/Vehicles/VehiclesScreen";
 
 var firebaseConfig = {
   apiKey: "AIzaSyDDJJKukPDp8mZ0AwZRACNceE000TsRXzc",
@@ -100,7 +101,7 @@ export default function App() {
         <UserContext.Provider value={{ loggedIn, setLoggedIn }}>
           <NavigationContainer>
             <Drawer.Navigator
-              initialRouteName="Home"
+              initialRouteName="HomeScreen"
               drawerContent={(props) => <DrawerContent {...props} />}
               drawerContentOptions={{
                 activeTintColor: "#fd4d4d",
@@ -108,11 +109,15 @@ export default function App() {
               }}
             >
               <Drawer.Screen
-                name="Home"
+                name="HomeScreen"
                 component={HomeScreen}
                 options={{
                   drawerLabel: ({ focused, color }) => (
-                    <Text style={{ fontSize: 16, marginTop: 10, color: "#151a21" }}>Home</Text>
+                    <Text
+                      style={{ fontSize: 16, color: "#151a21" }}
+                    >
+                      Home
+                    </Text>
                   ),
                   drawerIcon: ({ focused, color, size }) => (
                     <AntDesign name="home" size={24} color="#fd4d4d" />
@@ -120,14 +125,34 @@ export default function App() {
                 }}
               />
               <Drawer.Screen
-                name="Profile"
+                name="ProfileScreen"
                 component={ProfileScreen}
                 options={{
                   drawerLabel: ({ focused, color }) => (
-                    <Text style={{ fontSize: 16, marginTop: 10, color: "#151a21" }}>Profile</Text>
+                    <Text
+                      style={{ fontSize: 16, color: "#151a21" }}
+                    >
+                      Profile
+                    </Text>
                   ),
                   drawerIcon: ({ focused, color, size }) => (
                     <AntDesign name="user" size={24} color="#fd4d4d" />
+                  ),
+                }}
+              />
+              <Drawer.Screen
+                name="VehiclesScreen"
+                component={VehiclesScreen}
+                options={{
+                  drawerLabel: ({ focused, color }) => (
+                    <Text
+                      style={{ fontSize: 16, color: "#151a21" }}
+                    >
+                      Vehicles
+                    </Text>
+                  ),
+                  drawerIcon: ({ focused, color, size }) => (
+                    <AntDesign name="car" size={24} color="#fd4d4d" />
                   ),
                 }}
               />

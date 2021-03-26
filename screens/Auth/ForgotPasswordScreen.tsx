@@ -10,6 +10,7 @@ import {
 import FullButton from "../../components/Buttons/FullButton";
 import OutlinedButton from "../../components/Buttons/OutlinedButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Snackbar } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import firebase from "firebase/app";
 import "firebase/auth";
@@ -20,8 +21,34 @@ export default function ForgotPasswordScreen({
   navigation: any;
 }) {
   const [email, setEmail] = useState("");
+  //SNACKBAR
+  const [visible, setVisible] = useState(false);
+  const [message, setMessage] = useState("");
+  const onDismissSnackBar = () => setVisible(false);
+  const sleep = (ms: Number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
   const handleResetPassword = () => {
-    navigation.navigate("SignIn");
+    firebase
+      .auth()
+      .sendPasswordResetEmail(email)
+      .then(async () => {
+        setEmail("");
+        setMessage("Check your email!");
+        setVisible(true);
+        await sleep(3500);
+        navigation.navigate("SignIn");
+      })
+      .catch((error) => {
+        if (error.code === "auth/invalid-email") {
+          setMessage("Error. Invalid email address.");
+          setVisible(true);
+        }
+        if (error.code === "auth/user-not-found") {
+          setMessage("Error. User not found.");
+          setVisible(true);
+        }
+      });
   };
   return (
     <View style={styles.container}>
@@ -62,6 +89,20 @@ export default function ForgotPasswordScreen({
           />
         </View>
       </View>
+      <Snackbar
+        duration={4000}
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        style={{ backgroundColor: "#151a21" }}
+        action={{
+          label: "",
+          onPress: () => {
+            setVisible(false);
+          },
+        }}
+      >
+        <Text style={{ fontSize: 15, fontWeight: "bold" }}>{message}</Text>
+      </Snackbar>
     </View>
   );
 }

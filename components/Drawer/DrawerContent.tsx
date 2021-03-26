@@ -66,7 +66,7 @@ export default function DrawerContent({ ...props }) {
         <DrawerItemList {...props} />
         <DrawerItem
           label="Sign Out"
-          labelStyle={{ fontSize: 16, marginTop: 10, color: "#151a21"}}
+          labelStyle={{ fontSize: 16, color: "#151a21"}}
           icon={({ color, size }) => (
             <AntDesign name="logout" size={24} color="#fd4d4d" />
           )}
@@ -78,7 +78,6 @@ export default function DrawerContent({ ...props }) {
           style={styles.logo}
           source={require("../../assets/images/RMLogo.png")}
         >
-  
         </Image>
       </View>
     </SafeAreaView>
@@ -87,7 +86,7 @@ export default function DrawerContent({ ...props }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: 680
   },
   profile: {
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
@@ -115,7 +114,7 @@ const styles = StyleSheet.create({
   logoContainer:{
     flex:1,
     justifyContent: "flex-end",
-    alignItems: "center"
+    alignItems: "center",
   },
   logo: {
     width: 150,

@@ -28,13 +28,13 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
       .then((response: any) => {
         console.log(response);
         const uid = response.user.uid;
-        console.log(uid)
+        console.log(uid);
         const data = {
           id: uid,
           email,
           fullName,
           phoneNumber,
-          createdAt: new Date().toDateString()
+          createdAt: new Date().toDateString(),
         };
         const usersRef = firebase.firestore().collection("users");
         usersRef
@@ -52,7 +52,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
       });
   };
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.logoContainer}>
           <Image
@@ -76,17 +76,6 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
             autoCapitalize="none"
           />
         </View>
-        <Text style={styles.footer_text}>Phone Number</Text>
-        <View style={styles.inputContainer}>
-          <AntDesign name="phone" size={24} color="#151a21" />
-          <TextInput
-            placeholder="Your Phone Number"
-            style={styles.textInput}
-            onChangeText={(text) => setPhoneNumber(text)}
-            value={fullName}
-            autoCapitalize="none"
-          />
-        </View>
         <Text style={styles.footer_text}>Email</Text>
         <View style={styles.inputContainer}>
           <MaterialCommunityIcons
@@ -99,6 +88,17 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
             style={styles.textInput}
             onChangeText={(text) => setEmail(text)}
             value={email}
+            autoCapitalize="none"
+          />
+        </View>
+        <Text style={styles.footer_text}>Phone Number</Text>
+        <View style={styles.inputContainer}>
+          <AntDesign name="phone" size={24} color="#151a21" />
+          <TextInput
+            placeholder="Your Phone Number"
+            style={styles.textInput}
+            onChangeText={(text) => setPhoneNumber(text)}
+            value={phoneNumber}
             autoCapitalize="none"
           />
         </View>
@@ -124,7 +124,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
           />
         </View>
       </View>
-    </View>
+    </KeyboardAwareScrollView>
   );
 }
 
@@ -184,5 +184,5 @@ const styles = StyleSheet.create({
   },
   buttons: {
     marginTop: 30,
-  }
+  },
 });

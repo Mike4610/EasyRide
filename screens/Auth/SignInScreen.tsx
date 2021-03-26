@@ -24,6 +24,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
   const [password, setPassword] = useState("");
   // @ts-ignore
   const { setLoggedIn } = useContext(UserContext);
+  //SNACKBAR
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const onDismissSnackBar = () => setVisible(false);
@@ -63,7 +64,9 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
           setLoggedIn(true);
           navigation.navigate("Home");
           //@ts-ignore
-          await AsyncStorage.setItem("fullName", doc.data().fullName )
+          await AsyncStorage.setItem("fullName", doc.data().fullName)
+          //@ts-ignore
+          await AsyncStorage.setItem("email", doc.data().email)
           //@ts-ignore
           await AsyncStorage.setItem("createdAt", doc.data().createdAt)
         })
@@ -75,7 +78,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
     }
   }
   return (
-    <View style={styles.container}>
+    <KeyboardAwareScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.logoContainer}>
           <Image
@@ -148,7 +151,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
       >
         <Text style={{fontSize: 15, fontWeight: "bold"}}>{message}</Text>
       </Snackbar>
-    </View>
+    </KeyboardAwareScrollView>
   );
 }
 

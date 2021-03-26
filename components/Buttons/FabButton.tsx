@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { FAB, Portal, Provider } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
 
-export default function FabButton() {
+export default function FabButton({onRequest, onGive}:{onRequest:any, onGive:any}) {
   const [state, setState] = useState({ open: false });
   const onStateChange = ({ open }: { open: any }) => setState({ open });
   const { open } = state;
-  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <Provider>
@@ -16,27 +15,21 @@ export default function FabButton() {
           fabStyle={{
             backgroundColor: "#fd4d4d",
             marginBottom: 50,
-            zIndex: 30,
+            zIndex: 2,
           }}
           color="white"
           open={open}
           icon={"plus"}
           actions={[
             {
-              icon: "check",
+              icon: "car-hatchback",
               label: "Give a Ride",
-              onPress: () => console.log("Pressed star"),
+              onPress: onGive,
             },
             {
-              icon: "pin",
+              icon: "map-marker",
               label: "Request a Ride",
-              onPress: () => console.log("Pressed email"),
-            },
-            {
-              icon: "car",
-              label: "Register a Vehicle",
-              onPress: () => setModalVisible(!modalVisible),
-              small: false,
+              onPress: onRequest,
             },
           ]}
           onStateChange={onStateChange}

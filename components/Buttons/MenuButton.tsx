@@ -8,7 +8,7 @@ export default function MenuButton({ navigation }: { navigation: any }) {
       style={{
         flex: 1,
         marginTop: 20,
-        zIndex: 10,
+        zIndex: 0,
         position: "absolute",
         //@ts-ignore
         top: StatusBar.currentHeight * 1.5,

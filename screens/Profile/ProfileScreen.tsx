@@ -7,26 +7,23 @@ import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-community/async-storage";
 
 export default function ProfileScreen({ navigation }: { navigation: any }) {
-  const [fullName, setFullName] = useState("")
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [createdAt, setCreatedAt] = useState("");
+
   useEffect(() => {
     getUserDetails();
   }, []);
-  const getUserDetails = async () =>{
-    const fullName = await AsyncStorage.getItem("fullName")
-    if(fullName !==null){
-      console.log(fullName)
-      setFullName(fullName)
-    }
-    const email = await AsyncStorage.getItem("email")
-    if(email !==null){
-      console.log(email)
-      setEmail(email)
-    }
+  const getUserDetails = async () => {
+    const fullName = await AsyncStorage.getItem("fullName");
+    setFullName(fullName || "");
+
+    const email = await AsyncStorage.getItem("email");
+    setEmail(email || "");
+
     const createdAt = await AsyncStorage.getItem("createdAt");
     setCreatedAt(createdAt?.slice(3, createdAt.length) || "");
-  }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <MenuButton navigation={navigation} />
@@ -37,7 +34,7 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
           source={require("../../assets/images/avatar.png")}
         />
         <Text style={styles.profileName}>{fullName}</Text>
-        <Text style={styles.memberSince}>{createdAt}</Text>
+        <Text style={styles.memberSince}>Member since {createdAt}</Text>
       </View>
 
       <View style={styles.footer}>
@@ -64,9 +61,8 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
           </View>
         </View>
         <View style={styles.buttons}>
-            
-          <FullButton press={()=>{}} text={"Change email"} />
-          <OutlinedButton press={()=>{}} text={"Change password"} />
+          <FullButton press={() => {}} text={"Change email"} />
+          <OutlinedButton press={() => {}} text={"Change password"} />
         </View>
       </View>
     </SafeAreaView>
@@ -109,6 +105,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 30,
+    zIndex: -1,
   },
   profileName: {
     color: "#a3a3a3",

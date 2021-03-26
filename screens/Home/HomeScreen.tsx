@@ -6,10 +6,9 @@ import {
   TextInput,
   Image,
   ActivityIndicator,
-  Modal,
-  Text,
   SafeAreaView,
 } from "react-native";
+import { Dialog, Portal, Provider } from "react-native-paper";
 import MapView from "react-native-maps";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FabButton from "../../components/Buttons/FabButton";
@@ -18,9 +17,11 @@ import * as Location from "expo-location";
 export default function HomeScreen({ navigation }: { navigation: any }) {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
+
+  //POPUP
   const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => setVisible(false);
 
   useEffect(() => {
     (async () => {
@@ -35,6 +36,27 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
       setLocation(location);
     })();
   }, []);
+
+  const RidePopUp = () => {
+    return (
+      <Provider>
+        <Portal>
+          {/* @ts-ignore */}
+          <Dialog
+            style={{
+              backgroundColor: "white",
+              borderRadius: 30,
+              width: 300,
+              height: 450,
+              alignSelf: "center",
+            }}
+            visible={visible}
+            onDismiss={hideDialog}
+          ></Dialog>
+        </Portal>
+      </Provider>
+    );
+  };
 
   if (location === null) {
     return (
@@ -54,10 +76,11 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
         <View style={styles.searchBar}>
           <TextInput
             placeholder="Type a location"
+            placeholderTextColor="#151a21"
             style={styles.input}
           ></TextInput>
         </View>
-        <MapView
+        {/* <MapView
           initialRegion={{
             //@ts-ignore
             latitude: location.coords.latitude,
@@ -72,9 +95,17 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
           showsUserLocation={true}
           showsMyLocationButton={true}
           style={styles.map}
-        ></MapView>
+        ></MapView> */}
         <MenuButton navigation={navigation} />
-        <FabButton />
+        <FabButton
+          onGive={() => {
+            setVisible(true);
+          }}
+          onRequest={() => {
+            setVisible(true);
+          }}
+        />
+        <RidePopUp />
       </SafeAreaView>
     );
   }
@@ -101,7 +132,7 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
-    zIndex: 0,
+    zIndex: -1,
   },
   input: {
     padding: 12,
@@ -113,7 +144,7 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     flex: 1,
-    zIndex: 10,
+    zIndex: 0,
     paddingLeft: 30,
     paddingRight: 30,
   },
