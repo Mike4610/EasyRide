@@ -34,14 +34,14 @@ export default function App() {
 
   const getUser = async () => {
     try {
-      //const uid = await AsyncStorage.getItem("uid")
-      // if (!uid) {
+      const uid = await AsyncStorage.getItem("uid")
+      if (uid!==null) {
       // @ts-ignore
       setLoggedIn(true);
-      // } else {
-      //   // @ts-ignore
-      //   setLoggedIn(true);
-      // }
+     } else {
+        // @ts-ignore
+         setLoggedIn(false);
+    }
     } catch (error) {
       console.log(error);
     }
