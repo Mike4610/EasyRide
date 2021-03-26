@@ -46,6 +46,7 @@
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.2",
     "react-native-snackbar": "^2.4.0",
+    "react-native-swipe-gestures": "^1.0.5",
     "react-native-sync-localstorage": "^0.0.3",
     "react-native-web": "~0.13.12",
     "react-responsive": "^8.2.0",

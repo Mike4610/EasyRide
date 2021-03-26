@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   TextInput,
   StyleSheet,
   Image,
@@ -35,6 +34,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
           fullName,
           phoneNumber,
           createdAt: new Date().toDateString(),
+          vehicles: []
         };
         const usersRef = firebase.firestore().collection("users");
         usersRef
@@ -51,6 +51,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
         console.log(error);
       });
   };
+
   return (
     <KeyboardAwareScrollView style={styles.container}>
       <View style={styles.header}>

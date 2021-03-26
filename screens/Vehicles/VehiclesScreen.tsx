@@ -9,12 +9,12 @@ import {
   TextInput,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { VehicleContext } from "../../context/VehicleContext";
 import { Dialog, Portal, Provider } from "react-native-paper";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FullButton from "../../components/Buttons/FullButton";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import GestureRecognizer from "react-native-swipe-gestures";
 import firebase from "firebase/app";
 import "firebase/firestore";
 
@@ -22,41 +22,105 @@ import carList from "../../car-list.json";
 import AsyncStorage from "@react-native-community/async-storage";
 
 export default function VehiclesScreen({ navigation }: { navigation: any }) {
-  const [open, setOpen] = useState(false);
+  const [vehicles, setVehicles] = useState([]);
+
   //POPUP
   const [visible, setVisible] = useState(false);
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
   //PICKER
   const seatNumbers = ["2", "3", "4", "5"];
-  const [brand, setBrand] = useState("Seat");
-  const [model, setModel] = useState("");
-  const [seats, setSeats] = useState("");
+  const [brand, setBrand] = useState(carList[0].brand);
+  const [model, setModel] = useState(carList[0].models[0]);
+  const [seats, setSeats] = useState("2");
   const [licensePlate, setLicensePlate] = useState("");
   const [modelList, setModelList] = useState(carList[0].models);
+  const config = {
+    velocityThreshold: 0.3,
+    directionalOffsetThreshold: 80,
+  };
+
+  useEffect(() => {
+    getUserVehicles();
+  }, []);
+
+  const getUserVehiclesFromFirebase = async (uid: string) => {
+    const usersRef = firebase.firestore().collection("users");
+    usersRef
+      .doc(uid)
+      .get()
+      .then(async (doc) => {
+        //@ts-ignore
+        await AsyncStorage.setItem(
+          "vehicles",
+          //@ts-ignore
+          JSON.stringify(doc.data().vehicles)
+        );
+        getUserVehicles();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const getUserVehicles = async () => {
+    const vehicles = await AsyncStorage.getItem("vehicles");
+    //@ts-ignore
+    setVehicles(JSON.parse(vehicles));
+  };
+
+  const setUserVehicles = async () => {
+    const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
+    const uid = await AsyncStorage.getItem("uid");
+    const usersRef = firebase.firestore().collection("users");
+    usersRef
+      .doc(uid || "")
+      .update({
+        vehicles: arrayUnion({
+          brand,
+          model,
+          seats,
+          licensePlate,
+        }),
+      })
+      .then(() => {
+        getUserVehiclesFromFirebase(uid || "");
+        setVisible(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const handleBrandChange = (itemValue: any) => {
-    console.log("hey");
     carList.forEach(({ brand, models }) => {
       if (brand === itemValue) {
         setBrand(brand);
+        setModel(models[0]);
         setModelList(models);
       }
     });
   };
 
-  const handleRegisterVehicle = async () => {
-    const uid = await AsyncStorage.getItem("uid")
-    const db = firebase.firestore().collection("vehicles");
-    db.add({
-      uid,
-      brand,
-      model,
-      seats,
-      licensePlate
-    })
-    .then((response)=>{setVisible(false)})
-    .catch((error)=>{console.log(error)})
+  const handleRegisterVehicle = () => {
+    setUserVehicles();
+  };
+
+  const handleDeleteVehicle = async (vehicle: object) => {
+    const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
+    const uid = await AsyncStorage.getItem("uid");
+    console.log(uid);
+    const usersRef = firebase.firestore().collection("users");
+    usersRef
+      .doc(uid || "")
+      .update({
+        vehicles: arrayRemove(vehicle),
+      })
+      .then(() => {
+        getUserVehiclesFromFirebase(uid || "");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const VehiclePopUp = () => {
@@ -139,56 +203,65 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
 
   return (
     // @ts-ignore
-    <VehicleContext.Provider value={{ open, setOpen }}>
-      <SafeAreaView style={styles.container}>
-        <MenuButton navigation={navigation} />
-        <View style={styles.profileDetails}>
-          <Image
-            style={styles.profilePic}
-            source={require("../../assets/images/driver.png")}
-          />
-          <Text style={styles.profileName}>Registered vehicles</Text>
-          <Text style={styles.memberSince}>Total of 2 vehicles</Text>
+
+    <SafeAreaView style={styles.container}>
+      <MenuButton navigation={navigation} />
+      <View style={styles.profileDetails}>
+        <Image
+          style={styles.profilePic}
+          source={require("../../assets/images/driver.png")}
+        />
+        <Text style={styles.profileName}>Registered vehicles</Text>
+        <Text style={styles.memberSince}>
+          Total of {vehicles.length} vehicles
+        </Text>
+      </View>
+
+      <View style={styles.footer}>
+        <ScrollView style={{ height: 280 }}>
+          {vehicles.map(({ brand, model, licensePlate, seats }) => {
+            return (
+              <GestureRecognizer
+                onSwipeLeft={() =>
+                  handleDeleteVehicle({
+                    brand,
+                    model,
+                    licensePlate,
+                    seats,
+                  })
+                }
+                config={config}
+              >
+                <View key={licensePlate} style={styles.infoContainer}>
+                  <View
+                    style={{
+                      marginTop: 20,
+                    }}
+                  >
+                    <Text style={styles.footer_title}>
+                      {brand} {model}
+                    </Text>
+                  </View>
+
+                  <View style={styles.info}>
+                    <AntDesign name="idcard" size={28} color="#fd4d4d" />
+                    <Text style={styles.footer_text}>{licensePlate}</Text>
+                  </View>
+                  <View style={styles.info}>
+                    <Ionicons name="person-outline" size={24} color="#fd4d4d" />
+                    <Text style={styles.footer_text}>{seats}</Text>
+                  </View>
+                </View>
+              </GestureRecognizer>
+            );
+          })}
+        </ScrollView>
+        <View style={styles.buttons}>
+          <FullButton press={showDialog} text={"Add a vehicle"} />
         </View>
-
-        <View style={styles.footer}>
-          <ScrollView>
-            <View style={styles.infoContainer}>
-              <View style={{ marginTop: 20 }}>
-                <Text style={styles.footer_title}>Seat Ibiza</Text>
-              </View>
-
-              <View style={styles.info}>
-                <AntDesign name="idcard" size={28} color="#fd4d4d" />
-                <Text style={styles.footer_text}>92-MF-74</Text>
-              </View>
-              <View style={styles.info}>
-                <Ionicons name="person-outline" size={24} color="#fd4d4d" />
-                <Text style={styles.footer_text}>5</Text>
-              </View>
-            </View>
-            <View style={styles.infoContainer}>
-              <View style={{ marginTop: 20 }}>
-                <Text style={styles.footer_title}>Renault Mégane Coupe</Text>
-              </View>
-
-              <View style={styles.info}>
-                <AntDesign name="idcard" size={28} color="#fd4d4d" />
-                <Text style={styles.footer_text}>OO-12-59</Text>
-              </View>
-              <View style={styles.info}>
-                <Ionicons name="person-outline" size={24} color="#fd4d4d" />
-                <Text style={styles.footer_text}>2</Text>
-              </View>
-            </View>
-          </ScrollView>
-          <View style={styles.buttons}>
-            <FullButton press={showDialog} text={"Add a vehicle"} />
-          </View>
-        </View>
-        <VehiclePopUp />
-      </SafeAreaView>
-    </VehicleContext.Provider>
+      </View>
+      <VehiclePopUp />
+    </SafeAreaView>
   );
 }
 

@@ -34,7 +34,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((response: any) => {
-        storeData(response.user.uid)
+        storeData(response.user.uid);
       })
       .catch((error: any) => {
         console.log(error);
@@ -53,7 +53,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
       });
   };
 
-  const storeData = async (uid : any) => {
+  const storeData = async (uid: any) => {
     try {
       await AsyncStorage.setItem("uid", uid);
       const usersRef = firebase.firestore().collection("users");
@@ -64,11 +64,13 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
           setLoggedIn(true);
           navigation.navigate("Home");
           //@ts-ignore
-          await AsyncStorage.setItem("fullName", doc.data().fullName)
+          await AsyncStorage.setItem("fullName", doc.data().fullName);
           //@ts-ignore
-          await AsyncStorage.setItem("email", doc.data().email)
+          await AsyncStorage.setItem("email", doc.data().email);
           //@ts-ignore
-          await AsyncStorage.setItem("createdAt", doc.data().createdAt)
+          await AsyncStorage.setItem("createdAt", doc.data().createdAt);
+          //@ts-ignore
+          await AsyncStorage.setItem("vehicles", JSON.stringify(doc.data().vehicles));
         })
         .catch((error: any) => {
           console.log(error);
@@ -76,7 +78,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
   return (
     <KeyboardAwareScrollView style={styles.container}>
       <View style={styles.header}>
@@ -149,7 +151,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
           },
         }}
       >
-        <Text style={{fontSize: 15, fontWeight: "bold"}}>{message}</Text>
+        <Text style={{ fontSize: 15, fontWeight: "bold" }}>{message}</Text>
       </Snackbar>
     </KeyboardAwareScrollView>
   );
