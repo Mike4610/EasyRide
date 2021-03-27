@@ -15,7 +15,7 @@ export default function AddVehiclePopUp({
   //@ts-ignore
   const { visible, setVisible } = useContext(AddVehicleContext);
   //PICKER
-  const seatNumbers = ["2", "3", "4", "5"];
+  const seatNumbers = ["2", "3", "4", "5", "6", "7", "8"];
   const [brand, setBrand] = useState(carList[0].brand);
   const [model, setModel] = useState(carList[0].models[0]);
   const [seats, setSeats] = useState("2");
