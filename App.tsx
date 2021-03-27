@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { AntDesign } from "@expo/vector-icons";
 import ProfileScreen from "./screens/Profile/ProfileScreen";
 import VehiclesScreen from "./screens/Vehicles/VehiclesScreen";
+import Loading from "./components/Loading/Loading";
 
 var firebaseConfig = {
   apiKey: "AIzaSyDDJJKukPDp8mZ0AwZRACNceE000TsRXzc",
@@ -30,18 +31,18 @@ var firebaseConfig = {
 export default function App() {
   const Drawer = createDrawerNavigator();
   const Stack = createStackNavigator();
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(null);
 
   const getUser = async () => {
     try {
-      const uid = await AsyncStorage.getItem("uid")
-      if (uid!==null) {
-      // @ts-ignore
-      setLoggedIn(true);
-     } else {
+      const uid = await AsyncStorage.getItem("uid");
+      if (uid !== null) {
         // @ts-ignore
-         setLoggedIn(false);
-    }
+        setLoggedIn(true);
+      } else {
+        // @ts-ignore
+        setLoggedIn(false);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -54,7 +55,9 @@ export default function App() {
     getUser();
   }, []);
 
-  if (!loggedIn) {
+  if (loggedIn === null) {
+    return <Loading />;
+  } else if (!loggedIn) {
     return (
       <SafeAreaProvider>
         {/* @ts-ignore */}
@@ -113,11 +116,7 @@ export default function App() {
                 component={HomeScreen}
                 options={{
                   drawerLabel: ({ focused, color }) => (
-                    <Text
-                      style={{ fontSize: 16, color: "#151a21" }}
-                    >
-                      Home
-                    </Text>
+                    <Text style={{ fontSize: 16, color: "#151a21" }}>Home</Text>
                   ),
                   drawerIcon: ({ focused, color, size }) => (
                     <AntDesign name="home" size={24} color="#fd4d4d" />
@@ -129,9 +128,7 @@ export default function App() {
                 component={ProfileScreen}
                 options={{
                   drawerLabel: ({ focused, color }) => (
-                    <Text
-                      style={{ fontSize: 16, color: "#151a21" }}
-                    >
+                    <Text style={{ fontSize: 16, color: "#151a21" }}>
                       Profile
                     </Text>
                   ),
@@ -145,9 +142,7 @@ export default function App() {
                 component={VehiclesScreen}
                 options={{
                   drawerLabel: ({ focused, color }) => (
-                    <Text
-                      style={{ fontSize: 16, color: "#151a21" }}
-                    >
+                    <Text style={{ fontSize: 16, color: "#151a21" }}>
                       Vehicles
                     </Text>
                   ),

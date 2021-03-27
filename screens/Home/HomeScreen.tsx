@@ -4,17 +4,15 @@ import {
   StyleSheet,
   Dimensions,
   TextInput,
-  Image,
-  ActivityIndicator,
   SafeAreaView,
 } from "react-native";
-import { Dialog, Portal, Provider } from "react-native-paper";
 import RequestRidePopUp from "../../components/PopUp/RequestRidePopUp";
 import { RequestRideContext } from "../../context/RequestRideContext";
 import MapView from "react-native-maps";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FabButton from "../../components/Buttons/FabButton";
 import * as Location from "expo-location";
+import Loading from "../../components/Loading/Loading";
 
 export default function HomeScreen({ navigation }: { navigation: any }) {
   const [location, setLocation] = useState(null);
@@ -39,15 +37,7 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
 
   if (location === null) {
     return (
-      <View style={styles.loadingScreen}>
-        <View style={styles.logoContainer}>
-          <Image
-            style={styles.logo}
-            source={require("../../assets/images/RMLogo.png")}
-          ></Image>
-        </View>
-        <ActivityIndicator size="large" color="#fd4d4d" />
-      </View>
+     <Loading/>
     );
   } else {
     return (
@@ -96,20 +86,6 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  loadingScreen: {
-    flex: 1,
-    backgroundColor: "#151a21",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logoContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logo: {
-    width: 355,
-    height: 100,
   },
   map: {
     width: Dimensions.get("window").width,
