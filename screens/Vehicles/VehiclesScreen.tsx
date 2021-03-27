@@ -6,16 +6,20 @@ import {
   Text,
   Image,
   ScrollView,
+  Animated,
+  TouchableOpacity,
 } from "react-native";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FullButton from "../../components/Buttons/FullButton";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
-import GestureRecognizer from "react-native-swipe-gestures";
 import firebase from "firebase/app";
 import "firebase/firestore";
+import Swipeable from 'react-native-gesture-handler/Swipeable'
 import AsyncStorage from "@react-native-community/async-storage";
 import AddVehiclePopUp from "../../components/PopUp/AddVehiclePopUp";
 import {AddVehicleContext} from "../../context/AddVehicleContext";
+
+const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
 export default function VehiclesScreen({ navigation }: { navigation: any }) {
   const [vehicles, setVehicles] = useState([]);
@@ -51,7 +55,10 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
   const getUserVehicles = async () => {
     const vehicles = await AsyncStorage.getItem("vehicles");
     //@ts-ignore
-    setVehicles(JSON.parse(vehicles));
+    if(vehicles!==null){
+      setVehicles(JSON.parse(vehicles));
+    }
+    
   };
 
   const setUserVehicles = async (brand:any, model: any, seats: any, licensePlate: any) => {
@@ -100,6 +107,24 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
       });
   };
 
+  const RightActions = ({progress , dragX ,brand,model,licensePlate,seats}:{progress:any, dragX:any, brand:any,model:any,licensePlate:any,seats:any}) => {
+    const scale = dragX.interpolate({
+      inputRange:[-100,0],
+      outputRange:[1,0],
+      extrapolate: 'clamp'
+    })
+    return (
+    <TouchableOpacity onPress = {() =>
+         handleDeleteVehicle({
+           brand,model,licensePlate,seats
+         })
+       }> 
+      <View style = {styles.rightAction}>
+        <AnimatedIcon name ="trash-outline" size={40} style={[styles.actionIcon, {transform: [{scale}]}]}/>
+      </View>
+     </TouchableOpacity> 
+    )
+ };
   return (
     // @ts-ignore
     <AddVehicleContext.Provider value={{visible, setVisible}}>
@@ -120,42 +145,30 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
           <ScrollView style={{ height: 280 }}>
             {vehicles.map(({ brand, model, licensePlate, seats }) => {
               return (
-                <GestureRecognizer
-                  onSwipeLeft={() =>
-                    handleDeleteVehicle({
-                      brand,
-                      model,
-                      licensePlate,
-                      seats,
-                    })
-                  }
-                  config={config}
-                >
-                  <View key={licensePlate} style={styles.infoContainer}>
-                    <View
-                      style={{
-                        marginTop: 20,
-                      }}
-                    >
-                      <Text style={styles.footer_title}>
-                        {brand} {model}
-                      </Text>
-                    </View>
-
-                    <View style={styles.info}>
-                      <AntDesign name="idcard" size={28} color="#fd4d4d" />
-                      <Text style={styles.footer_text}>{licensePlate}</Text>
-                    </View>
-                    <View style={styles.info}>
-                      <Ionicons
-                        name="person-outline"
-                        size={24}
-                        color="#fd4d4d"
-                      />
-                      <Text style={styles.footer_text}>{seats}</Text>
-                    </View>
+                <Swipeable
+                renderRightActions = {(progress,dragX) => <RightActions progress={progress} dragX={dragX} brand={brand} model={model} licensePlate={licensePlate} seats={seats} /> }
+              >
+                <View key={licensePlate} style={styles.infoContainer}>
+                  <View
+                    style={{
+                      marginTop: 20,
+                    }}
+                  >
+                    <Text style={styles.footer_title}>
+                      {brand} {model}
+                    </Text>
                   </View>
-                </GestureRecognizer>
+
+                  <View style={styles.info}>
+                    <AntDesign name="idcard" size={28} color="#fd4d4d" />
+                    <Text style={styles.footer_text}>{licensePlate}</Text>
+                  </View>
+                  <View style={styles.info}>
+                    <Ionicons name="person-outline" size={24} color="#fd4d4d" />
+                    <Text style={styles.footer_text}>{seats}</Text>
+                  </View>
+                </View>
+              </Swipeable>
               );
             })}
           </ScrollView>
@@ -230,4 +243,16 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
   },
+  rightAction :{
+    backgroundColor: '#fd4d4d',
+    borderTopRightRadius: 30,
+    flex:1,
+    alignSelf:"center",
+  },  
+  actionIcon: {
+    color: '#fff',
+    alignSelf:'center',
+    flex:1,
+    padding:20,
+} 
 });
