@@ -10,29 +10,15 @@ import {
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import "firebase/firestore";
 import Swipeable from 'react-native-gesture-handler/Swipeable'
-import {Vehicle} from "../types"
+import {Vehicle} from "../../types"
+import SwipeToDelete from '../../components/Actions/SwipeToDelete'
 const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
 export default function VehicleCard({vehicle,handleDeleteVehicle}:{vehicle:Vehicle,handleDeleteVehicle:any}) {
-    const RightActions = ({progress , dragX ,vehicle}:{progress:any, dragX:any, vehicle:Vehicle}) => {
-        const scale = dragX.interpolate({
-          inputRange:[-100,0],
-          outputRange:[1,0],
-          extrapolate: 'clamp'
-        })
-        return (
-        <TouchableOpacity onPress = {() =>
-             handleDeleteVehicle(vehicle)
-           }> 
-          <View style = {styles.rightAction}>
-            <AnimatedIcon name ="trash-outline" size={40} style={[styles.actionIcon, {transform: [{scale}]}]}/>
-          </View>
-         </TouchableOpacity> 
-        )
-     };
+
     return(
     <Swipeable
-        renderRightActions = {(progress,dragX) => <RightActions progress={progress} dragX={dragX} vehicle={vehicle} /> }
+        renderRightActions = {(progress,dragX) => <SwipeToDelete handleDeleteVehicle={handleDeleteVehicle} dragX={dragX} vehicle={vehicle} /> }
           >
         <View key={vehicle.licensePlate} style={styles.infoContainer}>
           <View

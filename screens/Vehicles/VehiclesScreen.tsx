@@ -15,7 +15,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 import AddVehiclePopUp from "../../components/PopUp/AddVehiclePopUp";
 import {AddVehicleContext} from "../../context/AddVehicleContext";
 import {Vehicle} from "../../types"
-import VehicleCard from "../../components/VehicleCard"
+import VehicleCard from "../../components/Cards/VehicleCard"
 
 export default function VehiclesScreen({ navigation }: { navigation: any }) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
