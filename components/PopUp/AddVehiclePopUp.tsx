@@ -102,7 +102,7 @@ export default function AddVehiclePopUp({
             <View style={styles.buttons}>
               <FullButton
                 press={() => {
-                  handleRegisterVehicle(brand, model, seats, licensePlate);
+                  handleRegisterVehicle({brand, model, seats, licensePlate});
                 }}
                 text={"Add"}
               />
