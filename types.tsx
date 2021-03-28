@@ -9,6 +9,13 @@ export type BottomTabParamList = {
   TabThree: undefined
 };
 
+export type Vehicle = {
+  brand: string;
+  model: string;
+  seats: number;
+  licensePlate:string;
+}
+
 export type TabOneParamList = {
   TabOneScreen: undefined;
 };
