@@ -6,29 +6,22 @@ import {
   Text,
   Image,
   ScrollView,
-  Animated,
-  TouchableOpacity,
 } from "react-native";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FullButton from "../../components/Buttons/FullButton";
-import { Ionicons, AntDesign } from "@expo/vector-icons";
 import firebase from "firebase/app";
 import "firebase/firestore";
-import Swipeable from 'react-native-gesture-handler/Swipeable'
 import AsyncStorage from "@react-native-community/async-storage";
 import AddVehiclePopUp from "../../components/PopUp/AddVehiclePopUp";
 import {AddVehicleContext} from "../../context/AddVehicleContext";
-
-const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
+import {Vehicle} from "../../types"
+import VehicleCard from "../../components/VehicleCard"
 
 export default function VehiclesScreen({ navigation }: { navigation: any }) {
-  const [vehicles, setVehicles] = useState([]);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   //POPUP
   const [visible, setVisible] = useState(false);
-  const config = {
-    velocityThreshold: 0.3,
-    directionalOffsetThreshold: 80,
-  };
+
 
   useEffect(() => {
     getUserVehicles();
@@ -61,19 +54,14 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
     
   };
 
-  const setUserVehicles = async (brand:any, model: any, seats: any, licensePlate: any) => {
+  const setUserVehicles = async (vehicle:Vehicle) => {
     const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
     const uid = await AsyncStorage.getItem("uid");
     const usersRef = firebase.firestore().collection("users");
     usersRef
       .doc(uid || "")
       .update({
-        vehicles: arrayUnion({
-          brand,
-          model,
-          seats,
-          licensePlate,
-        }),
+        vehicles: arrayUnion(vehicle),
       })
       .then(() => {
         getUserVehiclesFromFirebase(uid || "");
@@ -84,12 +72,12 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
       });
   };
 
-  const handleRegisterVehicle = (brand: any, model: any, seats: any, licensePlate: any) => {
-    setUserVehicles(brand, model, seats, licensePlate);
+  const handleRegisterVehicle = (vehicle:Vehicle) => {
+    setUserVehicles(vehicle);
     setVisible(false)
   };
 
-  const handleDeleteVehicle = async (vehicle: object) => {
+  const handleDeleteVehicle = async (vehicle: Vehicle) => {
     const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
     const uid = await AsyncStorage.getItem("uid");
     console.log(uid);
@@ -107,24 +95,7 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
       });
   };
 
-  const RightActions = ({progress , dragX ,brand,model,licensePlate,seats}:{progress:any, dragX:any, brand:any,model:any,licensePlate:any,seats:any}) => {
-    const scale = dragX.interpolate({
-      inputRange:[-100,0],
-      outputRange:[1,0],
-      extrapolate: 'clamp'
-    })
-    return (
-    <TouchableOpacity onPress = {() =>
-         handleDeleteVehicle({
-           brand,model,licensePlate,seats
-         })
-       }> 
-      <View style = {styles.rightAction}>
-        <AnimatedIcon name ="trash-outline" size={40} style={[styles.actionIcon, {transform: [{scale}]}]}/>
-      </View>
-     </TouchableOpacity> 
-    )
- };
+
   return (
     // @ts-ignore
     <AddVehicleContext.Provider value={{visible, setVisible}}>
@@ -143,33 +114,10 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
 
         <View style={styles.footer}>
           <ScrollView style={{ height: 280 }}>
-            {vehicles.map(({ brand, model, licensePlate, seats }) => {
+            {vehicles.map((vehicle) => {
               return (
-                <Swipeable
-                renderRightActions = {(progress,dragX) => <RightActions progress={progress} dragX={dragX} brand={brand} model={model} licensePlate={licensePlate} seats={seats} /> }
-              >
-                <View key={licensePlate} style={styles.infoContainer}>
-                  <View
-                    style={{
-                      marginTop: 20,
-                    }}
-                  >
-                    <Text style={styles.footer_title}>
-                      {brand} {model}
-                    </Text>
-                  </View>
-
-                  <View style={styles.info}>
-                    <AntDesign name="idcard" size={28} color="#fd4d4d" />
-                    <Text style={styles.footer_text}>{licensePlate}</Text>
-                  </View>
-                  <View style={styles.info}>
-                    <Ionicons name="person-outline" size={24} color="#fd4d4d" />
-                    <Text style={styles.footer_text}>{seats}</Text>
-                  </View>
-                </View>
-              </Swipeable>
-              );
+                <VehicleCard key={vehicle.licensePlate} vehicle={vehicle} handleDeleteVehicle={handleDeleteVehicle} />
+                );
             })}
           </ScrollView>
           <View style={styles.buttons}>
