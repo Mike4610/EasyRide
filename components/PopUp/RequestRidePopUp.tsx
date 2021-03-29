@@ -4,7 +4,7 @@ import { RequestRideContext } from "../../context/RequestRideContext";
 
 export default function RequestRidePopUp() {
   //@ts-ignore
-  const { visible, setVisible } = useContext(RequestRideContext);
+  const { requestVisible, setRequestVisible } = useContext(RequestRideContext);
 
   return (
     <Provider>
@@ -18,9 +18,9 @@ export default function RequestRidePopUp() {
             height: 450,
             alignSelf: "center",
           }}
-          visible={visible}
+          visible={requestVisible}
           onDismiss={() => {
-            setVisible(false);
+            setRequestVisible(false);
           }}
         ></Dialog>
       </Portal>

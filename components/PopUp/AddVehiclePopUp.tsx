@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { View, Text, TextInput, StyleSheet, Animated } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Dialog, Portal, Provider } from "react-native-paper";
 import FullButton from "../../components/Buttons/FullButton";
@@ -16,17 +16,23 @@ export default function AddVehiclePopUp({
   const { visible, setVisible } = useContext(AddVehicleContext);
   //PICKER
   const seatNumbers = ["2", "3", "4", "5", "6", "7", "8"];
-  const [brand, setBrand] = useState(carList[0].brand);
-  const [model, setModel] = useState(carList[0].models[0]);
-  const [seats, setSeats] = useState("2");
-  const [licensePlate, setLicensePlate] = useState("");
   const [modelList, setModelList] = useState(carList[0].models);
+  const [vehicle, setVehicle] = useState({
+    brand: carList[0].brand,
+    model: carList[0].models[0],
+    seats: "2",
+    licensePlate: "",
+  });
 
   const handleBrandChange = (itemValue: any) => {
     carList.forEach(({ brand, models }) => {
       if (brand === itemValue) {
-        setBrand(brand);
-        setModel(models[0]);
+        setVehicle({
+          ...vehicle,
+          brand: brand,
+          model: models[0],
+        });
+
         setModelList(models);
       }
     });
@@ -49,7 +55,7 @@ export default function AddVehiclePopUp({
                 <Picker
                   style={{ width: 250, height: 44 }}
                   itemStyle={{ height: 44 }}
-                  selectedValue={brand}
+                  selectedValue={vehicle.brand}
                   onValueChange={(itemValue) => handleBrandChange(itemValue)}
                 >
                   {carList.map(({ brand }) => {
@@ -64,8 +70,10 @@ export default function AddVehiclePopUp({
                 <Picker
                   style={{ width: 250, height: 44 }}
                   itemStyle={{ height: 44 }}
-                  selectedValue={model}
-                  onValueChange={(itemValue) => setModel(itemValue)}
+                  selectedValue={vehicle.model}
+                  onValueChange={(itemValue) => {
+                    setVehicle({ ...vehicle, model: itemValue });
+                  }}
                 >
                   {modelList.map((item) => {
                     return <Picker.Item key={item} label={item} value={item} />;
@@ -77,8 +85,10 @@ export default function AddVehiclePopUp({
                 <Picker
                   style={{ width: 250, height: 44 }}
                   itemStyle={{ height: 44 }}
-                  selectedValue={seats}
-                  onValueChange={(itemValue) => setSeats(itemValue)}
+                  selectedValue={vehicle.seats}
+                  onValueChange={(itemValue) => {
+                    setVehicle({ ...vehicle, seats: itemValue });
+                  }}
                 >
                   {seatNumbers.map((number) => {
                     return (
@@ -92,8 +102,10 @@ export default function AddVehiclePopUp({
                 <TextInput
                   placeholder="AA-00-11"
                   placeholderTextColor="#151a21"
-                  onChangeText={(text) => setLicensePlate(text)}
-                  value={licensePlate}
+                  onChangeText={(text) => {
+                    setVehicle({ ...vehicle, licensePlate: text });
+                  }}
+                  value={vehicle.licensePlate}
                   style={styles.textInput}
                   autoCapitalize="none"
                 />
@@ -102,7 +114,7 @@ export default function AddVehiclePopUp({
             <View style={styles.buttons}>
               <FullButton
                 press={() => {
-                  handleRegisterVehicle({brand, model, seats, licensePlate});
+                  handleRegisterVehicle(vehicle);
                 }}
                 text={"Add"}
               />

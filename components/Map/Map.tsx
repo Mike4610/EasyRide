@@ -10,22 +10,38 @@ export default function Map() {
 
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-      let { coords } = await Location.getCurrentPositionAsync({});
-      setLocation(coords);
+      await getInitialLocation();
+      // await getGeocodeAddress()
+      await Location.watchPositionAsync({ distanceInterval: 1 }, async () => {
+        let { coords } = await Location.getCurrentPositionAsync({});
+        setLocation(coords);
+      });
     })();
   }, []);
+
+  // const getGeocodeAddress = async () => {
+  //     let a = await Location.geocodeAsync("central park zoo east 64th street")
+  //     console.log(a)
+  //     let latitude = await a[0].latitude
+  //     let longitude = await a[0].longitude
+  //     setLocation({latitude, longitude})
+  // }
+  const getInitialLocation = async () => {
+    let { status } = await Location.requestPermissionsAsync();
+    if (status !== "granted") {
+      setErrorMsg("Permission to access location was denied");
+      return;
+    }
+    let { coords } = await Location.getCurrentPositionAsync({});
+    setLocation(coords);
+  };
 
   if (location === null) {
     return <Loading />;
   } else {
     return (
       <MapView
-        initialRegion={{
+        region={{
           //@ts-ignore
           latitude: location.latitude,
           //@ts-ignore

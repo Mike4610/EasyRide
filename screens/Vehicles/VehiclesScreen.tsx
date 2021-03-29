@@ -13,15 +13,14 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import AsyncStorage from "@react-native-community/async-storage";
 import AddVehiclePopUp from "../../components/PopUp/AddVehiclePopUp";
-import {AddVehicleContext} from "../../context/AddVehicleContext";
-import {Vehicle} from "../../types"
-import VehicleCard from "../../components/Cards/VehicleCard"
+import { AddVehicleContext } from "../../context/AddVehicleContext";
+import { Vehicle } from "../../types";
+import VehicleCard from "../../components/Cards/VehicleCard";
 
 export default function VehiclesScreen({ navigation }: { navigation: any }) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   //POPUP
   const [visible, setVisible] = useState(false);
-
 
   useEffect(() => {
     getUserVehicles();
@@ -48,13 +47,12 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
   const getUserVehicles = async () => {
     const vehicles = await AsyncStorage.getItem("vehicles");
     //@ts-ignore
-    if(vehicles!==null){
+    if (vehicles !== null) {
       setVehicles(JSON.parse(vehicles));
     }
-    
   };
 
-  const setUserVehicles = async (vehicle:Vehicle) => {
+  const setUserVehicles = async (vehicle: Vehicle) => {
     const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
     const uid = await AsyncStorage.getItem("uid");
     const usersRef = firebase.firestore().collection("users");
@@ -72,9 +70,10 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
       });
   };
 
-  const handleRegisterVehicle = (vehicle:Vehicle) => {
+  const handleRegisterVehicle = (vehicle: Vehicle) => {
+    console.log(vehicle)
     setUserVehicles(vehicle);
-    setVisible(false)
+    setVisible(false);
   };
 
   const handleDeleteVehicle = async (vehicle: Vehicle) => {
@@ -95,10 +94,9 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
       });
   };
 
-
   return (
     // @ts-ignore
-    <AddVehicleContext.Provider value={{visible, setVisible}}>
+    <AddVehicleContext.Provider value={{ visible, setVisible }}>
       <SafeAreaView style={styles.container}>
         <MenuButton navigation={navigation} />
         <View style={styles.profileDetails}>
@@ -114,14 +112,24 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
 
         <View style={styles.footer}>
           <ScrollView style={{ height: 280 }}>
-            {vehicles.map((vehicle) => {
+            {vehicles.map((vehicle, index) => {
+              console.log("AAA" + index);
               return (
-                <VehicleCard key={vehicle.licensePlate} vehicle={vehicle} handleDeleteVehicle={handleDeleteVehicle} />
-                );
+                <VehicleCard
+                  key={vehicle.brand + vehicle.model + vehicle.licensePlate}
+                  vehicle={vehicle}
+                  handleDeleteVehicle={handleDeleteVehicle}
+                />
+              );
             })}
           </ScrollView>
           <View style={styles.buttons}>
-            <FullButton press={()=>{setVisible(true)}} text={"Add a vehicle"} />
+            <FullButton
+              press={() => {
+                setVisible(true);
+              }}
+              text={"Add a vehicle"}
+            />
           </View>
         </View>
         <AddVehiclePopUp handleRegisterVehicle={handleRegisterVehicle} />
@@ -191,16 +199,16 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
   },
-  rightAction :{
-    backgroundColor: '#fd4d4d',
+  rightAction: {
+    backgroundColor: "#fd4d4d",
     borderTopRightRadius: 30,
-    flex:1,
-    alignSelf:"center",
-  },  
+    flex: 1,
+    alignSelf: "center",
+  },
   actionIcon: {
-    color: '#fff',
-    alignSelf:'center',
-    flex:1,
-    padding:20,
-} 
+    color: "#fff",
+    alignSelf: "center",
+    flex: 1,
+    padding: 20,
+  },
 });

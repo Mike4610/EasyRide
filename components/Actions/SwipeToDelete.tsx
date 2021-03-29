@@ -13,7 +13,6 @@ export default function SwipeToDelete({
   vehicle: Vehicle;
 }) {
   const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
-
   const scale = dragX.interpolate({
     inputRange: [-100, 0],
     outputRange: [1, 0],
@@ -21,11 +20,7 @@ export default function SwipeToDelete({
   });
 
   return (
-    <TouchableOpacity
-      onPress={() =>
-        handleDeleteVehicle(vehicle)
-      }
-    >
+    <TouchableOpacity onPress={() => handleDeleteVehicle(vehicle)}>
       <View style={styles.rightAction}>
         <AnimatedIcon
           name="trash-outline"
@@ -47,7 +42,6 @@ const styles = StyleSheet.create({
   },
   rightAction: {
     backgroundColor: "#fd4d4d",
-    borderTopRightRadius: 30,
     flex: 1,
     alignSelf: "center",
   },
