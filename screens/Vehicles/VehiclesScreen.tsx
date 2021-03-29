@@ -13,7 +13,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import AsyncStorage from "@react-native-community/async-storage";
 import AddVehiclePopUp from "../../components/PopUp/AddVehiclePopUp";
-import { AddVehicleContext } from "../../context/AddVehicleContext";
+import { AddVehicleContext } from "../../context/PopUpContext";
 import { Vehicle } from "../../types";
 import VehicleCard from "../../components/Cards/VehicleCard";
 

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Dialog, Portal, Provider } from "react-native-paper";
-import { GiveRideContext } from "../../context/GiveRideContext";
+import { GiveRideContext } from "../../context/PopUpContext";
 
 export default function GiveRidePopUp() {
   //@ts-ignore

@@ -4,7 +4,7 @@ import { Picker } from "@react-native-picker/picker";
 import { Dialog, Portal, Provider } from "react-native-paper";
 import FullButton from "../../components/Buttons/FullButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { AddVehicleContext } from "../../context/AddVehicleContext";
+import { AddVehicleContext } from "../../context/PopUpContext";
 import carList from "../../car-list.json";
 
 export default function AddVehiclePopUp({

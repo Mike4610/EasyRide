@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import RequestRidePopUp from "../../components/PopUp/RequestRidePopUp";
-import { RequestRideContext } from "../../context/RequestRideContext";
 import GiveRidePopUp from "../../components/PopUp/GiveRidePopUp";
-import { GiveRideContext } from "../../context/GiveRideContext";
+import { RequestRideContext, GiveRideContext } from "../../context/PopUpContext";
 import Map from "../../components/Map/Map";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FabButton from "../../components/Buttons/FabButton";
