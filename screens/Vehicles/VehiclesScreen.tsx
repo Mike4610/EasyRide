@@ -13,7 +13,6 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import AsyncStorage from "@react-native-community/async-storage";
 import AddVehiclePopUp from "../../components/PopUp/AddVehiclePopUp";
-import { AddVehicleContext } from "../../context/PopUpContext";
 import { Vehicle } from "../../types";
 import VehicleCard from "../../components/Cards/VehicleCard";
 
@@ -50,7 +49,7 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
     //@ts-ignore
     if (vehicles !== null) {
       setVehicles(JSON.parse(vehicles));
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -98,46 +97,50 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
 
   return (
     // @ts-ignore
-    <AddVehicleContext.Provider value={{ visible, setVisible }}>
-      <SafeAreaView style={styles.container}>
-        <MenuButton navigation={navigation} />
-        <View style={styles.profileDetails}>
-          <Image
-            style={styles.profilePic}
-            source={require("../../assets/images/driver.png")}
-          />
-          <Text style={styles.profileName}>Registered vehicles</Text>
-          <Text style={styles.memberSince}>
-            Total of {vehicles.length} vehicles
-          </Text>
-        </View>
 
-        <View style={styles.footer}>
-          <ScrollView style={{ height: 280 }}>
-            {vehicles.map((vehicle, index) => {
-              console.log("AAA" + index);
-              return (
-                <VehicleCard
-                  key={vehicle.brand + vehicle.model + vehicle.licensePlate}
-                  vehicle={vehicle}
-                  handleDeleteVehicle={handleDeleteVehicle}
-                />
-              );
-            })}
-          </ScrollView>
-          <View style={styles.buttons}>
-            <FullButton
-              loading={loading}
-              press={() => {
-                setVisible(true);
-              }}
-              text={"Add a vehicle"}
-            />
-          </View>
+    <SafeAreaView style={styles.container}>
+      <MenuButton navigation={navigation} />
+      <View style={styles.profileDetails}>
+        <Image
+          style={styles.profilePic}
+          source={require("../../assets/images/driver.png")}
+        />
+        <Text style={styles.profileName}>Registered vehicles</Text>
+        <Text style={styles.memberSince}>
+          Total of {vehicles.length} vehicles
+        </Text>
+      </View>
+
+      <View style={styles.footer}>
+        <ScrollView style={{ height: 280 }}>
+          {vehicles.map((vehicle, index) => {
+            return (
+              <VehicleCard
+                key={vehicle.brand + vehicle.model + vehicle.licensePlate}
+                vehicle={vehicle}
+                handleDeleteVehicle={handleDeleteVehicle}
+              />
+            );
+          })}
+        </ScrollView>
+        <View style={styles.buttons}>
+          <FullButton
+            loading={loading}
+            press={() => {
+              setVisible(true);
+            }}
+            text={"Add a vehicle"}
+          />
         </View>
-        <AddVehiclePopUp handleRegisterVehicle={handleRegisterVehicle} />
-      </SafeAreaView>
-    </AddVehicleContext.Provider>
+      </View>
+      <AddVehiclePopUp
+        onDismiss={() => {
+          setVisible(false);
+        }}
+        visible={visible}
+        handleRegisterVehicle={handleRegisterVehicle}
+      />
+    </SafeAreaView>
   );
 }
 

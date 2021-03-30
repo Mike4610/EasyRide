@@ -1,19 +1,24 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, Animated } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Dialog, Portal, Provider } from "react-native-paper";
 import FullButton from "../../components/Buttons/FullButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { AddVehicleContext } from "../../context/PopUpContext";
 import carList from "../../car-list.json";
+import { Vehicle } from "../../types";
 
 export default function AddVehiclePopUp({
+  visible,
+  onDismiss,
   handleRegisterVehicle,
 }: {
-  handleRegisterVehicle: any;
+  visible: boolean;
+  onDismiss: () => void;
+  handleRegisterVehicle: (vehicle: Vehicle) => void;
 }) {
-  //@ts-ignore
-  const { visible, setVisible } = useContext(AddVehicleContext);
+  useEffect(() => {
+    setIsVisible(visible);
+  }, [visible]);
   //PICKER
   const seatNumbers = ["2", "3", "4", "5", "6", "7", "8"];
   const [modelList, setModelList] = useState(carList[0].models);
@@ -23,6 +28,7 @@ export default function AddVehiclePopUp({
     seats: "2",
     licensePlate: "",
   });
+  const [isVisible, setIsVisible] = useState(false);
 
   const handleBrandChange = (itemValue: any) => {
     carList.forEach(({ brand, models }) => {
@@ -43,9 +49,9 @@ export default function AddVehiclePopUp({
       <Portal>
         <Dialog
           style={styles.popup}
-          visible={visible}
+          visible={isVisible}
           onDismiss={() => {
-            setVisible(false);
+            onDismiss()
           }}
         >
           <Dialog.Content>

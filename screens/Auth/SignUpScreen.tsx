@@ -1,59 +1,63 @@
-import React, { useState} from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Image,
-} from "react-native";
+import React, { useState, useRef } from "react";
+import { View, Text, TextInput, StyleSheet, Image } from "react-native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FullButton from "../../components/Buttons/FullButton";
 import OutlinedButton from "../../components/Buttons/OutlinedButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import firebase from "firebase/app";
 import "firebase/auth";
-import "firebase/firestore";
+import { set } from "react-native-reanimated";
 
 export default function SignUpScreen({ navigation }: { navigation: any }) {
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("+351");
-  const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
+  const recaptchaVerifierRef = useRef(null);
+  const [user, setUser] = useState({
+    fullName: "",
+    email: "",
+    phoneNumber: "+351",
+    birthDate: "",
+    password: "",
+    verificationId: ""
+  });
+
   const handleSignUp = () => {
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then((response: any) => {
-        console.log(response);
-        const uid = response.user.uid;
-        console.log(uid);
-        const data = {
-          id: uid,
-          email,
-          fullName,
-          phoneNumber,
-          createdAt: new Date().toDateString(),
-          vehicles: []
-        };
-        const usersRef = firebase.firestore().collection("users");
-        usersRef
-          .doc(uid)
-          .set(data)
-          .then(() => {
-            navigation.navigate("SignIn");
-          })
-          .catch((error: any) => {
-            console.log(error);
-          });
-      })
-      .catch((error: any) => {
-        console.log(error);
-      }); 
+    if (validateAge()) {
+      validatePhoneNumber();
+      
+    }
+  };
+
+  const validatePhoneNumber = async () => {
+    const phoneProvider = new firebase.auth.PhoneAuthProvider();
+    const verificationId = await phoneProvider
+      .verifyPhoneNumber(user.phoneNumber, recaptchaVerifierRef.current)
+      .then(() => {
+        setUser({...user, verificationId: verificationId})
+        navigation.navigate("VerifyPhoneNumber", { userData: user });
+      });
+  };
+
+  const validateAge = () => {
+    var today = new Date();
+    var birth = new Date(user.birthDate);
+    var age = today.getFullYear() - birth.getFullYear();
+    var m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+
+    return age >= 18;
   };
 
   return (
     <KeyboardAwareScrollView style={styles.container}>
+      <FirebaseRecaptchaVerifierModal
+        ref={recaptchaVerifierRef}
+        firebaseConfig={firebase.app().options}
+        title="Prove you are human!"
+      />
+
       <View style={styles.header}>
         <View style={styles.logoContainer}>
           <Image
@@ -65,6 +69,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
           Not a member yet<Text style={{ color: "#fd4d4d" }}>?</Text>
         </Text>
       </View>
+
       <View style={styles.footer}>
         <Text style={styles.footer_text}>Name</Text>
         <View style={styles.inputContainer}>
@@ -72,8 +77,8 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
           <TextInput
             placeholder="First and Last Name"
             style={styles.textInput}
-            onChangeText={(text) => setFullName(text)}
-            value={fullName}
+            onChangeText={(text) => setUser({ ...user, fullName: text })}
+            value={user.fullName}
             autoCapitalize="none"
           />
         </View>
@@ -87,8 +92,8 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
           <TextInput
             placeholder="Your Email"
             style={styles.textInput}
-            onChangeText={(text) => setEmail(text)}
-            value={email}
+            onChangeText={(text) => setUser({ ...user, email: text })}
+            value={user.email}
             autoCapitalize="none"
           />
         </View>
@@ -98,21 +103,34 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
           <TextInput
             placeholder="Your Phone Number"
             style={styles.textInput}
-            onChangeText={(text) => setPhoneNumber(text)}
-            value={phoneNumber}
+            onChangeText={(text) => setUser({ ...user, phoneNumber: text })}
+            value={user.phoneNumber}
             autoCapitalize="none"
           />
         </View>
+
         <Text style={styles.footer_text}>Password</Text>
         <View style={styles.inputContainer}>
           <AntDesign name="lock" size={24} color="#151a21" />
           <TextInput
             placeholder="Your Password"
             style={styles.textInput}
-            onChangeText={(text) => setPassword(text)}
-            value={password}
+            onChangeText={(text) => setUser({ ...user, password: text })}
+            value={user.password}
             autoCapitalize="none"
             secureTextEntry={true}
+          />
+        </View>
+
+        <Text style={styles.footer_text}>Birth Date</Text>
+        <View style={styles.inputContainer}>
+          <AntDesign name="calendar" size={24} color="#151a21" />
+          <TextInput
+            placeholder="YYYY-MM-DD"
+            style={styles.textInput}
+            onChangeText={(text) => setUser({ ...user, birthDate: text })}
+            value={user.birthDate}
+            autoCapitalize="none"
           />
         </View>
         <View style={styles.buttons}>
@@ -149,7 +167,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 150,
     height: 100,
-    marginTop: 20,
+    marginTop: 30,
   },
   headerTitle: {
     color: "white",
@@ -158,7 +176,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     backgroundColor: "white",
-    flex: 2.5,
+
     justifyContent: "center",
     borderTopStartRadius: 30,
     borderTopEndRadius: 30,

@@ -1,12 +1,5 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  StyleSheet,
-  Image,
-} from "react-native";
+import React, { useState, useContext } from "react";
+import { View, Text, TextInput, StyleSheet, Image } from "react-native";
 import FullButton from "../../components/Buttons/FullButton";
 import OutlinedButton from "../../components/Buttons/OutlinedButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -14,40 +7,66 @@ import { Snackbar } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import firebase from "firebase/app";
 import "firebase/auth";
+import "firebase/firestore";
 
-export default function ForgotPasswordScreen({
+export default function VerifyPhoneNumberScreen({
+  route,
   navigation,
 }: {
+  route: any;
   navigation: any;
 }) {
-  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [user, setUser] = useState(route.params.userData)
   //SNACKBAR
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const onDismissSnackBar = () => setVisible(false);
-  const sleep = (ms: Number) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  };
-  const handleResetPassword = () => {
+
+  const handleConfirmCode = () => {
+    const credential = firebase.auth.PhoneAuthProvider.credential(
+      user.verificationId,
+      code
+    );
+
     firebase
       .auth()
-      .sendPasswordResetEmail(email)
-      .then(async () => {
-        setEmail("");
-        setMessage("Check your email!");
-        setVisible(true);
-        await sleep(3500);
-        navigation.navigate("SignIn");
+      .signInWithCredential(credential)
+      .then(() => {
+        registerUser();
+      });
+  };
+
+  const registerUser = async () => {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(user.email, user.password)
+      .then((response: any) => {
+        console.log(response);
+        const uid = response.user.uid;
+        console.log(uid);
+        const data = {
+          id: uid,
+          email: user.email,
+          fullName: user.fullName,
+          phoneNumber: user.phoneNumber,
+          createdAt: new Date().toDateString(),
+          birthDate: user.birthDate,
+          vehicles: [],
+        };
+        const usersRef = firebase.firestore().collection("users");
+        usersRef
+          .doc(uid)
+          .set(data)
+          .then(() => {
+            navigation.navigate("SignIn");
+          })
+          .catch((error: any) => {
+            console.log(error);
+          });
       })
-      .catch((error) => {
-        if (error.code === "auth/invalid-email") {
-          setMessage("Error. Invalid email address.");
-          setVisible(true);
-        }
-        if (error.code === "auth/user-not-found") {
-          setMessage("Error. User not found.");
-          setVisible(true);
-        }
+      .catch((error: any) => {
+        console.log(error);
       });
   };
   return (
@@ -60,27 +79,27 @@ export default function ForgotPasswordScreen({
           ></Image>
         </View>
         <Text style={styles.headerTitle}>
-          Forgot your password<Text style={{ color: "#fd4d4d" }}>?</Text>
+          Verify your phone<Text style={{ color: "#fd4d4d" }}>!</Text>
         </Text>
       </View>
       <View style={styles.footer}>
-        <Text style={styles.footer_text}>Email</Text>
+        <Text style={styles.footer_text}>Confirmation Code</Text>
         <View style={styles.inputContainer}>
           <MaterialCommunityIcons
-            name="email-outline"
+            name="cellphone-key"
             size={24}
             color="#151a21"
           />
           <TextInput
-            placeholder="Your Email"
-            onChangeText={(text) => setEmail(text)}
-            value={email}
+            placeholder="Your Code"
+            onChangeText={(text) => setCode(text)}
+            value={code}
             style={styles.textInput}
             autoCapitalize="none"
           />
         </View>
         <View style={styles.buttons}>
-          <FullButton text={"Reset Password"} press={handleResetPassword} />
+          <FullButton text={"Confirm"} press={handleConfirmCode} />
           <OutlinedButton
             text={"Cancel"}
             press={() => {

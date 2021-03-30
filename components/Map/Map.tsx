@@ -76,7 +76,9 @@ export default function Map() {
           <Marker
             visible={visible}
             location={{
+              //  @ts-ignore
               longitude: location.longitude,
+              //  @ts-ignore
               latitude: location.latitude,
             }}
           />

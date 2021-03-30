@@ -1,7 +1,7 @@
 type Vehicle = {
   brand: string;
   model: string;
-  seats: number;
+  seats: string;
   licensePlate: string;
 };
 
@@ -21,4 +21,12 @@ type Ride = {
   driver: Driver;
 };
 
-export { Vehicle, Driver, Ride };
+type User = {
+  fullName: string | null,
+  email: string | null,
+  phoneNumber: string | null, 
+  birthDate?: string | null,
+  createdAt: string | null
+}
+
+export { Vehicle, Driver, Ride, User};

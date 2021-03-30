@@ -71,6 +71,8 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
           //@ts-ignore
           await AsyncStorage.setItem("email", doc.data().email);
           //@ts-ignore
+          await AsyncStorage.setItem("phoneNumber", doc.data().phoneNumber);
+          //@ts-ignore
           await AsyncStorage.setItem("createdAt", doc.data().createdAt);
           //@ts-ignore
           await AsyncStorage.setItem("vehicles", JSON.stringify(doc.data().vehicles));
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 150,
     height: 100,
-    marginTop: 20,
+    marginTop: 30,
   },
   headerTitle: {
     color: "white",

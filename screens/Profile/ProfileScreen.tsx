@@ -1,28 +1,38 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, View, Text, Image } from "react-native";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FullButton from "../../components/Buttons/FullButton";
 import OutlinedButton from "../../components/Buttons/OutlinedButton";
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-community/async-storage";
+import EditProfilePopUp from "../../components/PopUp/EditProfilePopUp";
+import { User } from "../../types";
 
 export default function ProfileScreen({ navigation }: { navigation: any }) {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [createdAt, setCreatedAt] = useState("");
+  const [userData, setUserData] = useState<User>({
+    fullName: "",
+    email: "",
+    phoneNumber: "",
+    createdAt: ""
+  })
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     getUserDetails();
   }, []);
   const getUserDetails = async () => {
     const fullName = await AsyncStorage.getItem("fullName");
-    setFullName(fullName || "");
-
+    const phoneNumber = await AsyncStorage.getItem("phoneNumber")
     const email = await AsyncStorage.getItem("email");
-    setEmail(email || "");
+    let createdAt = await AsyncStorage.getItem("createdAt")
+    createdAt = createdAt?.slice(3, createdAt.length) || ""
 
-    const createdAt = await AsyncStorage.getItem("createdAt");
-    setCreatedAt(createdAt?.slice(3, createdAt.length) || "");
+    setUserData({
+      fullName,
+      phoneNumber,
+      email,
+      createdAt
+    })
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -33,38 +43,50 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
           style={styles.profilePic}
           source={require("../../assets/images/avatar.png")}
         />
-        <Text style={styles.profileName}>{fullName}</Text>
-        <Text style={styles.memberSince}>Member since {createdAt}</Text>
+        <Text style={styles.profileName}>{userData.fullName}</Text>
+        <Text style={styles.memberSince}>Member since {userData.createdAt}</Text>
       </View>
-
       <View style={styles.footer}>
-        <View style={styles.infoContainer}>
-          <View style={{ marginTop: 30 }}>
-            <Text style={styles.footer_title}>Email</Text>
+        <View style={{height: 280}}>
+          <View style={styles.infoContainer}>
+            <View style={{ marginTop: 30 }}>
+              <Text style={styles.footer_title}>Email</Text>
+            </View>
+            <View style={styles.info}>
+              <MaterialCommunityIcons
+                name="email-outline"
+                size={28}
+                color="#fd4d4d"
+              />
+              <Text style={styles.footer_text}>{userData.email}</Text>
+            </View>
           </View>
-          <View style={styles.info}>
-            <MaterialCommunityIcons
-              name="email-outline"
-              size={28}
-              color="#fd4d4d"
-            />
-            <Text style={styles.footer_text}>{email}</Text>
-          </View>
-        </View>
-        <View style={styles.infoContainer}>
-          <View style={{ marginTop: 30 }}>
-            <Text style={styles.footer_title}>Phone Number</Text>
-          </View>
-          <View style={styles.info}>
-            <AntDesign name="phone" size={28} color="#fd4d4d" />
-            <Text style={styles.footer_text}>916661494</Text>
+          <View style={styles.infoContainer}>
+            <View style={{ marginTop: 30 }}>
+              <Text style={styles.footer_title}>Phone Number</Text>
+            </View>
+            <View style={styles.info}>
+              <AntDesign name="phone" size={28} color="#fd4d4d" />
+              <Text style={styles.footer_text}>+351 {userData.phoneNumber}</Text>
+            </View>
           </View>
         </View>
         <View style={styles.buttons}>
-          <FullButton press={() => {}} text={"Edit Profile"} />
+          <FullButton
+            press={() => {
+              setVisible(true);
+            }}
+            text={"Edit Profile"}
+          />
           <OutlinedButton press={() => {}} text={"Reset Password"} />
         </View>
       </View>
+      <EditProfilePopUp
+        visible={visible}
+        onDismiss={() => {
+          setVisible(false);
+        }}
+      />
     </SafeAreaView>
   );
 }
@@ -74,18 +96,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#151a21",
   },
-  header: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingBottom: 50,
-  },
-  headerContainer: {
-    flex: 1,
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-  },
   footer: {
-    flex: 2,
     backgroundColor: "white",
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
@@ -101,7 +112,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   profileDetails: {
-    flex: 1,
+    marginTop: 30,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 30,
@@ -134,10 +145,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20,
+    marginBottom: 15,
   },
   buttons: {
-    marginTop: 15,
     padding: 30,
     display: "flex",
     alignItems: "center",

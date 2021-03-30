@@ -13,7 +13,7 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Map/>
+      {/* <Map/> */}
       <MenuButton navigation={navigation} />
 
       <FabButton

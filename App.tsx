@@ -8,6 +8,7 @@ import SplashScreen from "./screens/Splash/SplashScreen";
 import SignInScreen from "./screens/Auth/SignInScreen";
 import SignUpScreen from "./screens/Auth/SignUpScreen";
 import ForgotPasswordScreen from "./screens/Auth/ForgotPasswordScreen";
+import VerifyPhoneNumberScreen from "./screens/Auth/VerifyPhoneNumberScreen";
 import HomeScreen from "./screens/Home/HomeScreen";
 import { UserContext } from "./context/UserContext";
 import DrawerContent from "./components/Drawer/DrawerContent";
@@ -17,16 +18,7 @@ import { AntDesign } from "@expo/vector-icons";
 import ProfileScreen from "./screens/Profile/ProfileScreen";
 import VehiclesScreen from "./screens/Vehicles/VehiclesScreen";
 import Loading from "./components/Loading/Loading";
-
-var firebaseConfig = {
-  apiKey: "AIzaSyDDJJKukPDp8mZ0AwZRACNceE000TsRXzc",
-  authDomain: "easyride-cec49.firebaseapp.com",
-  projectId: "easyride-cec49",
-  storageBucket: "easyride-cec49.appspot.com",
-  messagingSenderId: "813876382814",
-  appId: "1:813876382814:web:72c2817517bb2747edf8cf",
-  measurementId: "G-1YT8ZE3LSW",
-};
+import { firebaseConfig } from "./firebaseConfig";
 
 export default function App() {
   const Drawer = createDrawerNavigator();
@@ -81,6 +73,13 @@ export default function App() {
               <Stack.Screen
                 name="SignUp"
                 component={SignUpScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="VerifyPhoneNumber"
+                component={VerifyPhoneNumberScreen}
                 options={{
                   headerShown: false,
                 }}
