@@ -61,8 +61,8 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
           </View>
         </View>
         <View style={styles.buttons}>
-          <FullButton press={() => {}} text={"Change email"} />
-          <OutlinedButton press={() => {}} text={"Change password"} />
+          <FullButton press={() => {}} text={"Edit Profile"} />
+          <OutlinedButton press={() => {}} text={"Reset Password"} />
         </View>
       </View>
     </SafeAreaView>

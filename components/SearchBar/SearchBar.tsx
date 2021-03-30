@@ -2,26 +2,28 @@ import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 
-export default function SearchBar() {
+export default function SearchBar({
+  setAddressLocation,
+}: {
+  setAddressLocation: (address: string) => void;
+}) {
   const [visible, setVisible] = useState(false);
-  const [location, setLocation] = useState("");
+  const [searchLocation, setSearchLocation] = useState("");
 
   const handleTextChange = (text: string) => {
     if (text === "") {
       console.log("hey");
-      setLocation(text);
+      setSearchLocation(text);
       setVisible(false);
     }
-    setLocation(text);
+    setSearchLocation(text);
     setVisible(true);
   };
 
   const handleEraseText = () => {
-    setLocation("");
+    setSearchLocation("");
     setVisible(false);
   };
-
-  const changeMapRegion = () => {};
 
   return (
     <View style={styles.searchBar}>
@@ -33,14 +35,12 @@ export default function SearchBar() {
         placeholder="Type a location"
         placeholderTextColor="#151a21"
         style={styles.input}
-        value={location}
+        value={searchLocation}
         onChangeText={(text) => {
           handleTextChange(text);
         }}
-        onKeyPress={(event) => {
-          if (event.nativeEvent.key == "Enter") {
-            changeMapRegion();
-          }
+        onSubmitEditing = {()=>{
+            setAddressLocation(searchLocation)
         }}
       ></TextInput>
 
@@ -83,5 +83,6 @@ const styles = StyleSheet.create({
   searchIcon: {
     marginTop: 85,
     marginRight: -30,
+    flex: 1
   },
 });

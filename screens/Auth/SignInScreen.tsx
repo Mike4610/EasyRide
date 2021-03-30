@@ -28,8 +28,10 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const onDismissSnackBar = () => setVisible(false);
+  const [loading, setLoading] = useState(false)
 
   const handleSignIn = () => {
+    setLoading(true)
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
@@ -61,6 +63,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
         .doc(uid)
         .get()
         .then(async (doc) => {
+          setLoading(false)
           setLoggedIn(true);
           navigation.navigate("Home");
           //@ts-ignore
@@ -130,7 +133,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
           </Text>
         </TouchableOpacity>
         <View style={styles.buttons}>
-          <FullButton text={"Sign In"} press={handleSignIn} />
+          <FullButton text={"Sign In"} press={handleSignIn} loading={loading}/>
           <OutlinedButton
             text={"Sign Up"}
             press={() => {

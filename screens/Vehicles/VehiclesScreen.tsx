@@ -21,6 +21,7 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   //POPUP
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getUserVehicles();
@@ -49,6 +50,7 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
     //@ts-ignore
     if (vehicles !== null) {
       setVehicles(JSON.parse(vehicles));
+      setLoading(false)
     }
   };
 
@@ -63,7 +65,6 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
       })
       .then(() => {
         getUserVehiclesFromFirebase(uid || "");
-        setVisible(false);
       })
       .catch((error) => {
         console.log(error);
@@ -71,9 +72,10 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
   };
 
   const handleRegisterVehicle = (vehicle: Vehicle) => {
-    console.log(vehicle)
-    setUserVehicles(vehicle);
+    console.log(vehicle);
+    setLoading(true);
     setVisible(false);
+    setUserVehicles(vehicle);
   };
 
   const handleDeleteVehicle = async (vehicle: Vehicle) => {
@@ -125,6 +127,7 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
           </ScrollView>
           <View style={styles.buttons}>
             <FullButton
+              loading={loading}
               press={() => {
                 setVisible(true);
               }}

@@ -17,7 +17,7 @@ import "firebase/firestore";
 
 export default function SignUpScreen({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("+351");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const handleSignUp = () => {
@@ -49,7 +49,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
       })
       .catch((error: any) => {
         console.log(error);
-      });
+      }); 
   };
 
   return (

@@ -1,10 +1,17 @@
 import React, { useState } from "react";
+import { View } from "react-native";
 import { FAB, Portal, Provider } from "react-native-paper";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 
-export default function FabButton({onRequest, onGive}:{onRequest:any, onGive:any}) {
+export default function FabButton({
+  onRequest,
+  onGive,
+}: {
+  onRequest: () => void;
+  onGive: () => void;
+}) {
   const [state, setState] = useState({ open: false });
-  const onStateChange = ({ open }: { open: any }) => setState({ open });
+  const onStateChange = ({ open }: { open: boolean }) => setState({ open });
   const { open } = state;
 
   return (
@@ -14,7 +21,7 @@ export default function FabButton({onRequest, onGive}:{onRequest:any, onGive:any
         <FAB.Group
           fabStyle={{
             backgroundColor: "#fd4d4d",
-            marginBottom: 50,
+            marginBottom: 120,
             zIndex: 2,
           }}
           color="white"

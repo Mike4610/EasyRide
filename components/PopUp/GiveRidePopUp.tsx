@@ -1,10 +1,19 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, Portal, Provider } from "react-native-paper";
-import { GiveRideContext } from "../../context/PopUpContext";
 
-export default function GiveRidePopUp() {
-  //@ts-ignore
-  const { giveVisible, setGiveVisible } = useContext(GiveRideContext);
+export default function GiveRidePopUp({
+  giveVisible,
+  onDismiss,
+}: {
+  giveVisible: boolean;
+  onDismiss: () => void;
+}) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    console.log(giveVisible);
+    setVisible(giveVisible);
+  }, [giveVisible]);
 
   return (
     <Provider>
@@ -18,9 +27,9 @@ export default function GiveRidePopUp() {
             height: 450,
             alignSelf: "center",
           }}
-          visible={giveVisible}
+          visible={visible}
           onDismiss={() => {
-            setGiveVisible(false);
+            onDismiss()
           }}
         ></Dialog>
       </Portal>

@@ -1,11 +1,19 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, Portal, Provider } from "react-native-paper";
-import { RequestRideContext } from "../../context/PopUpContext";
 
-export default function RequestRidePopUp() {
-  //@ts-ignore
-  const { requestVisible, setRequestVisible } = useContext(RequestRideContext);
+export default function RequestRidePopUp({
+  requestVisible,
+  onDismiss,
+}: {
+  requestVisible: boolean;
+  onDismiss: () => void;
+}) {
 
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setVisible(requestVisible);
+  }, [requestVisible]);
   return (
     <Provider>
       <Portal>
@@ -18,9 +26,9 @@ export default function RequestRidePopUp() {
             height: 450,
             alignSelf: "center",
           }}
-          visible={requestVisible}
+          visible={visible}
           onDismiss={() => {
-            setRequestVisible(false);
+            onDismiss()
           }}
         ></Dialog>
       </Portal>

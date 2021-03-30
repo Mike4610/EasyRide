@@ -1,29 +1,24 @@
-export type RootStackParamList = {
-  Root: undefined;
-  NotFound: undefined;
-};
-
-export type BottomTabParamList = {
-  TabOne: undefined;
-  TabTwo: undefined;
-  TabThree: undefined
-};
-
-export type Vehicle = {
+type Vehicle = {
   brand: string;
   model: string;
   seats: number;
-  licensePlate:string;
-}
-
-export type TabOneParamList = {
-  TabOneScreen: undefined;
+  licensePlate: string;
 };
 
-export type TabTwoParamList = {
-  TabTwoScreen: undefined;
+type Driver = {
+  name: {
+    firstName: string;
+    lastName: string;
+  };
+  age: number;
+  phoneNumber: string;
 };
 
-export type TabThreeParamList = {
-  TabTwoThree: undefined;
+type Ride = {
+  from: string;
+  to: string;
+  date: string;
+  driver: Driver;
 };
+
+export { Vehicle, Driver, Ride };
