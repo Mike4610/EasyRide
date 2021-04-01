@@ -5,23 +5,56 @@ import GiveRidePopUp from "../../components/PopUp/GiveRidePopUp";
 import Map from "../../components/Map/Map";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FabButton from "../../components/Buttons/FabButton";
+import SearchBar from "../../components/SearchBar/SearchBar";
+import LocationButtons from "../../components/Buttons/LocationButtons";
 
 export default function HomeScreen({ navigation }: { navigation: any }) {
   //POPUP
   const [requestVisible, setRequestVisible] = useState(false);
   const [giveVisible, setGiveVisible] = useState(false);
+  const [transform, setTransform] = useState({
+    fabVisible: true,
+    returnButton: false,
+    searchBar: false,
+    locationButtons: false,
+  });
+
+  const requestRideHandler = () => {
+    setTransform({
+      fabVisible: false,
+      returnButton: true,
+      searchBar: true,
+      locationButtons: true,
+    });
+  };
+
+  const onDismiss = () => {
+    setTransform({
+      fabVisible: true,
+      returnButton: false,
+      searchBar: false,
+      locationButtons: false,
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Map/> */}
-      <MenuButton navigation={navigation} />
+      <MenuButton
+        onDismiss={onDismiss}
+        returnButton={transform.returnButton}
+        navigation={navigation}
+      />
+      <SearchBar visible={transform.searchBar} setAddressLocation={() => {}} />
+
+      {/* <Map /> */}
 
       <FabButton
+        visible={transform.fabVisible}
         onGive={() => {
           setGiveVisible(true);
         }}
         onRequest={() => {
-          setRequestVisible(true);
+          requestRideHandler();
         }}
       />
       <RequestRidePopUp
@@ -36,6 +69,7 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
           setGiveVisible(false);
         }}
       />
+      <LocationButtons visible={transform.locationButtons} />
     </SafeAreaView>
   );
 }

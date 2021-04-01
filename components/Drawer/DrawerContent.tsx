@@ -21,7 +21,6 @@ import "firebase/auth";
 
 export default function DrawerContent({ ...props }) {
   const [fullName, setFullName] = useState("");
-  const [createdAt, setCreatedAt] = useState("");
   //@ts-ignore
   const { setLoggedIn } = useContext(UserContext);
 
@@ -30,10 +29,11 @@ export default function DrawerContent({ ...props }) {
   }, []);
 
   const getUserData = async () => {
-    const fullName = await AsyncStorage.getItem("fullName");
-    setFullName(fullName || "");
-    const createdAt = await AsyncStorage.getItem("createdAt");
-    setCreatedAt(createdAt?.slice(3, createdAt.length) || "");
+    const user = await AsyncStorage.getItem("user");
+    if (user !== null) {
+      const { fullName } = JSON.parse(user);
+      setFullName(fullName || "");
+    }
   };
   const handleSignOut = () => {
     console.log("click");
@@ -66,7 +66,7 @@ export default function DrawerContent({ ...props }) {
         <DrawerItemList {...props} />
         <DrawerItem
           label="Sign Out"
-          labelStyle={{ fontSize: 16, color: "#151a21"}}
+          labelStyle={{ fontSize: 16, color: "#151a21" }}
           icon={({ color, size }) => (
             <AntDesign name="logout" size={24} color="#fd4d4d" />
           )}
@@ -77,8 +77,7 @@ export default function DrawerContent({ ...props }) {
         <Image
           style={styles.logo}
           source={require("../../assets/images/RMLogo.png")}
-        >
-        </Image>
+        ></Image>
       </View>
     </SafeAreaView>
   );
@@ -86,7 +85,7 @@ export default function DrawerContent({ ...props }) {
 
 const styles = StyleSheet.create({
   container: {
-    height: 680
+    height: 680,
   },
   profile: {
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
@@ -111,8 +110,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
   },
-  logoContainer:{
-    flex:1,
+  logoContainer: {
+    flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
   },

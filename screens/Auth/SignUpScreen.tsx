@@ -8,7 +8,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import firebase from "firebase/app";
 import "firebase/auth";
-import { set } from "react-native-reanimated";
 
 export default function SignUpScreen({ navigation }: { navigation: any }) {
   const recaptchaVerifierRef = useRef(null);
@@ -18,24 +17,31 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
     phoneNumber: "+351",
     birthDate: "",
     password: "",
-    verificationId: ""
+    verificationId: "",
   });
 
   const handleSignUp = () => {
     if (validateAge()) {
       validatePhoneNumber();
-      
     }
   };
 
   const validatePhoneNumber = async () => {
     const phoneProvider = new firebase.auth.PhoneAuthProvider();
-    const verificationId = await phoneProvider
-      .verifyPhoneNumber(user.phoneNumber, recaptchaVerifierRef.current)
-      .then(() => {
-        setUser({...user, verificationId: verificationId})
-        navigation.navigate("VerifyPhoneNumber", { userData: user });
-      });
+    //@ts-ignore
+    try {
+      const verificationId = await phoneProvider.verifyPhoneNumber(
+        user.phoneNumber,
+        recaptchaVerifierRef.current
+      );
+      setUser({ ...user, verificationId });
+    } catch (error) {
+      console.error(error);
+    }
+
+    if (user.verificationId != "") {
+      navigation.navigate("VerifyPhoneNumber", { userData: user });
+    }
   };
 
   const validateAge = () => {
@@ -54,6 +60,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
     <KeyboardAwareScrollView style={styles.container}>
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifierRef}
+        //@ts-ignore
         firebaseConfig={firebase.app().options}
         title="Prove you are human!"
       />
@@ -76,6 +83,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
           <AntDesign name="user" size={24} color="#151a21" />
           <TextInput
             placeholder="First and Last Name"
+            placeholderTextColor="#151a21"
             style={styles.textInput}
             onChangeText={(text) => setUser({ ...user, fullName: text })}
             value={user.fullName}
@@ -91,6 +99,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
           />
           <TextInput
             placeholder="Your Email"
+            placeholderTextColor="#151a21"
             style={styles.textInput}
             onChangeText={(text) => setUser({ ...user, email: text })}
             value={user.email}
@@ -102,6 +111,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
           <AntDesign name="phone" size={24} color="#151a21" />
           <TextInput
             placeholder="Your Phone Number"
+            placeholderTextColor="#151a21"
             style={styles.textInput}
             onChangeText={(text) => setUser({ ...user, phoneNumber: text })}
             value={user.phoneNumber}
@@ -114,6 +124,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
           <AntDesign name="lock" size={24} color="#151a21" />
           <TextInput
             placeholder="Your Password"
+            placeholderTextColor="#151a21"
             style={styles.textInput}
             onChangeText={(text) => setUser({ ...user, password: text })}
             value={user.password}
@@ -127,6 +138,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
           <AntDesign name="calendar" size={24} color="#151a21" />
           <TextInput
             placeholder="YYYY-MM-DD"
+            placeholderTextColor="#151a21"
             style={styles.textInput}
             onChangeText={(text) => setUser({ ...user, birthDate: text })}
             value={user.birthDate}

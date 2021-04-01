@@ -28,10 +28,10 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
   const onDismissSnackBar = () => setVisible(false);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleSignIn = () => {
-    setLoading(true)
+    setLoading(true);
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
@@ -63,19 +63,12 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
         .doc(uid)
         .get()
         .then(async (doc) => {
-          setLoading(false)
+          setLoading(false);
           setLoggedIn(true);
           navigation.navigate("Home");
+          console.log(JSON.stringify(doc.data()));
           //@ts-ignore
-          await AsyncStorage.setItem("fullName", doc.data().fullName);
-          //@ts-ignore
-          await AsyncStorage.setItem("email", doc.data().email);
-          //@ts-ignore
-          await AsyncStorage.setItem("phoneNumber", doc.data().phoneNumber);
-          //@ts-ignore
-          await AsyncStorage.setItem("createdAt", doc.data().createdAt);
-          //@ts-ignore
-          await AsyncStorage.setItem("vehicles", JSON.stringify(doc.data().vehicles));
+          await AsyncStorage.setItem("user", JSON.stringify(doc.data()));
         })
         .catch((error: any) => {
           console.log(error);
@@ -85,7 +78,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
     }
   };
   return (
-    <KeyboardAwareScrollView style={styles.container}>
+    <KeyboardAwareScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <View style={styles.logoContainer}>
           <Image
@@ -93,9 +86,12 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
             source={require("../../assets/images/RMLogo.png")}
           ></Image>
         </View>
-        <Text style={styles.headerTitle}>
-          Welcome<Text style={{ color: "#fd4d4d" }}>!</Text>
-        </Text>
+        <View style={{display: "flex", justifyContent: "center", alignItems:"center"}}>
+          <Text style={styles.headerTitle}>🖕</Text>
+          <Text style={styles.headerTitle}>
+            Welcome<Text style={{ color: "#fd4d4d" }}>!</Text>
+          </Text>
+        </View>
       </View>
       <View style={styles.footer}>
         <Text style={styles.footer_text}>Email</Text>
@@ -107,6 +103,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
           />
           <TextInput
             placeholder="Your Email"
+            placeholderTextColor="#151a21"
             onChangeText={(text) => setEmail(text)}
             value={email}
             style={styles.textInput}
@@ -118,6 +115,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
           <AntDesign name="lock" size={24} color="#151a21" />
           <TextInput
             placeholder="Your Password"
+            placeholderTextColor="#151a21"
             onChangeText={(password) => setPassword(password)}
             value={password}
             style={styles.textInput}
@@ -135,7 +133,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
           </Text>
         </TouchableOpacity>
         <View style={styles.buttons}>
-          <FullButton text={"Sign In"} press={handleSignIn} loading={loading}/>
+          <FullButton text={"Sign In"} press={handleSignIn} loading={loading} />
           <OutlinedButton
             text={"Sign Up"}
             press={() => {
@@ -169,24 +167,25 @@ const styles = StyleSheet.create({
   },
   header: {
     flex: 1,
-    justifyContent: "flex-end",
+
     paddingHorizontal: 20,
     paddingBottom: 50,
   },
   logoContainer: {
     justifyContent: "flex-start",
     alignItems: "center",
-    height: "100%",
   },
   logo: {
     width: 150,
     height: 100,
-    marginTop: 30,
   },
   headerTitle: {
     color: "white",
     fontWeight: "bold",
     fontSize: 30,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   footer: {
     backgroundColor: "white",

@@ -5,7 +5,7 @@ import * as Location from "expo-location";
 import Loading from "../Loading/Loading";
 import SearchBar from "../SearchBar/SearchBar";
 import Marker from "./Marker";
-import LocationButton from "../Buttons/LocationButton";
+import LocationButtons from "../Buttons/LocationButtons";
 
 export default function Map() {
   const [location, setLocation] = useState<object | null>(null);
@@ -56,7 +56,7 @@ export default function Map() {
   } else {
     return (
       <View>
-        <SearchBar setAddressLocation={setAddressLocation} />
+        <LocationButtons visible={true}/>
         <MapView
           region={{
             //@ts-ignore
@@ -83,10 +83,12 @@ export default function Map() {
             }}
           />
         </MapView>
-        <LocationButton
+        
+        
+        {/* <LocationButton
           loading={loading}
           setCurrentLocation={setCurrentLocation}
-        />
+        /> */}
       </View>
     );
   }
@@ -96,6 +98,6 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
-    zIndex: -1,
+    zIndex: -40,
   },
 });

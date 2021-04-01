@@ -8,6 +8,7 @@ import SplashScreen from "./screens/Splash/SplashScreen";
 import SignInScreen from "./screens/Auth/SignInScreen";
 import SignUpScreen from "./screens/Auth/SignUpScreen";
 import ForgotPasswordScreen from "./screens/Auth/ForgotPasswordScreen";
+//@ts-ignore
 import VerifyPhoneNumberScreen from "./screens/Auth/VerifyPhoneNumberScreen";
 import HomeScreen from "./screens/Home/HomeScreen";
 import { UserContext } from "./context/UserContext";

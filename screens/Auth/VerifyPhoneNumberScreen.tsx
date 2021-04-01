@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, Image } from "react-native";
 import FullButton from "../../components/Buttons/FullButton";
 import OutlinedButton from "../../components/Buttons/OutlinedButton";
@@ -17,13 +17,17 @@ export default function VerifyPhoneNumberScreen({
   navigation: any;
 }) {
   const [code, setCode] = useState("");
-  const [user, setUser] = useState(route.params.userData)
+  const [user] = useState(route.params.userData)
   //SNACKBAR
   const [visible, setVisible] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message] = useState("");
   const onDismissSnackBar = () => setVisible(false);
-
+  
+  useEffect(() => {
+    console.log(user)
+  }, [])
   const handleConfirmCode = () => {
+    console.log(user)
     const credential = firebase.auth.PhoneAuthProvider.credential(
       user.verificationId,
       code

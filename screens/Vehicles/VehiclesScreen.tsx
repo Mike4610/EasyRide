@@ -34,9 +34,9 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
       .then(async (doc) => {
         //@ts-ignore
         await AsyncStorage.setItem(
-          "vehicles",
+          "user",
           //@ts-ignore
-          JSON.stringify(doc.data().vehicles)
+          JSON.stringify(doc.data())
         );
         getUserVehicles();
       })
@@ -45,11 +45,14 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
       });
   };
   const getUserVehicles = async () => {
-    const vehicles = await AsyncStorage.getItem("vehicles");
-    //@ts-ignore
-    if (vehicles !== null) {
-      setVehicles(JSON.parse(vehicles));
-      setLoading(false);
+    const user = await AsyncStorage.getItem("user");
+    if (user !== null) {
+      const { vehicles } = JSON.parse(user);
+      //@ts-ignore
+      if (vehicles !== null) {
+        setVehicles(vehicles);
+        setLoading(false);
+      }
     }
   };
 

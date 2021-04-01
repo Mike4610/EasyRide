@@ -1,88 +1,111 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { Icon } from "react-native-paper/lib/typescript/components/Avatar/Avatar";
 
 export default function SearchBar({
+  visible,
   setAddressLocation,
 }: {
+  visible: boolean;
   setAddressLocation: (address: string) => void;
 }) {
-  const [visible, setVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [searchLocation, setSearchLocation] = useState("");
 
-  const handleTextChange = (text: string) => {
-    if (text === "") {
-      console.log("hey");
-      setSearchLocation(text);
-      setVisible(false);
-    }
-    setSearchLocation(text);
-    setVisible(true);
-  };
+  useEffect(() => {
+    setIsVisible(visible);
+  }, [visible]);
+  //   const handleTextChange = (text: string) => {
+  //     if (text === "") {
+  //       console.log("hey");
+  //       setSearchLocation(text);
+  //       setVisible(false);
+  //     }
+  //     setSearchLocation(text);
+  //     setVisible(true);
+  //   };
 
-  const handleEraseText = () => {
-    setSearchLocation("");
-    setVisible(false);
-  };
+  //   const handleEraseText = () => {
+  //     setSearchLocation("");
+  //     setVisible(false);
+  //   };
 
+  //   return (
+  //     <View style={styles.searchBar}>
+  //       <View style={styles.searchIcon}>
+  //         <AntDesign name="search1" size={20} color="#fd4d4d" />
+  //       </View>
+
+  //       <TextInput
+  //         placeholder="Type a location"
+  //         placeholderTextColor="#151a21"
+  //         style={styles.input}
+  //         value={searchLocation}
+  //         onChangeText={(text) => {
+  //           handleTextChange(text);
+  //         }}
+  //         onSubmitEditing = {()=>{
+  //             setAddressLocation(searchLocation)
+  //         }}
+  //       ></TextInput>
+
+  //       <View style={visible ? styles.showCross : styles.hideCross}>
+  //         <TouchableOpacity onPress={handleEraseText}>
+  //           <Entypo name="cross" size={24} color="#fd4d4d" />
+  //         </TouchableOpacity>
+  //       </View>
+  //     </View>
+  //   );
+  // }
   return (
-    <View style={styles.searchBar}>
-      <View style={styles.searchIcon}>
-        <AntDesign name="search1" size={20} color="#fd4d4d" />
-      </View>
-
-      <TextInput
-        placeholder="Type a location"
-        placeholderTextColor="#151a21"
-        style={styles.input}
-        value={searchLocation}
-        onChangeText={(text) => {
-          handleTextChange(text);
+    <View style={styles.container}>
+      <GooglePlacesAutocomplete
+        placeholder="Where to?"
+        minLength={2}
+        isRowScrollable={true}
+        fetchDetails={true}
+        textInputHide={isVisible ? false : true}
+        onPress={(data, details = null) => {
+          // 'details' is provided when fetchDetails = true
+          console.log(data, details);
         }}
-        onSubmitEditing = {()=>{
-            setAddressLocation(searchLocation)
+        styles={styles}
+        query={{
+          key: "AIzaSyCk08TOprTNr1B9tIrztczcoqEcgtCJpVM",
+          language: "pt",
         }}
-      ></TextInput>
-
-      <View style={visible ? styles.showCross : styles.hideCross}>
-        <TouchableOpacity onPress={handleEraseText}>
-          <Entypo name="cross" size={24} color="#fd4d4d" />
-        </TouchableOpacity>
-      </View>
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  input: {
-    padding: 12,
-    color: "black",
-    borderRadius: 30,
-    backgroundColor: "white",
-    height: 45,
-    marginTop: 75,
-    width: 300,
-    textAlign: "center",
+  container: {
+    flex: 1,
   },
-  searchBar: {
-    paddingLeft: 30,
-    paddingRight: 30,
+  textInputContainer: {
     flexDirection: "row",
     alignSelf: "center",
-    flex: 1,
-    zIndex: 0,
+    padding: 20,
+    marginTop: 75,
+    zIndex: 0
   },
-  showCross: {
-    marginTop: 85,
-    marginLeft: -30,
-    display: "flex",
+  textInput: {
+    padding: 12,
+    borderRadius: 10,
+    backgroundColor: "white",
+    color: "#151a21",
+    height: 45,
   },
-  hideCross: {
-    display: "none",
+  predefinedPlacesDescription: {
+    color: "#151a21",
   },
-  searchIcon: {
-    marginTop: 85,
-    marginRight: -30,
-    flex: 1
+  row: {
+    backgroundColor: "#FFFFFF",
+    padding: 13,
+    height: 44,
+    flexDirection: "row",
   },
 });

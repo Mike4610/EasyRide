@@ -89,10 +89,12 @@ const styles = StyleSheet.create({
     marginTop: 30,
     color: "#151a21",
     fontWeight: "bold",
+    alignSelf: "center"
   },
   subtitle_text: {
     fontSize: 18,
     color: "#a3a3a3",
+    alignSelf: "center"
   },
   buttons: {
     marginTop: 40,
