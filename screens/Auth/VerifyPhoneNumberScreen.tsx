@@ -18,6 +18,7 @@ export default function VerifyPhoneNumberScreen({
 }) {
   const [code, setCode] = useState("");
   const [user] = useState(route.params.userData)
+  const [verificationId] = useState(route.params.verificationId)
   //SNACKBAR
   const [visible, setVisible] = useState(false);
   const [message] = useState("");
@@ -25,11 +26,12 @@ export default function VerifyPhoneNumberScreen({
   
   useEffect(() => {
     console.log(user)
+    console.log(verificationId)
   }, [])
   const handleConfirmCode = () => {
     console.log(user)
     const credential = firebase.auth.PhoneAuthProvider.credential(
-      user.verificationId,
+      verificationId,
       code
     );
 

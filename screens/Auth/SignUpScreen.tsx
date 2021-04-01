@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Text, TextInput, StyleSheet, Image } from "react-native";
+import { View, Text, TextInput, StyleSheet, Image,Platform } from "react-native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FullButton from "../../components/Buttons/FullButton";
@@ -10,14 +10,13 @@ import firebase from "firebase/app";
 import "firebase/auth";
 
 export default function SignUpScreen({ navigation }: { navigation: any }) {
-  const recaptchaVerifierRef = useRef(null);
+  const recaptchaVerifierRef:any = useRef(null);
   const [user, setUser] = useState({
     fullName: "",
     email: "",
     phoneNumber: "+351",
     birthDate: "",
     password: "",
-    verificationId: "",
   });
 
   const handleSignUp = () => {
@@ -26,22 +25,21 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
     }
   };
 
-  const validatePhoneNumber = async () => {
+  const validatePhoneNumber = () => {
     const phoneProvider = new firebase.auth.PhoneAuthProvider();
     //@ts-ignore
-    try {
-      const verificationId = await phoneProvider.verifyPhoneNumber(
+        phoneProvider.verifyPhoneNumber(
         user.phoneNumber,
         recaptchaVerifierRef.current
-      );
-      setUser({ ...user, verificationId });
-    } catch (error) {
-      console.error(error);
-    }
-
-    if (user.verificationId != "") {
-      navigation.navigate("VerifyPhoneNumber", { userData: user });
-    }
+      ).then((verificationId:any)=>{
+        console.log("VerificationID:");
+        console.log(verificationId);
+        navigation.navigate("VerifyPhoneNumber", { userData: user ,verificationId:verificationId});
+      }).catch((err)=>{console.log(err)});
+      
+      // showMessage({text: 'Verification code has been sent to your phone.',});
+      // setTimeout(() => showMessage({text: undefined,}), 5000);
+    
   };
 
   const validateAge = () => {
@@ -154,6 +152,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
             }}
           />
         </View>
+        
       </View>
     </KeyboardAwareScrollView>
   );
