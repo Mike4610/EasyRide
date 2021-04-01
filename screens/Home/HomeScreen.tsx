@@ -39,14 +39,15 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Map />
+      
+      <SearchBar visible={transform.searchBar} setAddressLocation={() => {}} />
+
       <MenuButton
         onDismiss={onDismiss}
         returnButton={transform.returnButton}
         navigation={navigation}
       />
-      <SearchBar visible={transform.searchBar} setAddressLocation={() => {}} />
-
-      {/* <Map /> */}
 
       <FabButton
         visible={transform.fabVisible}
@@ -57,12 +58,12 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
           requestRideHandler();
         }}
       />
-      <RequestRidePopUp
+      {/* <RequestRidePopUp
         requestVisible={requestVisible}
         onDismiss={() => {
           setRequestVisible(false);
         }}
-      />
+      /> */}
       <GiveRidePopUp
         giveVisible={giveVisible}
         onDismiss={() => {

@@ -57,12 +57,12 @@ export default function FabButton({
 const stlyes = StyleSheet.create({
   visibleFab:{
     backgroundColor: "#fd4d4d",
-    marginBottom: 120,
+    marginBottom: 80,
     zIndex: 2,
   },
   invisibleFab: {
     backgroundColor: "#fd4d4d",
-    marginBottom: 120,
+    marginBottom: 80,
     zIndex: 2,
     display: "none"
   }

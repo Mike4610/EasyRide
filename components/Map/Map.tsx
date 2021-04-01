@@ -56,7 +56,6 @@ export default function Map() {
   } else {
     return (
       <View>
-        <LocationButtons visible={true}/>
         <MapView
           region={{
             //@ts-ignore

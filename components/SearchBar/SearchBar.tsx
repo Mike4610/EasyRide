@@ -84,13 +84,17 @@ export default function SearchBar({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    top: 10,
   },
   textInputContainer: {
     flexDirection: "row",
     alignSelf: "center",
     padding: 20,
     marginTop: 75,
-    zIndex: 0
+    // zIndex: 0
   },
   textInput: {
     padding: 12,
