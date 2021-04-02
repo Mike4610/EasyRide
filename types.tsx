@@ -22,11 +22,12 @@ type Ride = {
 };
 
 type User = {
-  fullName: string | null,
-  email: string | null,
-  phoneNumber: string | null, 
-  birthDate?: string | null,
-  createdAt: string | null
-}
+  id?: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  birthDate?: string;
+  createdAt: string;
+};
 
-export { Vehicle, Driver, Ride, User};
+export { Vehicle, Driver, Ride, User };
