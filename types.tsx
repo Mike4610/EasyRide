@@ -26,7 +26,7 @@ type User = {
   fullName: string;
   email: string;
   phoneNumber: string;
-  birthDate?: string;
+  birthDate: string;
   createdAt: string;
 };
 

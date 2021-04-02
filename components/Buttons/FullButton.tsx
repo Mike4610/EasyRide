@@ -16,7 +16,7 @@ export default function FullButton({
   error?: boolean;
 }) {
   const [isLoading, setIsLoading] = useState<boolean | undefined>(false);
-  const [isCorrect, setIsCorrect] = useState<boolean | undefined>(true);
+  const [isCorrect, setIsCorrect] = useState<boolean | undefined>(false);
   const [isError, setIsError] = useState<boolean | undefined>(false);
 
   useEffect(() => {
