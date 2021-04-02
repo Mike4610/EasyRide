@@ -9,7 +9,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import { UserContext } from "../../context/UserContext";
 import { Snackbar } from "react-native-paper";
-
+import DatePicker from "@react-native-community/datetimepicker"
 export default function EditProfilePopUp({
   user,
   getUserDetails,
@@ -40,6 +40,7 @@ export default function EditProfilePopUp({
   const [snackBarVisible, setSnackBarVisible] = useState(false);
 
   useEffect(() => {
+    sleep(2000)
     setIsVisible(visible);
   }, [visible]);
 
@@ -167,15 +168,15 @@ export default function EditProfilePopUp({
               </View>
               <View style={styles.pickerContainer}>
                 <Text style={styles.popup_title}>Birth Date</Text>
-                <TextInput
-                  placeholder={user.birthDate}
-                  placeholderTextColor="#151a21"
-                  style={styles.textInput}
-                  onChangeText={(birthDate) => {
-                    setUserData({ ...userData, birthDate });
+                <DatePicker
+                  style={styles.datePickerStyle}
+                  value={new Date()}
+                  mode="date"
+                  onChange={(e, d) => {
+                    if (d !== undefined) {
+                      user.birthDate = d.toDateString()
+                    }
                   }}
-                  value={userData.birthDate}
-                  autoCapitalize="none"
                 />
               </View>
             </KeyboardAwareScrollView>
@@ -252,4 +253,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
+  datePickerStyle: {
+    height: 40,
+    width: 250,
+    borderBottomWidth: 1,
+    borderColor: "#fd4d4d",
+    color: "black",
+    padding: 12,
+    alignSelf: "center",
+    textAlign: "center",
+  }
 });

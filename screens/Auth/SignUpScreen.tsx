@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Text, TextInput, StyleSheet, Image,Platform } from "react-native";
+import { View, Text, TextInput, StyleSheet, Image, Platform } from "react-native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FullButton from "../../components/Buttons/FullButton";
@@ -7,10 +7,11 @@ import OutlinedButton from "../../components/Buttons/OutlinedButton";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import firebase from "firebase/app";
+import DatePicker from "@react-native-community/datetimepicker"
 import "firebase/auth";
 
 export default function SignUpScreen({ navigation }: { navigation: any }) {
-  const recaptchaVerifierRef:any = useRef(null);
+  const recaptchaVerifierRef: any = useRef(null);
   const [user, setUser] = useState({
     fullName: "",
     email: "",
@@ -28,21 +29,19 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
   const validatePhoneNumber = () => {
     const phoneProvider = new firebase.auth.PhoneAuthProvider();
     //@ts-ignore
-        phoneProvider.verifyPhoneNumber(
-        user.phoneNumber,
-        recaptchaVerifierRef.current
-      ).then((verificationId:any)=>{
-        console.log("VerificationID:");
-        console.log(verificationId);
-        navigation.navigate("VerifyPhoneNumber", { userData: user ,verificationId:verificationId});
-      }).catch((err)=>{console.log(err)});
-      
-      // showMessage({text: 'Verification code has been sent to your phone.',});
-      // setTimeout(() => showMessage({text: undefined,}), 5000);
-    
+    phoneProvider.verifyPhoneNumber(
+      user.phoneNumber,
+      recaptchaVerifierRef.current
+    ).then((verificationId: any) => {
+      console.log("VerificationID:");
+      console.log(verificationId);
+      navigation.navigate("VerifyPhoneNumber", { userData: user, verificationId: verificationId });
+    }).catch((err) => { console.log(err) });
+
   };
 
   const validateAge = () => {
+
     var today = new Date();
     var birth = new Date(user.birthDate);
     var age = today.getFullYear() - birth.getFullYear();
@@ -96,6 +95,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
             color="#151a21"
           />
           <TextInput
+            autoCompleteType='email'
             placeholder="Your Email"
             placeholderTextColor="#151a21"
             style={styles.textInput}
@@ -108,6 +108,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
         <View style={styles.inputContainer}>
           <AntDesign name="phone" size={24} color="#151a21" />
           <TextInput
+            keyboardType='decimal-pad'
             placeholder="Your Phone Number"
             placeholderTextColor="#151a21"
             style={styles.textInput}
@@ -134,13 +135,15 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
         <Text style={styles.footer_text}>Birth Date</Text>
         <View style={styles.inputContainer}>
           <AntDesign name="calendar" size={24} color="#151a21" />
-          <TextInput
-            placeholder="YYYY-MM-DD"
-            placeholderTextColor="#151a21"
-            style={styles.textInput}
-            onChangeText={(text) => setUser({ ...user, birthDate: text })}
-            value={user.birthDate}
-            autoCapitalize="none"
+          <DatePicker
+            style={styles.datePickerStyle}
+            value={new Date()}
+            mode="date"
+            onChange={(e, d) => {
+              if (d !== undefined) {
+                user.birthDate = d.toDateString()
+              }
+            }}
           />
         </View>
         <View style={styles.buttons}>
@@ -152,7 +155,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
             }}
           />
         </View>
-        
+
       </View>
     </KeyboardAwareScrollView>
   );
@@ -215,4 +218,13 @@ const styles = StyleSheet.create({
   buttons: {
     marginTop: 30,
   },
+  datePickerStyle: {
+    marginLeft: 20,
+    flex: 1,
+    height: 40,
+    borderBottomWidth: 1,
+    borderColor: "#fd4d4d",
+    color: "black",
+    padding: 12,
+  }
 });

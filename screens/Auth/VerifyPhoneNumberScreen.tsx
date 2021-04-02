@@ -21,7 +21,7 @@ export default function VerifyPhoneNumberScreen({
   const [verificationId] = useState(route.params.verificationId)
   //SNACKBAR
   const [visible, setVisible] = useState(false);
-  const [message] = useState("");
+  const [message,setMessage] = useState("");
   const onDismissSnackBar = () => setVisible(false);
   
   useEffect(() => {
@@ -30,6 +30,7 @@ export default function VerifyPhoneNumberScreen({
   }, [])
   const handleConfirmCode = () => {
     console.log(user)
+    setVisible(true)
     const credential = firebase.auth.PhoneAuthProvider.credential(
       verificationId,
       code
@@ -65,6 +66,7 @@ export default function VerifyPhoneNumberScreen({
           .doc(uid)
           .set(data)
           .then(() => {
+            setVisible(false)
             navigation.navigate("SignIn");
           })
           .catch((error: any) => {
@@ -97,6 +99,7 @@ export default function VerifyPhoneNumberScreen({
             color="#151a21"
           />
           <TextInput
+            keyboardType = 'number-pad'
             placeholder="Your Code"
             onChangeText={(text) => setCode(text)}
             value={code}

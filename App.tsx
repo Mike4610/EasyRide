@@ -25,7 +25,6 @@ export default function App() {
   const Drawer = createDrawerNavigator();
   const Stack = createStackNavigator();
   const [loggedIn, setLoggedIn] = useState(null);
-
   const getUser = async () => {
     try {
       const uid = await AsyncStorage.getItem("uid");
