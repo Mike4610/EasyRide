@@ -1,34 +1,52 @@
 import React, { useState, useEffect } from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-
+import {AntDesign, Feather} from '@expo/vector-icons'
 export default function FullButton({
   text,
   press,
   loading,
+  correct,
+  error,
 }: {
   text: String;
-  press: Function;
+  press: () => void;
   loading?: boolean;
+  correct?: boolean;
+  error?: boolean;
 }) {
   const [isLoading, setIsLoading] = useState<boolean | undefined>(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | undefined>(true);
+  const [isError, setIsError] = useState<boolean | undefined>(false);
 
   useEffect(() => {
     setIsLoading(loading);
-  }, [loading]);
+    setIsCorrect(correct);
+    setIsError(error);
+  }, [loading, correct, error]);
 
-  if (!isLoading) {
+  if (isLoading) {
     return (
-      //@ts-ignore
       <TouchableOpacity onPress={press} style={styles.btn}>
-        <Text style={styles.btnTxt}>{text}</Text>
+        <ActivityIndicator animating={true} color={"white"} />
+      </TouchableOpacity>
+    );
+  } else if (isCorrect) {
+    return (
+      <TouchableOpacity onPress={press} style={styles.btn}>
+        <AntDesign name="check" size={24} color="white" />
+      </TouchableOpacity>
+    );
+  } else if (isError) {
+    return (
+      <TouchableOpacity onPress={press} style={styles.btn}>
+        <Feather name="x" size={24} color="white" />
       </TouchableOpacity>
     );
   } else {
     return (
-      //@ts-ignore
       <TouchableOpacity onPress={press} style={styles.btn}>
-        <ActivityIndicator animating={true} color={"white"} />
+        <Text style={styles.btnTxt}>{text}</Text>
       </TouchableOpacity>
     );
   }

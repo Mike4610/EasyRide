@@ -8,9 +8,17 @@ import AsyncStorage from "@react-native-community/async-storage";
 import EditProfilePopUp from "../../components/PopUp/EditProfilePopUp";
 import { User } from "../../types";
 import { ScrollView } from "react-native-gesture-handler";
+import { Snackbar } from "react-native-paper";
+import firebase from "firebase/app";
+import "firebase/auth";
 
 export default function ProfileScreen({ navigation }: { navigation: any }) {
+  useEffect(() => {
+    getUserDetails();
+  }, []);
+
   const [userData, setUserData] = useState<User>({
+    id: "",
     fullName: "",
     email: "",
     phoneNumber: "",
@@ -18,27 +26,57 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
     birthDate: "",
   });
   const [visible, setVisible] = useState(false);
+  const [buttonState, setButtonState] = useState({
+    loading: false,
+    correct: false,
+  });
+ const [snackBarVisible, setSnackBarVisible] = useState(false)
 
-  useEffect(() => {
-    getUserDetails();
-  }, []);
+
   const getUserDetails = async () => {
     const user = await AsyncStorage.getItem("user");
     if (user !== null) {
-      const { fullName, email, phoneNumber, birthDate, createdAt } = JSON.parse(
-        user
-      );
-      const created = createdAt?.slice(3, createdAt.length) || "";
-
+      const {
+        id,
+        fullName,
+        email,
+        phoneNumber,
+        birthDate,
+        createdAt,
+      } = JSON.parse(user);
       setUserData({
+        id,
         fullName,
         phoneNumber,
         email,
-        createdAt: created,
+        createdAt,
         birthDate,
       });
     }
   };
+
+  const sleep = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
+
+  const dismissSnackBar = () => {
+   setSnackBarVisible(false)
+  }
+
+  const resetPasswordHandler = () => {
+    setButtonState({ ...buttonState, loading: true });
+    firebase
+      .auth()
+      .sendPasswordResetEmail(userData.email)
+      .then(async () => {
+        setButtonState({ ...buttonState, loading: false, correct: true });
+        setSnackBarVisible(true)
+        await sleep(1000);
+        setButtonState({ ...buttonState, correct: false });
+       setSnackBarVisible(false)
+      });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <MenuButton navigation={navigation} />
@@ -76,15 +114,40 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
             }}
             text={"Edit Profile"}
           />
-          <OutlinedButton press={() => {}} text={"Reset Password"} />
+          <OutlinedButton
+            loading={buttonState.loading}
+            correct={buttonState.correct}
+            press={() => {
+              resetPasswordHandler();
+            }}
+            text={"Reset Password"}
+          />
         </View>
       </ScrollView>
       <EditProfilePopUp
+        user={userData}
+        getUserDetails={getUserDetails}
         visible={visible}
         onDismiss={() => {
           setVisible(false);
         }}
       />
+      <Snackbar
+        duration={1500}
+        visible={snackBarVisible}
+        onDismiss={dismissSnackBar}
+        style={{ backgroundColor: "#151a21" }}
+        action={{
+          label: "",
+          onPress: () => {
+            dismissSnackBar();
+          },
+        }}
+      >
+        <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+          Check your email!
+        </Text>
+      </Snackbar>
     </SafeAreaView>
   );
 }

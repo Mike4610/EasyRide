@@ -24,33 +24,64 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
   const [password, setPassword] = useState("");
   // @ts-ignore
   const { setLoggedIn } = useContext(UserContext);
+
   //SNACKBAR
-  const [visible, setVisible] = useState(false);
-  const [message, setMessage] = useState("");
-  const onDismissSnackBar = () => setVisible(false);
-  const [loading, setLoading] = useState(false);
+  const [snackBarState, setSnackBarState] = useState({
+    visible: false,
+    message: "",
+  });
+
+  const [buttonState, setButtonState] = useState({
+    loading: false,
+    correct: false,
+    error: false,
+  });
+
+  const dismissSnackBar = () =>
+  setSnackBarState({ ...snackBarState, visible: false });
+
+  const sleep = async (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
 
   const handleSignIn = () => {
-    setLoading(true);
+    setButtonState({ ...buttonState, loading: true });
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then((response: any) => {
+      .then(async (response: any) => {
+        setButtonState({ ...buttonState, loading: false, correct: true });
+        await sleep(1000);
         storeData(response.user.uid);
       })
-      .catch((error: any) => {
+      .catch(async (error: any) => {
         console.log(error);
         if (error.code === "auth/invalid-email") {
-          setMessage("Error. Invalid email address.");
-          setVisible(true);
+          setButtonState({ ...buttonState, loading: false, error: true });
+          setSnackBarState({
+            visible: true,
+            message: "Error. Invalid email address.",
+          });
+          await sleep(2000);
+          setButtonState({ ...buttonState, error: false });
         }
         if (error.code === "auth/wrong-password") {
-          setMessage("Error. Wrong password.");
-          setVisible(true);
+          setButtonState({ ...buttonState, loading: false, error: true });
+          setSnackBarState({
+            visible: true,
+            message: "Error. Wrong password.",
+          });
+          await sleep(2000);
+          setButtonState({ ...buttonState, error: false });
         }
         if (error.code === "auth/user-not-found") {
-          setMessage("Error. User not found.");
-          setVisible(true);
+          setButtonState({ ...buttonState, loading: false, error: true });
+          setSnackBarState({
+            visible: true,
+            message: "Error. User not found.",
+          });
+          await sleep(2000);
+          setButtonState({ ...buttonState, error: false });
         }
       });
   };
@@ -63,7 +94,6 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
         .doc(uid)
         .get()
         .then(async (doc) => {
-          setLoading(false);
           setLoggedIn(true);
           navigation.navigate("Home");
           console.log(JSON.stringify(doc.data()));
@@ -86,7 +116,13 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
             source={require("../../assets/images/RMLogo.png")}
           ></Image>
         </View>
-        <View style={{display: "flex", justifyContent: "center", alignItems:"center"}}>
+        <View
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Text style={styles.headerTitle}>🖕</Text>
           <Text style={styles.headerTitle}>
             Welcome<Text style={{ color: "#fd4d4d" }}>!</Text>
@@ -133,7 +169,13 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
           </Text>
         </TouchableOpacity>
         <View style={styles.buttons}>
-          <FullButton text={"Sign In"} press={handleSignIn} loading={loading} />
+          <FullButton
+            text={"Sign In"}
+            press={handleSignIn}
+            loading={buttonState.loading}
+            correct={buttonState.correct}
+            error={buttonState.error}
+          />
           <OutlinedButton
             text={"Sign Up"}
             press={() => {
@@ -143,18 +185,20 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
         </View>
       </View>
       <Snackbar
-        duration={4000}
-        visible={visible}
-        onDismiss={onDismissSnackBar}
+        duration={1500}
+        visible={snackBarState.visible}
+        onDismiss={dismissSnackBar}
         style={{ backgroundColor: "#151a21" }}
         action={{
           label: "",
           onPress: () => {
-            setVisible(false);
+            dismissSnackBar()
           },
         }}
       >
-        <Text style={{ fontSize: 15, fontWeight: "bold" }}>{message}</Text>
+        <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+          {snackBarState.message}
+        </Text>
       </Snackbar>
     </KeyboardAwareScrollView>
   );
