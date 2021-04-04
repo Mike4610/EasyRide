@@ -19,6 +19,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 
 export default function ProfileScreen({ navigation }: { navigation: any }) {
   const [image, setImage] = useState("");
@@ -37,6 +38,7 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
     correct: false,
   });
   const [snackBarVisible, setSnackBarVisible] = useState(false);
+  const [getUser, setUser] = useAsyncStorage();
 
   useEffect(() => {
     getUserDetails();
@@ -107,27 +109,8 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
   };
 
   const getUserDetails = async () => {
-    const user = await AsyncStorage.getItem("user");
-    if (user !== null) {
-      const {
-        id,
-        fullName,
-        email,
-        phoneNumber,
-        birthDate,
-        createdAt,
-        profileImgURL,
-      } = JSON.parse(user);
-      setUserData({
-        id,
-        fullName,
-        phoneNumber,
-        email,
-        createdAt,
-        birthDate,
-        profileImgURL,
-      });
-    }
+    const user = await getUser();
+    setUserData(user);
   };
 
   const sleep = (ms: number) => {

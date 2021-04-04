@@ -45,7 +45,6 @@ export default function DrawerContent({ ...props }) {
       .then(async () => {
         await AsyncStorage.clear();
         setLoggedIn(false);
-        console.log(AsyncStorage.getAllKeys());
       })
       .catch((error) => {
         console.log(error);

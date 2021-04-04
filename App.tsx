@@ -19,22 +19,21 @@ import { AntDesign } from "@expo/vector-icons";
 import ProfileScreen from "./screens/Profile/ProfileScreen";
 import VehiclesScreen from "./screens/Vehicles/VehiclesScreen";
 import Loading from "./components/Loading/Loading";
+import { useAsyncStorage } from "./hooks/useAsyncStorage";
 import { firebaseConfig } from "./firebaseConfig";
 
 export default function App() {
   const Drawer = createDrawerNavigator();
   const Stack = createStackNavigator();
   const [loggedIn, setLoggedIn] = useState(null);
-  const getUser = async () => {
+  const [getUser] = useAsyncStorage();
+
+  const isAuthenticated = async () => {
     try {
-      const uid = await AsyncStorage.getItem("uid");
-      if (uid !== null) {
-        // @ts-ignore
-        setLoggedIn(true);
-      } else {
-        // @ts-ignore
-        setLoggedIn(false);
-      }
+      const user = await getUser();
+      //@ts-ignore
+      (user !== undefined) ? setLoggedIn(true) : setLoggedIn(false);
+      console.log(user)
     } catch (error) {
       console.log(error);
     }
@@ -44,7 +43,7 @@ export default function App() {
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
-    getUser();
+    isAuthenticated();
   }, []);
 
   if (loggedIn === null) {

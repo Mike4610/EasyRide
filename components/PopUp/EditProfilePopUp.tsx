@@ -10,6 +10,8 @@ import "firebase/firestore";
 import { UserContext } from "../../context/UserContext";
 import { Snackbar } from "react-native-paper";
 import DatePicker from "@react-native-community/datetimepicker";
+import { useAsyncStorage } from "../../hooks/useAsyncStorage";
+import { useFetch } from "../../hooks/useFetch";
 export default function EditProfilePopUp({
   user,
   getUserDetails,
@@ -38,6 +40,8 @@ export default function EditProfilePopUp({
     error: false,
   });
   const [snackBarVisible, setSnackBarVisible] = useState(false);
+  const [getUser, setUser, removeUser] = useAsyncStorage();
+  const [fetchData, changeData] = useFetch();
 
   useEffect(() => {
     setIsVisible(visible);
@@ -56,22 +60,16 @@ export default function EditProfilePopUp({
     console.log(userCredential);
     userCredential
       ?.updateEmail(userData.email)
-      .then(() => {
-        const usersRef = firebase.firestore().collection("users");
-        usersRef
-          .doc(id)
-          .update(obj)
-          .then(async () => {
-            user.email = userData.email;
-            await AsyncStorage.setItem("user", JSON.stringify(user));
-            setButtonState({ ...buttonState, loading: false, correct: true });
-            getUserDetails();
-            setSnackBarVisible(true);
-            await sleep(2000);
-            await AsyncStorage.clear();
-            setLoggedIn(false);
-          })
-          .catch((error) => console.error(error));
+      .then(async () => {
+        await changeData(id, obj);
+        user.email = userData.email;
+        await setUser(user);
+        setButtonState({ ...buttonState, loading: false, correct: true });
+        getUserDetails();
+        setSnackBarVisible(true);
+        await sleep(2000);
+        await removeUser();
+        setLoggedIn(false);
       })
       .catch((error) => console.error(error));
   };
@@ -83,7 +81,7 @@ export default function EditProfilePopUp({
       .update(obj)
       .then(async () => {
         user.fullName = userData.fullName;
-        await AsyncStorage.setItem("user", JSON.stringify(user));
+        await setUser(user);
         getUserDetails();
       })
       .catch((error) => {

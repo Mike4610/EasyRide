@@ -12,6 +12,8 @@ import Button from "../../components/Buttons/Button";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import AsyncStorage from "@react-native-community/async-storage";
+import { useAsyncStorage } from "../../hooks/useAsyncStorage";
+import { useFetch } from "../../hooks/useFetch";
 import AddVehiclePopUp from "../../components/PopUp/AddVehiclePopUp";
 import { Vehicle } from "../../types";
 import VehicleCard from "../../components/Cards/VehicleCard";
@@ -21,56 +23,27 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
   //POPUP
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  //CUSTOM HOOKS
+  const [getUser, setUser] = useAsyncStorage();
+  const [fetchData, changeData] = useFetch();
 
   useEffect(() => {
     getUserVehicles();
   }, []);
 
-  const getUserVehiclesFromFirebase = async (uid: string) => {
-    const usersRef = firebase.firestore().collection("users");
-    usersRef
-      .doc(uid)
-      .get()
-      .then(async (doc) => {
-        //@ts-ignore
-        await AsyncStorage.setItem(
-          "user",
-          //@ts-ignore
-          JSON.stringify(doc.data())
-        );
-        getUserVehicles();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
   const getUserVehicles = async () => {
-    const user = await AsyncStorage.getItem("user");
-    if (user !== null) {
-      const { vehicles } = JSON.parse(user);
-      //@ts-ignore
-      if (vehicles !== null) {
-        setVehicles(vehicles);
-        setLoading(false);
-      }
-    }
+    const vehicles = await getUser("vehicles");
+    setVehicles(vehicles);
+    setLoading(false);
   };
 
   const setUserVehicles = async (vehicle: Vehicle) => {
     const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
-    const uid = await AsyncStorage.getItem("uid");
-    const usersRef = firebase.firestore().collection("users");
-    usersRef
-      .doc(uid || "")
-      .update({
-        vehicles: arrayUnion(vehicle),
-      })
-      .then(() => {
-        getUserVehiclesFromFirebase(uid || "");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const uid = await getUser("id");
+    await changeData(uid, { vehicles: arrayUnion(vehicle) });
+    const response = await fetchData(uid);
+    await setUser(response);
+    getUserVehicles();
   };
 
   const handleRegisterVehicle = (vehicle: Vehicle) => {
@@ -82,25 +55,11 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
 
   const handleDeleteVehicle = async (vehicle: Vehicle) => {
     const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
-    const uid = await AsyncStorage.getItem("uid");
-    console.log(uid);
-    const usersRef = firebase.firestore().collection("users");
-    usersRef
-      .doc(uid || "")
-      .update({
-        vehicles: arrayRemove(vehicle),
-      })
-      .then(() => {
-        getUserVehiclesFromFirebase(uid || "");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const uid = await getUser("id");
+    await changeData(uid, { vehicles: arrayRemove(vehicle) });
   };
 
   return (
-    // @ts-ignore
-
     <SafeAreaView style={styles.container}>
       <MenuButton navigation={navigation} />
       <View style={styles.profileDetails}>

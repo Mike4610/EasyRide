@@ -17,12 +17,14 @@ import { Snackbar } from "react-native-paper";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import {useAsyncStorage} from '../../hooks/useAsyncStorage'
 
 export default function SignInScreen({ navigation }: { navigation: any }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // @ts-ignore
   const { setLoggedIn } = useContext(UserContext);
+  const[getUser, setUser] = useAsyncStorage()
 
   //SNACKBAR
   const [snackBarState, setSnackBarState] = useState({
@@ -95,9 +97,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
         .then(async (doc) => {
           setLoggedIn(true);
           navigation.navigate("Home");
-          console.log(JSON.stringify(doc.data()));
-          //@ts-ignore
-          await AsyncStorage.setItem("user", JSON.stringify(doc.data()));
+          await setUser(doc.data())
         })
         .catch((error: any) => {
           console.log(error);

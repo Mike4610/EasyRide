@@ -7,6 +7,8 @@ import MenuButton from "../../components/Buttons/MenuButton";
 import FabButton from "../../components/Buttons/FabButton";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import LocationButtons from "../../components/Buttons/LocationButtons";
+import firebase from "firebase/app"
+import "firebase/auth"
 
 export default function HomeScreen({ navigation }: { navigation: any }) {
   //POPUP
