@@ -26,7 +26,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
     password: "",
   });
   const [titleDate, setTitleDate] = useState("Select Birth Date");
-
+  const [date,setDate] = useState(new Date())
   const handleSignUp = () => {
     if (emailValidator(user.email) !== '') {
       setVisible(true);
@@ -159,13 +159,28 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
 
         <Text style={styles.footer_text}>Birth Date</Text>
         <View style={styles.inputContainer}>
-        
+
           <AntDesign name="calendar" size={24} color="#151a21" />
-          <TouchableOpacity style={styles.textInput} onPress={() => setShow(true)} >
+          {Platform.OS === 'ios' && (<DatePicker
+            display='default'
+            style={styles.datePickerStyle}
+            value={date}
+            mode="date"
+            onChange={(e, d) => {
+              //setShow(false);
+              if (d !== undefined) {
+                setUser({ ...user, birthDate: d.toDateString() })
+                console.log(d.toLocaleDateString())
+                setDate(d)
+                //setTitleDate(d.toLocaleDateString())
+              }
+            }}
+          />)}
+          {Platform.OS==='android' &&  <TouchableOpacity style={styles.textInput} onPress={() => setShow(!show)} >
             <Text>{titleDate}</Text>
           </TouchableOpacity>
-        
-          {show && <DatePicker
+      
+          }{show && <DatePicker
             display='default'
             style={styles.datePickerStyle}
             value={new Date()}
@@ -178,6 +193,8 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
               }
             }}
           />}
+         
+
 
         </View>
         <View style={styles.buttons}>
