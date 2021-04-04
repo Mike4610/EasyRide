@@ -23,7 +23,7 @@ export default function OutlinedButton({
   }, [correct, loading, error]);
 
   const [isLoading, setIsLoading] = useState<boolean | undefined>(false);
-  const [isCorrect, setIsCorrect] = useState<boolean | undefined>(true);
+  const [isCorrect, setIsCorrect] = useState<boolean | undefined>(false);
   const [isError, setIsError] = useState<boolean | undefined>(false);
 
   if (isLoading) {
