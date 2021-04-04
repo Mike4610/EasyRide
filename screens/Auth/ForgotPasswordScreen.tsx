@@ -1,14 +1,6 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  StyleSheet,
-  Image,
-} from "react-native";
-import FullButton from "../../components/Buttons/FullButton";
-import OutlinedButton from "../../components/Buttons/OutlinedButton";
+import { View, Text, TextInput, StyleSheet, Image } from "react-native";
+import Button from "../../components/Buttons/Button";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Snackbar } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -80,8 +72,13 @@ export default function ForgotPasswordScreen({
           />
         </View>
         <View style={styles.buttons}>
-          <FullButton text={"Reset Password"} press={handleResetPassword} />
-          <OutlinedButton
+          <Button
+            full={true}
+            text={"Reset Password"}
+            press={handleResetPassword}
+          />
+          <Button
+            full={false}
             text={"Cancel"}
             press={() => {
               navigation.navigate("SignIn");

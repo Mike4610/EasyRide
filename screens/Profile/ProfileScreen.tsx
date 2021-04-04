@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet, View, Text, Image ,Platform} from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  Platform,
+} from "react-native";
 import MenuButton from "../../components/Buttons/MenuButton";
-import FullButton from "../../components/Buttons/FullButton";
-import OutlinedButton from "../../components/Buttons/OutlinedButton";
+import Button from "../../components/Buttons/Button";
 import ProfileCard from "../../components/Cards/ProfileCard";
 import AsyncStorage from "@react-native-community/async-storage";
 import EditProfilePopUp from "../../components/PopUp/EditProfilePopUp";
@@ -12,10 +18,10 @@ import { Snackbar } from "react-native-paper";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 
 export default function ProfileScreen({ navigation }: { navigation: any }) {
-  const [image,setImage] = useState("")
+  const [image, setImage] = useState("");
   const [userData, setUserData] = useState<User>({
     id: "",
     fullName: "",
@@ -23,60 +29,60 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
     phoneNumber: "",
     createdAt: "",
     birthDate: "",
-    profileImgURL:"",
+    profileImgURL: "",
   });
   const [visible, setVisible] = useState(false);
   const [buttonState, setButtonState] = useState({
     loading: false,
     correct: false,
   });
- const [snackBarVisible, setSnackBarVisible] = useState(false)
-
+  const [snackBarVisible, setSnackBarVisible] = useState(false);
 
   useEffect(() => {
     getUserDetails();
   }, []);
 
-  const requestPermission= async () => {
-    if (Platform.OS !== 'web') {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
+  const requestPermission = async () => {
+    if (Platform.OS !== "web") {
+      const {
+        status,
+      } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        alert("Sorry, we need camera roll permissions to make this work!");
       }
     }
   };
-  async function uploadImageAsync(uri:string) {
+  async function uploadImageAsync(uri: string) {
     // Why are we using XMLHttpRequest? See:
     // https://github.com/expo/expo/issues/2402#issuecomment-443726662
     const blob = await new Promise<any>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.onload = function() {
+      xhr.onload = function () {
         resolve(xhr.response);
       };
-      xhr.onerror = function(e) {
+      xhr.onerror = function (e) {
         console.log(e);
-        reject(new TypeError('Network request failed'));
+        reject(new TypeError("Network request failed"));
       };
-      xhr.responseType = 'blob';
-      xhr.open('GET', uri, true);
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
       xhr.send(null);
     });
-  
+
     const ref = firebase
       .storage()
       .ref()
-      .child('profilePics/'+userData.id);
+      .child("profilePics/" + userData.id);
     const snapshot = await ref.put(blob);
-  
+
     // We're done with the blob, close and release it
     blob.close();
-  
+
     return await snapshot.ref.getDownloadURL();
   }
- 
-  
+
   const pickImage = async () => {
-    requestPermission()
+    requestPermission();
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [4, 3],
@@ -87,21 +93,18 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
 
     if (!result.cancelled) {
       setImage(result.uri);
-      const url = await uploadImageAsync(result.uri)
-      console.log(url)
+      const url = await uploadImageAsync(result.uri);
+      console.log(url);
       const usersRef = firebase.firestore().collection("users");
-      setUserData({...userData,profileImgURL:url})
+      setUserData({ ...userData, profileImgURL: url });
       usersRef
         .doc(userData.id)
-        .update({profileImgURL:url})
+        .update({ profileImgURL: url })
         .catch((error: any) => {
           console.log(error);
         });
     }
   };
-
- 
-
 
   const getUserDetails = async () => {
     const user = await AsyncStorage.getItem("user");
@@ -132,8 +135,8 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
   };
 
   const dismissSnackBar = () => {
-   setSnackBarVisible(false)
-  }
+    setSnackBarVisible(false);
+  };
 
   const resetPasswordHandler = () => {
     setButtonState({ ...buttonState, loading: true });
@@ -142,10 +145,10 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
       .sendPasswordResetEmail(userData.email)
       .then(async () => {
         setButtonState({ ...buttonState, loading: false, correct: true });
-        setSnackBarVisible(true)
+        setSnackBarVisible(true);
         await sleep(1000);
         setButtonState({ ...buttonState, correct: false });
-       setSnackBarVisible(false)
+        setSnackBarVisible(false);
       });
   };
 
@@ -154,16 +157,28 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
       <MenuButton navigation={navigation} />
 
       <View style={styles.profileDetails}>
-      {userData.profileImgURL ==''?(<Image
-          style={styles.profilePic}
-          source={require("../../assets/images/avatar.png")}
-        />):(<Image
-          style={styles.profilePic}
-          source={{uri:userData.profileImgURL}}
-        />)}
-        
-        <TouchableOpacity onPress={pickImage} style={{width:40,height:40,alignSelf:'center'}}>
-          <MaterialCommunityIcons style={{alignSelf:'center'}} name="image-plus" size={30} color="white" />
+        {userData.profileImgURL == "" ? (
+          <Image
+            style={styles.profilePic}
+            source={require("../../assets/images/avatar.png")}
+          />
+        ) : (
+          <Image
+            style={styles.profilePic}
+            source={{ uri: userData.profileImgURL }}
+          />
+        )}
+
+        <TouchableOpacity
+          onPress={pickImage}
+          style={{ width: 40, height: 40, alignSelf: "center" }}
+        >
+          <MaterialCommunityIcons
+            style={{ alignSelf: "center" }}
+            name="image-plus"
+            size={30}
+            color="white"
+          />
         </TouchableOpacity>
         <Text style={styles.profileName}>{userData.fullName}</Text>
         <Text style={styles.memberSince}>
@@ -187,13 +202,15 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
           icon={"calendar"}
         />
         <View style={styles.buttons}>
-          <FullButton
+          <Button
+            full={true}
             press={() => {
               setVisible(true);
             }}
             text={"Edit Profile"}
           />
-          <OutlinedButton
+          <Button
+            full={false}
             loading={buttonState.loading}
             correct={buttonState.correct}
             press={() => {

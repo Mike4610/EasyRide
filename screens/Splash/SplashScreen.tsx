@@ -1,15 +1,14 @@
-import React, {useState, useContext, useEffect} from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import FullButton from "../../components/Buttons/FullButton";
+import React, { useContext, useEffect } from "react";
+import { View, Text, StyleSheet, Image } from "react-native";
+import Button from '../../components/Buttons/Button'
 import { UserContext } from "../../context/UserContext";
 
 export default function SplashScreen({ navigation }: { navigation: any }) {
   // @ts-ignore
   const { setLoggedIn } = useContext(UserContext);
   useEffect(() => {
-    setLoggedIn(false)
-  }, [])
+    setLoggedIn(false);
+  }, []);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -34,7 +33,8 @@ export default function SplashScreen({ navigation }: { navigation: any }) {
           Meet new people. Give or request a ride.
         </Text>
         <View style={styles.buttons}>
-          <FullButton
+          <Button
+            full={true}
             press={() => {
               navigation.navigate("SignIn");
             }}
@@ -89,14 +89,14 @@ const styles = StyleSheet.create({
     marginTop: 30,
     color: "#151a21",
     fontWeight: "bold",
-    alignSelf: "center"
+    alignSelf: "center",
   },
   subtitle_text: {
     fontSize: 18,
     color: "#a3a3a3",
-    alignSelf: "center"
+    alignSelf: "center",
   },
   buttons: {
     marginTop: 40,
-  }
+  },
 });

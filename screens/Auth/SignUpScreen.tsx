@@ -1,22 +1,21 @@
 import React, { useState, useRef } from "react";
-import { View, Text, TextInput, StyleSheet, Image, Platform, Button, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, StyleSheet, Image, Platform, TouchableOpacity } from "react-native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import FullButton from "../../components/Buttons/FullButton";
-import OutlinedButton from "../../components/Buttons/OutlinedButton";
+import Button from "../../components/Buttons/Button";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import firebase from "firebase/app";
-import DatePicker from "@react-native-community/datetimepicker"
+import DatePicker from "@react-native-community/datetimepicker";
 import "firebase/auth";
-import { emailValidator, passwordValidator, nameValidator } from "../../utils"
+import { emailValidator, passwordValidator, nameValidator } from "../../utils";
 import { Snackbar } from "react-native-paper";
 
 export default function SignUpScreen({ navigation }: { navigation: any }) {
   const recaptchaVerifierRef: any = useRef(null);
   const onDismissSnackBar = () => setVisible(false);
-  const [visible, setVisible] = useState(false)
-  const [message, setMessage] = useState("")
+  const [visible, setVisible] = useState(false);
+  const [message, setMessage] = useState("");
   const [show, setShow] = useState(false);
   const [user, setUser] = useState({
     fullName: "",
@@ -28,25 +27,25 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
   const [titleDate, setTitleDate] = useState("Select Birth Date");
   const [date,setDate] = useState(new Date())
   const handleSignUp = () => {
-    if (emailValidator(user.email) !== '') {
+    if (emailValidator(user.email) !== "") {
       setVisible(true);
-      setMessage(emailValidator(user.email))
-      return
+      setMessage(emailValidator(user.email));
+      return;
     }
-    if (passwordValidator(user.password) !== '') {
+    if (passwordValidator(user.password) !== "") {
       setVisible(true);
-      setMessage(passwordValidator(user.password))
-      return
+      setMessage(passwordValidator(user.password));
+      return;
     }
-    if (nameValidator(user.fullName) !== '') {
+    if (nameValidator(user.fullName) !== "") {
       setVisible(true);
-      setMessage(nameValidator(user.fullName))
-      return
+      setMessage(nameValidator(user.fullName));
+      return;
     }
     if (!validateAge()) {
       setVisible(true);
-      setMessage("You're under age!")
-      return
+      setMessage("You're under age!");
+      return;
     }
     validatePhoneNumber();
   };
@@ -54,19 +53,22 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
   const validatePhoneNumber = () => {
     const phoneProvider = new firebase.auth.PhoneAuthProvider();
     //@ts-ignore
-    phoneProvider.verifyPhoneNumber(
-      user.phoneNumber,
-      recaptchaVerifierRef.current
-    ).then((verificationId: any) => {
-      console.log("VerificationID:");
-      console.log(verificationId);
-      navigation.navigate("VerifyPhoneNumber", { userData: user, verificationId: verificationId });
-    }).catch((err) => { console.log(err) });
-
+    phoneProvider
+      .verifyPhoneNumber(user.phoneNumber, recaptchaVerifierRef.current)
+      .then((verificationId: any) => {
+        console.log("VerificationID:");
+        console.log(verificationId);
+        navigation.navigate("VerifyPhoneNumber", {
+          userData: user,
+          verificationId: verificationId,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const validateAge = () => {
-
     var today = new Date();
     var birth = new Date(user.birthDate);
     var age = today.getFullYear() - birth.getFullYear();
@@ -120,7 +122,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
             color="#151a21"
           />
           <TextInput
-            autoCompleteType='email'
+            autoCompleteType="email"
             placeholder="Your Email"
             placeholderTextColor="#151a21"
             style={styles.textInput}
@@ -133,7 +135,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
         <View style={styles.inputContainer}>
           <AntDesign name="phone" size={24} color="#151a21" />
           <TextInput
-            keyboardType='decimal-pad'
+            keyboardType="decimal-pad"
             placeholder="Your Phone Number"
             placeholderTextColor="#151a21"
             style={styles.textInput}
@@ -193,20 +195,17 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
               }
             }}
           />}
-         
-
-
         </View>
         <View style={styles.buttons}>
-          <OutlinedButton text={"Sign Up"} press={handleSignUp} />
-          <FullButton
+          <Button full={false} text={"Sign Up"} press={handleSignUp} />
+          <Button
+            full={true}
             text={"Sign In"}
             press={() => {
               navigation.navigate("SignIn");
             }}
           />
         </View>
-
       </View>
       <Snackbar
         duration={4000}
@@ -223,7 +222,6 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
         <Text style={{ fontSize: 15, fontWeight: "bold" }}>{message}</Text>
       </Snackbar>
     </KeyboardAwareScrollView>
-
   );
 }
 
@@ -297,5 +295,5 @@ const styles = StyleSheet.create({
     borderColor: "#fd4d4d",
     color: "black",
     padding: 12,
-  }
+  },
 });

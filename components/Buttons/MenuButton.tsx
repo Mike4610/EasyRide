@@ -7,14 +7,13 @@ export default function MenuButton({
   returnButton,
   navigation,
 }: {
-  onDismiss: () => void;
-  returnButton: boolean;
-
+  onDismiss?: () => void;
+  returnButton?: boolean;
   navigation: any;
 }) {
   const [goBack, setGoBack] = useState(false);
   useEffect(() => {
-    setGoBack(returnButton);
+    setGoBack(returnButton || false);
   }, [returnButton]);
 
   if (!goBack) {
@@ -49,7 +48,7 @@ export default function MenuButton({
           left: 20,
         }}
         onPress={() => {
-          onDismiss();
+          if (onDismiss !== undefined) onDismiss();
         }}
       >
         <Ionicons name="arrow-back" size={45} color="#fd4d4d" />

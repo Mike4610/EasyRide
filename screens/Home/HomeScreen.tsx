@@ -39,7 +39,7 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Map />
+      {/* <Map /> */}
       
       <SearchBar visible={transform.searchBar} setAddressLocation={() => {}} />
 

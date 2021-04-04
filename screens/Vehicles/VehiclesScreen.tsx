@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import MenuButton from "../../components/Buttons/MenuButton";
-import FullButton from "../../components/Buttons/FullButton";
+import Button from "../../components/Buttons/Button";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -127,7 +127,8 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
           })}
         </ScrollView>
         <View style={styles.buttons}>
-          <FullButton
+          <Button
+            full={true}
             loading={loading}
             press={() => {
               setVisible(true);

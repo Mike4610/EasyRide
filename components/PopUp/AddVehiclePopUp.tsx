@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, Animated } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Dialog, Portal, Provider } from "react-native-paper";
-import FullButton from "../../components/Buttons/FullButton";
+import Button from "../../components/Buttons/Button";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import carList from "../../car-list.json";
 import { Vehicle } from "../../types";
@@ -51,7 +51,7 @@ export default function AddVehiclePopUp({
           style={styles.popup}
           visible={isVisible}
           onDismiss={() => {
-            onDismiss()
+            onDismiss();
           }}
         >
           <Dialog.Content>
@@ -118,7 +118,8 @@ export default function AddVehiclePopUp({
               </View>
             </KeyboardAwareScrollView>
             <View style={styles.buttons}>
-              <FullButton
+              <Button
+                full={true}
                 press={() => {
                   handleRegisterVehicle(vehicle);
                 }}

@@ -7,8 +7,7 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import FullButton from "../../components/Buttons/FullButton";
-import OutlinedButton from "../../components/Buttons/OutlinedButton";
+import Button from "../../components/Buttons/Button";
 import { UserContext } from "../../context/UserContext";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -38,7 +37,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
   });
 
   const dismissSnackBar = () =>
-  setSnackBarState({ ...snackBarState, visible: false });
+    setSnackBarState({ ...snackBarState, visible: false });
 
   const sleep = async (ms: number) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -169,14 +168,16 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
           </Text>
         </TouchableOpacity>
         <View style={styles.buttons}>
-          <FullButton
+          <Button
+            full={true}
             text={"Sign In"}
             press={handleSignIn}
             loading={buttonState.loading}
             correct={buttonState.correct}
             error={buttonState.error}
           />
-          <OutlinedButton
+          <Button
+            full={false}
             text={"Sign Up"}
             press={() => {
               navigation.navigate("SignUp");
@@ -192,7 +193,7 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
         action={{
           label: "",
           onPress: () => {
-            dismissSnackBar()
+            dismissSnackBar();
           },
         }}
       >

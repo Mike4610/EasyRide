@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, Image } from "react-native";
-import FullButton from "../../components/Buttons/FullButton";
-import OutlinedButton from "../../components/Buttons/OutlinedButton";
+import Button from "../../components/Buttons/Button";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Snackbar } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -17,20 +16,20 @@ export default function VerifyPhoneNumberScreen({
   navigation: any;
 }) {
   const [code, setCode] = useState("");
-  const [user] = useState(route.params.userData)
-  const [verificationId] = useState(route.params.verificationId)
+  const [user] = useState(route.params.userData);
+  const [verificationId] = useState(route.params.verificationId);
   //SNACKBAR
   const [visible, setVisible] = useState(false);
-  const [message,setMessage] = useState("");
+  const [message, setMessage] = useState("");
   const onDismissSnackBar = () => setVisible(false);
-  
+
   useEffect(() => {
-    console.log(user)
-    console.log(verificationId)
-  }, [])
+    console.log(user);
+    console.log(verificationId);
+  }, []);
   const handleConfirmCode = () => {
-    console.log(user)
-    setVisible(true)
+    console.log(user);
+    setVisible(true);
     const credential = firebase.auth.PhoneAuthProvider.credential(
       verificationId,
       code
@@ -66,7 +65,7 @@ export default function VerifyPhoneNumberScreen({
           .doc(uid)
           .set(data)
           .then(() => {
-            setVisible(false)
+            setVisible(false);
             navigation.navigate("SignIn");
           })
           .catch((error: any) => {
@@ -99,7 +98,7 @@ export default function VerifyPhoneNumberScreen({
             color="#151a21"
           />
           <TextInput
-            keyboardType = 'number-pad'
+            keyboardType="number-pad"
             placeholder="Your Code"
             onChangeText={(text) => setCode(text)}
             value={code}
@@ -108,8 +107,9 @@ export default function VerifyPhoneNumberScreen({
           />
         </View>
         <View style={styles.buttons}>
-          <FullButton text={"Confirm"} press={handleConfirmCode} />
-          <OutlinedButton
+          <Button full={true} text={"Confirm"} press={handleConfirmCode} />
+          <Button
+            full={false}
             text={"Cancel"}
             press={() => {
               navigation.navigate("SignIn");

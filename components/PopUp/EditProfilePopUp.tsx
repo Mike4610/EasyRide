@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import { Dialog, Portal, Provider } from "react-native-paper";
-import FullButton from "../../components/Buttons/FullButton";
+import Button from "../../components/Buttons/Button";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { User } from "../../types";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -9,7 +9,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import { UserContext } from "../../context/UserContext";
 import { Snackbar } from "react-native-paper";
-import DatePicker from "@react-native-community/datetimepicker"
+import DatePicker from "@react-native-community/datetimepicker";
 export default function EditProfilePopUp({
   user,
   getUserDetails,
@@ -167,21 +167,22 @@ export default function EditProfilePopUp({
               </View>
               <View style={styles.pickerContainer}>
                 <Text style={styles.popup_title}>Birth Date</Text>
-                
+
                 <DatePicker
                   style={styles.datePickerStyle}
                   value={new Date(user.birthDate)}
                   mode="date"
                   onChange={(e, d) => {
                     if (d !== undefined) {
-                      user.birthDate = d.toDateString()
+                      user.birthDate = d.toDateString();
                     }
                   }}
                 />
               </View>
             </KeyboardAwareScrollView>
             <View style={styles.buttons}>
-              <FullButton
+              <Button
+                full={true}
                 loading={buttonState.loading}
                 correct={buttonState.correct}
                 error={buttonState.error}
@@ -258,5 +259,5 @@ const styles = StyleSheet.create({
     width: 250,
     padding: 12,
     alignSelf: "center",
-  }
+  },
 });
