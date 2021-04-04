@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Text, TextInput, StyleSheet, Image, Platform, Button } from "react-native";
+import { View, Text, TextInput, StyleSheet, Image, Platform, Button, TouchableOpacity } from "react-native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FullButton from "../../components/Buttons/FullButton";
@@ -159,10 +159,12 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
 
         <Text style={styles.footer_text}>Birth Date</Text>
         <View style={styles.inputContainer}>
-        <View style={styles.dateContainer}>
+        
           <AntDesign name="calendar" size={24} color="#151a21" />
-          <OutlinedButton text={titleDate} press={() => setShow(true)} />
-        </View>
+          <TouchableOpacity style={styles.textInput} onPress={() => setShow(true)} >
+            <Text>{titleDate}</Text>
+          </TouchableOpacity>
+        
           {show && <DatePicker
             display='default'
             style={styles.datePickerStyle}
