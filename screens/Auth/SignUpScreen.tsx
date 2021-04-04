@@ -159,8 +159,10 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
 
         <Text style={styles.footer_text}>Birth Date</Text>
         <View style={styles.inputContainer}>
+        <View style={styles.dateContainer}>
           <AntDesign name="calendar" size={24} color="#151a21" />
-          <Button title={titleDate} onPress={() => setShow(true)} />
+          <OutlinedButton text={titleDate} press={() => setShow(true)} />
+        </View>
           {show && <DatePicker
             display='default'
             style={styles.datePickerStyle}
@@ -211,6 +213,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#151a21",
   },
+  dateContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: 'black'
+  },
   header: {
     flex: 0.5,
     justifyContent: "flex-end",
@@ -235,7 +243,6 @@ const styles = StyleSheet.create({
   },
   footer: {
     backgroundColor: "white",
-
     justifyContent: "center",
     borderTopStartRadius: 30,
     borderTopEndRadius: 30,
@@ -250,7 +257,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   },
   textInput: {
     flex: 1,
