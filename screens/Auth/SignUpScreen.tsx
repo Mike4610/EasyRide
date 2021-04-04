@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Text, TextInput, StyleSheet, Image, Platform } from "react-native";
+import { View, Text, TextInput, StyleSheet, Image, Platform, Button } from "react-native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FullButton from "../../components/Buttons/FullButton";
@@ -9,9 +9,15 @@ import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import firebase from "firebase/app";
 import DatePicker from "@react-native-community/datetimepicker"
 import "firebase/auth";
+import { emailValidator, passwordValidator, nameValidator } from "../../utils"
+import { Snackbar } from "react-native-paper";
 
 export default function SignUpScreen({ navigation }: { navigation: any }) {
   const recaptchaVerifierRef: any = useRef(null);
+  const onDismissSnackBar = () => setVisible(false);
+  const [visible, setVisible] = useState(false)
+  const [message, setMessage] = useState("")
+  const [show, setShow] = useState(false);
   const [user, setUser] = useState({
     fullName: "",
     email: "",
@@ -21,9 +27,27 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
   });
 
   const handleSignUp = () => {
-    if (validateAge()) {
-      validatePhoneNumber();
+    if (emailValidator(user.email) !== '') {
+      setVisible(true);
+      setMessage(emailValidator(user.email))
+      return
     }
+    if (passwordValidator(user.password) !== '') {
+      setVisible(true);
+      setMessage(passwordValidator(user.password))
+      return
+    }
+    if (nameValidator(user.fullName) !== '') {
+      setVisible(true);
+      setMessage(nameValidator(user.fullName))
+      return
+    }
+    if (!validateAge()) {
+      setVisible(true);
+      setMessage("You're under age!")
+      return
+    }
+    validatePhoneNumber();
   };
 
   const validatePhoneNumber = () => {
@@ -135,16 +159,20 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
         <Text style={styles.footer_text}>Birth Date</Text>
         <View style={styles.inputContainer}>
           <AntDesign name="calendar" size={24} color="#151a21" />
-          <DatePicker
+          <Button title="Select birth date" onPress={() => setShow(true)} />
+          {show && <DatePicker
+            display='default'
             style={styles.datePickerStyle}
             value={new Date()}
             mode="date"
             onChange={(e, d) => {
               if (d !== undefined) {
-                user.birthDate = d.toDateString()
+                setUser({ ...user, birthDate: d.toDateString() })
               }
+              setShow(Platform.OS === 'ios');
             }}
-          />
+          />}
+
         </View>
         <View style={styles.buttons}>
           <OutlinedButton text={"Sign Up"} press={handleSignUp} />
@@ -157,7 +185,22 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
         </View>
 
       </View>
+      <Snackbar
+        duration={4000}
+        visible={visible}
+        onDismiss={onDismissSnackBar}
+        style={{ backgroundColor: "#151a21" }}
+        action={{
+          label: "",
+          onPress: () => {
+            setVisible(false);
+          },
+        }}
+      >
+        <Text style={{ fontSize: 15, fontWeight: "bold" }}>{message}</Text>
+      </Snackbar>
     </KeyboardAwareScrollView>
+
   );
 }
 
