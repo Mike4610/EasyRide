@@ -27,6 +27,7 @@ type User = {
   email: string;
   phoneNumber: string;
   birthDate: string;
+  profileImgURL?:string,
   createdAt: string;
 };
 

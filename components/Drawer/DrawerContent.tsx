@@ -21,6 +21,7 @@ import "firebase/auth";
 
 export default function DrawerContent({ ...props }) {
   const [fullName, setFullName] = useState("");
+  const [imgURL,setImgURL] = useState("")
   //@ts-ignore
   const { setLoggedIn } = useContext(UserContext);
 
@@ -31,8 +32,9 @@ export default function DrawerContent({ ...props }) {
   const getUserData = async () => {
     const user = await AsyncStorage.getItem("user");
     if (user !== null) {
-      const { fullName } = JSON.parse(user);
+      const { fullName,profileImgURL } = JSON.parse(user);
       setFullName(fullName || "");
+      setImgURL(profileImgURL||"");
     }
   };
   const handleSignOut = () => {
@@ -53,10 +55,13 @@ export default function DrawerContent({ ...props }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.profile}>
-        <Image
+        {imgURL===''?(<Image
           style={styles.profilePic}
           source={require("../../assets/images/avatar.png")}
-        />
+        />):(<Image
+        style={styles.profilePic}
+        source={{uri:imgURL}}
+      />)}
         <View style={styles.textContainer}>
           <Text style={styles.profileName}>{fullName}</Text>
         </View>
