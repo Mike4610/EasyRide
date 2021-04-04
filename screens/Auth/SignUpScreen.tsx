@@ -25,6 +25,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
     birthDate: "",
     password: "",
   });
+  const [titleDate, setTitleDate] = useState("Select Birth Date");
 
   const handleSignUp = () => {
     if (emailValidator(user.email) !== '') {
@@ -159,17 +160,18 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
         <Text style={styles.footer_text}>Birth Date</Text>
         <View style={styles.inputContainer}>
           <AntDesign name="calendar" size={24} color="#151a21" />
-          <Button title="Select birth date" onPress={() => setShow(true)} />
+          <Button title={titleDate} onPress={() => setShow(true)} />
           {show && <DatePicker
             display='default'
             style={styles.datePickerStyle}
             value={new Date()}
             mode="date"
             onChange={(e, d) => {
+              setShow(false);
               if (d !== undefined) {
                 setUser({ ...user, birthDate: d.toDateString() })
+                setTitleDate(d.toLocaleDateString())
               }
-              setShow(Platform.OS === 'ios');
             }}
           />}
 
