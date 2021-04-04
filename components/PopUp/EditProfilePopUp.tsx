@@ -40,7 +40,6 @@ export default function EditProfilePopUp({
   const [snackBarVisible, setSnackBarVisible] = useState(false);
 
   useEffect(() => {
-    sleep(2000)
     setIsVisible(visible);
   }, [visible]);
 
@@ -168,9 +167,10 @@ export default function EditProfilePopUp({
               </View>
               <View style={styles.pickerContainer}>
                 <Text style={styles.popup_title}>Birth Date</Text>
+                
                 <DatePicker
                   style={styles.datePickerStyle}
-                  value={new Date()}
+                  value={new Date(user.birthDate)}
                   mode="date"
                   onChange={(e, d) => {
                     if (d !== undefined) {
@@ -256,11 +256,7 @@ const styles = StyleSheet.create({
   datePickerStyle: {
     height: 40,
     width: 250,
-    borderBottomWidth: 1,
-    borderColor: "#fd4d4d",
-    color: "black",
     padding: 12,
     alignSelf: "center",
-    textAlign: "center",
   }
 });
