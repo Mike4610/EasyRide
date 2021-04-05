@@ -17,14 +17,17 @@ import { Snackbar } from "react-native-paper";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
-import {useAsyncStorage} from '../../hooks/useAsyncStorage'
+import { useAsyncStorage } from "../../hooks/useAsyncStorage";
+import { useFetch } from "../../hooks/useFetch";
+import { ScreenNavigationProps } from "../../types";
 
-export default function SignInScreen({ navigation }: { navigation: any }) {
+const SignInScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // @ts-ignore
   const { setLoggedIn } = useContext(UserContext);
-  const[getUser, setUser] = useAsyncStorage()
+  const [getUser, setUser] = useAsyncStorage();
+  const [fetchData] = useFetch();
 
   //SNACKBAR
   const [snackBarState, setSnackBarState] = useState({
@@ -89,19 +92,10 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
 
   const storeData = async (uid: any) => {
     try {
-      await AsyncStorage.setItem("uid", uid);
-      const usersRef = firebase.firestore().collection("users");
-      usersRef
-        .doc(uid)
-        .get()
-        .then(async (doc) => {
-          setLoggedIn(true);
-          navigation.navigate("Home");
-          await setUser(doc.data())
-        })
-        .catch((error: any) => {
-          console.log(error);
-        });
+      const response = await fetchData(uid);
+      setLoggedIn(true);
+      navigation.navigate("Home");
+      await setUser(response);
     } catch (error) {
       console.log(error);
     }
@@ -204,6 +198,8 @@ export default function SignInScreen({ navigation }: { navigation: any }) {
     </KeyboardAwareScrollView>
   );
 }
+
+export default SignInScreen;
 
 const styles = StyleSheet.create({
   container: {

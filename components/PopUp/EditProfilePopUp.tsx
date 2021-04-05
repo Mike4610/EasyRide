@@ -12,17 +12,19 @@ import { Snackbar } from "react-native-paper";
 import DatePicker from "@react-native-community/datetimepicker";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import { useFetch } from "../../hooks/useFetch";
-export default function EditProfilePopUp({
-  user,
-  getUserDetails,
-  visible,
-  onDismiss,
-}: {
+
+interface Props {
   user: User;
   getUserDetails: () => void;
   visible: boolean;
   onDismiss: () => void;
-}) {
+}
+const EditProfilePopUp: React.FC<Props> = ({
+  user,
+  getUserDetails,
+  visible,
+  onDismiss,
+}) => {
   //@ts-ignore
   const { setLoggedIn } = useContext(UserContext);
   const [userData, setUserData] = useState<User>({
@@ -33,7 +35,6 @@ export default function EditProfilePopUp({
     birthDate: "",
     createdAt: "",
   });
-  const [isVisible, setIsVisible] = useState(false);
   const [buttonState, setButtonState] = useState({
     loading: false,
     correct: false,
@@ -41,11 +42,7 @@ export default function EditProfilePopUp({
   });
   const [snackBarVisible, setSnackBarVisible] = useState(false);
   const [getUser, setUser, removeUser] = useAsyncStorage();
-  const [fetchData, changeData] = useFetch();
-
-  useEffect(() => {
-    setIsVisible(visible);
-  }, [visible]);
+  const [fetchData, updateData] = useFetch();
 
   const dismissSnackBar = () => {
     setSnackBarVisible(false);
@@ -61,7 +58,7 @@ export default function EditProfilePopUp({
     userCredential
       ?.updateEmail(userData.email)
       .then(async () => {
-        await changeData(id, obj);
+        await updateData(id, obj);
         user.email = userData.email;
         await setUser(user);
         setButtonState({ ...buttonState, loading: false, correct: true });
@@ -74,19 +71,11 @@ export default function EditProfilePopUp({
       .catch((error) => console.error(error));
   };
 
-  const updateProfile = (id: string, obj: object) => {
-    const usersRef = firebase.firestore().collection("users");
-    usersRef
-      .doc(id)
-      .update(obj)
-      .then(async () => {
-        user.fullName = userData.fullName;
-        await setUser(user);
-        getUserDetails();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  const updateProfile = async (id: string, obj: object) => {
+    await updateData(id, obj);
+    user.fullName = userData.fullName;
+    await setUser(user);
+    getUserDetails();
   };
 
   const updateProfileHandler = async () => {
@@ -117,7 +106,7 @@ export default function EditProfilePopUp({
       <Portal>
         <Dialog
           style={styles.editProfilePopup}
-          visible={isVisible}
+          visible={visible}
           onDismiss={() => {
             onDismiss();
           }}
@@ -209,7 +198,9 @@ export default function EditProfilePopUp({
       </Portal>
     </Provider>
   );
-}
+};
+
+export default EditProfilePopUp;
 
 const styles = StyleSheet.create({
   buttons: {

@@ -6,7 +6,8 @@ import {
   StyleSheet,
   Dimensions,
 } from "react-native";
-export default function Loading() {
+
+const Loading: React.FC<{}> = () => {
   return (
     <View style={styles.loadingScreen}>
       <View style={styles.logoContainer}>
@@ -18,7 +19,9 @@ export default function Loading() {
       <ActivityIndicator size="large" color="#fd4d4d" />
     </View>
   );
-}
+};
+
+export default Loading;
 
 const styles = StyleSheet.create({
   loadingScreen: {
@@ -27,7 +30,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#151a21",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 3
+    zIndex: 3,
   },
   logoContainer: {
     justifyContent: "center",

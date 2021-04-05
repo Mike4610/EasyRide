@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, Portal, Provider } from "react-native-paper";
 
-export default function GiveRidePopUp({
-  giveVisible,
-  onDismiss,
-}: {
+interface Props {
   giveVisible: boolean;
   onDismiss: () => void;
-}) {
-  const [visible, setVisible] = useState(false);
+}
 
-  useEffect(() => {
-    console.log(giveVisible);
-    setVisible(giveVisible);
-  }, [giveVisible]);
-
+const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   return (
     <Provider>
       <Portal>
@@ -27,12 +19,13 @@ export default function GiveRidePopUp({
             height: 450,
             alignSelf: "center",
           }}
-          visible={visible}
+          visible={giveVisible}
           onDismiss={() => {
-            onDismiss()
+            onDismiss();
           }}
         ></Dialog>
       </Portal>
     </Provider>
   );
-}
+};
+export default GiveRidePopUp;

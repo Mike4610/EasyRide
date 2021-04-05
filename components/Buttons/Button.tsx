@@ -12,11 +12,6 @@ interface Props {
   full: boolean;
 }
 
-interface ButtonState {
-  isLoading: boolean | undefined;
-  isCorrect: boolean | undefined;
-  isError: boolean | undefined;
-}
 const Button: React.FC<Props> = ({
   text,
   press,
@@ -25,60 +20,25 @@ const Button: React.FC<Props> = ({
   error,
   full,
 }) => {
-  const [buttonState, setButtonState] = useState<ButtonState>({
-    isLoading: false,
-    isCorrect: false,
-    isError: false,
-  });
-
-  useEffect(() => {
-    setButtonState({
-      isLoading: loading,
-      isCorrect: correct,
-      isError: error,
-    });
-  }, [loading, correct, error]);
-
-  if (buttonState.isLoading) {
-    return (
-      <TouchableOpacity
-        onPress={press}
-        style={full ? styles.fullButton : styles.outlinedButton}
-      >
+  return (
+    <TouchableOpacity
+      onPress={press}
+      style={full ? styles.fullButton : styles.outlinedButton}
+    >
+      {loading ? (
         <ActivityIndicator
           animating={true}
           color={full ? "white" : "#fd4d4d"}
         />
-      </TouchableOpacity>
-    );
-  } else if (buttonState.isCorrect) {
-    return (
-      <TouchableOpacity
-        onPress={press}
-        style={full ? styles.fullButton : styles.outlinedButton}
-      >
+      ) : correct ? (
         <AntDesign name="check" size={24} color={full ? "white" : "#fd4d4d"} />
-      </TouchableOpacity>
-    );
-  } else if (buttonState.isError) {
-    return (
-      <TouchableOpacity
-        onPress={press}
-        style={full ? styles.fullButton : styles.outlinedButton}
-      >
+      ) : error ? (
         <Feather name="x" size={24} color={full ? "white" : "#fd4d4d"} />
-      </TouchableOpacity>
-    );
-  } else {
-    return (
-      <TouchableOpacity
-        onPress={press}
-        style={full ? styles.fullButton : styles.outlinedButton}
-      >
+      ) : (
         <Text style={full ? styles.fullTxt : styles.outlinedTxt}>{text}</Text>
-      </TouchableOpacity>
-    );
-  }
+      )}
+    </TouchableOpacity>
+  );
 };
 
 export default Button;

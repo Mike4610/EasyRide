@@ -1,9 +1,10 @@
 import React, { useContext, useEffect } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import Button from '../../components/Buttons/Button'
+import Button from "../../components/Buttons/Button";
 import { UserContext } from "../../context/UserContext";
+import { ScreenNavigationProps } from "../../types";
 
-export default function SplashScreen({ navigation }: { navigation: any }) {
+const SplashScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   // @ts-ignore
   const { setLoggedIn } = useContext(UserContext);
   useEffect(() => {
@@ -44,7 +45,9 @@ export default function SplashScreen({ navigation }: { navigation: any }) {
       </View>
     </View>
   );
-}
+};
+
+export default SplashScreen;
 
 const styles = StyleSheet.create({
   container: {

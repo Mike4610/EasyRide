@@ -4,13 +4,11 @@ import { AntDesign, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { Icon } from "react-native-paper/lib/typescript/components/Avatar/Avatar";
 
-export default function SearchBar({
-  visible,
-  setAddressLocation,
-}: {
+interface Props {
   visible: boolean;
   setAddressLocation: (address: string) => void;
-}) {
+}
+const SearchBar: React.FC<Props> = ({ visible, setAddressLocation }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [searchLocation, setSearchLocation] = useState("");
 
@@ -79,12 +77,14 @@ export default function SearchBar({
       />
     </View>
   );
-}
+};
+
+export default SearchBar;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'absolute',
+    position: "absolute",
     left: 20,
     right: 20,
     top: 10,

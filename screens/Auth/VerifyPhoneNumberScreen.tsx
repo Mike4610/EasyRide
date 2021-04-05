@@ -7,20 +7,20 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import { useFetch } from "../../hooks/useFetch";
+import { ScreenNavigationProps } from "../../types";
 
-export default function VerifyPhoneNumberScreen({
+const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
   route,
   navigation,
-}: {
-  route: any;
-  navigation: any;
-}) {
+}) => {
   const [code, setCode] = useState("");
   const [user] = useState(route.params.userData);
   const [verificationId] = useState(route.params.verificationId);
   //SNACKBAR
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
+  const [getData, changeData, setData] = useFetch();
   const onDismissSnackBar = () => setVisible(false);
 
   useEffect(() => {
@@ -47,9 +47,8 @@ export default function VerifyPhoneNumberScreen({
     firebase
       .auth()
       .createUserWithEmailAndPassword(user.email, user.password)
-      .then((response: any) => {
-        console.log(response);
-        const uid = response.user.uid;
+      .then(async ({ user }: any) => {
+        const uid = user.uid;
         console.log(uid);
         const data = {
           id: uid,
@@ -60,17 +59,8 @@ export default function VerifyPhoneNumberScreen({
           birthDate: user.birthDate,
           vehicles: [],
         };
-        const usersRef = firebase.firestore().collection("users");
-        usersRef
-          .doc(uid)
-          .set(data)
-          .then(() => {
-            setVisible(false);
-            navigation.navigate("SignIn");
-          })
-          .catch((error: any) => {
-            console.log(error);
-          });
+        const response = await setData(uid, data);
+        setVisible(false);
       })
       .catch((error: any) => {
         console.log(error);
@@ -100,6 +90,7 @@ export default function VerifyPhoneNumberScreen({
           <TextInput
             keyboardType="number-pad"
             placeholder="Your Code"
+            placeholderTextColor="#151a21"
             onChangeText={(text) => setCode(text)}
             value={code}
             style={styles.textInput}
@@ -133,7 +124,9 @@ export default function VerifyPhoneNumberScreen({
       </Snackbar>
     </KeyboardAwareScrollView>
   );
-}
+};
+
+export default VerifyPhoneNumberScreen;
 
 const styles = StyleSheet.create({
   container: {

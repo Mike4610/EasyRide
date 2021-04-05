@@ -10,8 +10,9 @@ import DatePicker from "@react-native-community/datetimepicker";
 import "firebase/auth";
 import { emailValidator, passwordValidator, nameValidator } from "../../utils";
 import { Snackbar } from "react-native-paper";
+import { ScreenNavigationProps } from "../../types";
 
-export default function SignUpScreen({ navigation }: { navigation: any }) {
+const SignUpScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   const recaptchaVerifierRef: any = useRef(null);
   const onDismissSnackBar = () => setVisible(false);
   const [visible, setVisible] = useState(false);
@@ -224,6 +225,8 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
     </KeyboardAwareScrollView>
   );
 }
+
+export default SignUpScreen;
 
 const styles = StyleSheet.create({
   container: {

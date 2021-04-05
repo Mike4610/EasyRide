@@ -9,8 +9,9 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 import LocationButtons from "../../components/Buttons/LocationButtons";
 import firebase from "firebase/app"
 import "firebase/auth"
+import { ScreenNavigationProps } from "../../types";
 
-export default function HomeScreen({ navigation }: { navigation: any }) {
+const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   //POPUP
   const [requestVisible, setRequestVisible] = useState(false);
   const [giveVisible, setGiveVisible] = useState(false);
@@ -76,6 +77,8 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
     </SafeAreaView>
   );
 }
+
+export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {

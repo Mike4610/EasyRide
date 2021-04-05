@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Image } from "react-native";
 import { LatLng, MarkerAnimated } from "react-native-maps";
 
-const Driver = ({
-  location,
-  visible,
-}: {
+interface Props {
   location: LatLng;
   visible: boolean;
-}) => {
+}
+
+const Marker: React.FC<Props> = ({ location, visible }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -25,7 +24,7 @@ const Driver = ({
   );
 };
 
-export default Driver;
+export default Marker;
 
 const styles = StyleSheet.create({
   visibleMarker: {

@@ -3,15 +3,17 @@ import { TouchableOpacity, Animated, View, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Vehicle } from "../../types";
 
-export default function SwipeToDelete({
-  handleDeleteVehicle,
-  dragX,
-  vehicle,
-}: {
+interface Props {
   handleDeleteVehicle: (vehicle: Vehicle) => void;
   dragX: any;
   vehicle: Vehicle;
-}) {
+}
+
+const SwipeToDelete: React.FC<Props> = ({
+  handleDeleteVehicle,
+  dragX,
+  vehicle,
+}) => {
   const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
   const scale = dragX.interpolate({
     inputRange: [-100, 0],
@@ -30,7 +32,9 @@ export default function SwipeToDelete({
       </View>
     </TouchableOpacity>
   );
-}
+};
+
+export default SwipeToDelete;
 
 const styles = StyleSheet.create({
   actionIcon: {

@@ -8,13 +8,11 @@ import SplashScreen from "./screens/Splash/SplashScreen";
 import SignInScreen from "./screens/Auth/SignInScreen";
 import SignUpScreen from "./screens/Auth/SignUpScreen";
 import ForgotPasswordScreen from "./screens/Auth/ForgotPasswordScreen";
-//@ts-ignore
 import VerifyPhoneNumberScreen from "./screens/Auth/VerifyPhoneNumberScreen";
 import HomeScreen from "./screens/Home/HomeScreen";
 import { UserContext } from "./context/UserContext";
 import DrawerContent from "./components/Drawer/DrawerContent";
 import firebase from "firebase/app";
-import AsyncStorage from "@react-native-community/async-storage";
 import { AntDesign } from "@expo/vector-icons";
 import ProfileScreen from "./screens/Profile/ProfileScreen";
 import VehiclesScreen from "./screens/Vehicles/VehiclesScreen";
@@ -22,18 +20,17 @@ import Loading from "./components/Loading/Loading";
 import { useAsyncStorage } from "./hooks/useAsyncStorage";
 import { firebaseConfig } from "./firebaseConfig";
 
-export default function App() {
+const App: React.FC<{}> = () => {
   const Drawer = createDrawerNavigator();
   const Stack = createStackNavigator();
-  const [loggedIn, setLoggedIn] = useState(null);
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
   const [getUser] = useAsyncStorage();
 
   const isAuthenticated = async () => {
     try {
       const user = await getUser();
-      //@ts-ignore
-      (user !== undefined) ? setLoggedIn(true) : setLoggedIn(false);
-      console.log(user)
+      user !== null ? setLoggedIn(true) : setLoggedIn(false);
+      console.log(user);
     } catch (error) {
       console.log(error);
     }
@@ -103,7 +100,7 @@ export default function App() {
           <NavigationContainer>
             <Drawer.Navigator
               initialRouteName="HomeScreen"
-              drawerContent={(props) => <DrawerContent {...props} />}
+              drawerContent={(props) => <DrawerContent drawerProps={props} />}
               drawerContentOptions={{
                 activeTintColor: "#fd4d4d",
                 inactiveTintColor: "#151a21",
@@ -155,4 +152,6 @@ export default function App() {
       </SafeAreaProvider>
     );
   }
-}
+};
+
+export default App;

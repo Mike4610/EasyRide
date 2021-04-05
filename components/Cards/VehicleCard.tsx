@@ -12,15 +12,12 @@ import "firebase/firestore";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { Vehicle } from "../../types";
 import SwipeToDelete from "../../components/Actions/SwipeToDelete";
-const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
 
-export default function VehicleCard({
-  vehicle,
-  handleDeleteVehicle,
-}: {
+interface Props {
   vehicle: Vehicle;
-  handleDeleteVehicle: any;
-}) {
+  handleDeleteVehicle: (vehicle: Vehicle) => void;
+}
+const VehicleCard: React.FC<Props> = ({ vehicle, handleDeleteVehicle }) => {
   return (
     <Swipeable
       renderRightActions={(progress, dragX) => (
@@ -53,7 +50,9 @@ export default function VehicleCard({
       </View>
     </Swipeable>
   );
-}
+};
+
+export default VehicleCard;
 
 const styles = StyleSheet.create({
   container: {

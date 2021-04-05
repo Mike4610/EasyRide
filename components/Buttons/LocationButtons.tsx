@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { FAB } from "react-native-paper";
 
-export default function LocationButton({ visible }: { visible: boolean }) {
-  const [isVisible, setIsVisible] = useState(true);
+interface Props {
+  visible: boolean;
+}
+const LocationButtons: React.FC<Props> = ({ visible }) => {
 
-  useEffect(() => {
-    setIsVisible(visible);
-  }, [visible]);
   return (
     <View
-      style={isVisible ? styles.visibleContainer : styles.invisibleContainer}
+      style={visible ? styles.visibleContainer : styles.invisibleContainer}
     >
       <View style={styles.fabContainer}>
         <FAB
@@ -42,7 +41,10 @@ export default function LocationButton({ visible }: { visible: boolean }) {
       </View>
     </View>
   );
-}
+};
+
+export default LocationButtons;
+
 const styles = StyleSheet.create({
   visibleContainer: {
     flex: 1,
@@ -69,7 +71,6 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: "#fd4d4d",
     zIndex: 30,
-     
   },
   text: { fontSize: 14, color: "#151a21" },
 });

@@ -10,9 +10,8 @@ import {
 import MenuButton from "../../components/Buttons/MenuButton";
 import Button from "../../components/Buttons/Button";
 import ProfileCard from "../../components/Cards/ProfileCard";
-import AsyncStorage from "@react-native-community/async-storage";
 import EditProfilePopUp from "../../components/PopUp/EditProfilePopUp";
-import { User } from "../../types";
+import { User, ScreenNavigationProps} from "../../types";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { Snackbar } from "react-native-paper";
 import firebase from "firebase/app";
@@ -21,7 +20,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 
-export default function ProfileScreen({ navigation }: { navigation: any }) {
+const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [userData, setUserData] = useState<User>({
     id: "",
@@ -38,7 +37,7 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
     correct: false,
   });
   const [snackBarVisible, setSnackBarVisible] = useState(false);
-  const [getUser, setUser] = useAsyncStorage();
+  const [getValue] = useAsyncStorage();
 
   useEffect(() => {
     getUserDetails();
@@ -109,7 +108,8 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
   };
 
   const getUserDetails = async () => {
-    const user = await getUser();
+    const user = await getValue();
+    console.log(user)
     setUserData(user);
   };
 
@@ -229,7 +229,9 @@ export default function ProfileScreen({ navigation }: { navigation: any }) {
       </Snackbar>
     </SafeAreaView>
   );
-}
+};
+
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
   container: {

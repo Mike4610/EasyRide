@@ -12,29 +12,36 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
   DrawerItem,
+  DrawerContentComponentProps,
+  DrawerContentOptions,
 } from "@react-navigation/drawer";
 import AsyncStorage from "@react-native-community/async-storage";
 import { UserContext } from "../../context/UserContext";
 import { AntDesign } from "@expo/vector-icons";
+import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import firebase from "firebase";
 import "firebase/auth";
 
-export default function DrawerContent({ ...props }) {
+interface Props {
+  drawerProps: DrawerContentComponentProps<DrawerContentOptions>;
+}
+const DrawerContent: React.FC<Props> = ({ drawerProps }) => {
   const [fullName, setFullName] = useState("");
-  const [imgURL,setImgURL] = useState("")
+  const [imgURL, setImgURL] = useState("");
   //@ts-ignore
   const { setLoggedIn } = useContext(UserContext);
+  const [getUser, setUser, removeUser] = useAsyncStorage();
 
   useEffect(() => {
     getUserData();
   }, []);
 
   const getUserData = async () => {
-    const user = await AsyncStorage.getItem("user");
+    const user = await getUser();
     if (user !== null) {
-      const { fullName,profileImgURL } = JSON.parse(user);
+      const { fullName, profileImgURL } = user;
       setFullName(fullName || "");
-      setImgURL(profileImgURL||"");
+      setImgURL(profileImgURL || "");
     }
   };
   const handleSignOut = () => {
@@ -43,7 +50,7 @@ export default function DrawerContent({ ...props }) {
       .auth()
       .signOut()
       .then(async () => {
-        await AsyncStorage.clear();
+        await removeUser();
         setLoggedIn(false);
       })
       .catch((error) => {
@@ -54,20 +61,21 @@ export default function DrawerContent({ ...props }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.profile}>
-        {imgURL===''?(<Image
-          style={styles.profilePic}
-          source={require("../../assets/images/avatar.png")}
-        />):(<Image
-        style={styles.profilePic}
-        source={{uri:imgURL}}
-      />)}
+        {imgURL === "" ? (
+          <Image
+            style={styles.profilePic}
+            source={require("../../assets/images/avatar.png")}
+          />
+        ) : (
+          <Image style={styles.profilePic} source={{ uri: imgURL }} />
+        )}
         <View style={styles.textContainer}>
           <Text style={styles.profileName}>{fullName}</Text>
         </View>
       </View>
-      <DrawerContentScrollView {...props}>
+      <DrawerContentScrollView {...drawerProps}>
         {/* @ts-ignore */}
-        <DrawerItemList {...props} />
+        <DrawerItemList {...drawerProps} />
         <DrawerItem
           label="Sign Out"
           labelStyle={{ fontSize: 16, color: "#151a21" }}
@@ -85,7 +93,9 @@ export default function DrawerContent({ ...props }) {
       </View>
     </SafeAreaView>
   );
-}
+};
+
+export default DrawerContent;
 
 const styles = StyleSheet.create({
   container: {

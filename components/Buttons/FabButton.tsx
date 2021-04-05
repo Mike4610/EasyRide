@@ -1,32 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { FAB, Portal, Provider } from "react-native-paper";
-import {StyleSheet} from 'react-native'
+import { StyleSheet } from "react-native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 
-export default function FabButton({
-  visible,
-  onRequest,
-  onGive,
-}: {
+interface Props {
   visible: boolean;
   onRequest: () => void;
   onGive: () => void;
-}) {
+}
+
+const FabButton: React.FC<Props> = ({ visible, onRequest, onGive }) => {
   const [state, setState] = useState({ open: false });
-  const [isVisible, setIsVisible] = useState(true)
   const onStateChange = ({ open }: { open: boolean }) => setState({ open });
   const { open } = state;
-
-  useEffect(() => {
-    setIsVisible(visible)
-  }, [visible])
-
   return (
     <Provider>
       <Portal>
         {/* @ts-ignore */}
         <FAB.Group
-          fabStyle={isVisible ? stlyes.visibleFab : stlyes.invisibleFab}
+          fabStyle={visible ? stlyes.visibleFab : stlyes.invisibleFab}
           color="white"
           open={open}
           icon={"plus"}
@@ -52,10 +44,12 @@ export default function FabButton({
       </Portal>
     </Provider>
   );
-}
+};
+
+export default FabButton;
 
 const stlyes = StyleSheet.create({
-  visibleFab:{
+  visibleFab: {
     backgroundColor: "#fd4d4d",
     marginBottom: 80,
     zIndex: 2,
@@ -64,8 +58,6 @@ const stlyes = StyleSheet.create({
     backgroundColor: "#fd4d4d",
     marginBottom: 80,
     zIndex: 2,
-    display: "none"
-  }
-})
-
-
+    display: "none",
+  },
+});

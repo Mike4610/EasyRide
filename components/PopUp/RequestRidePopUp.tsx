@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, Portal, Provider } from "react-native-paper";
 
-export default function RequestRidePopUp({
-  requestVisible,
-  onDismiss,
-}: {
+interface Props {
   requestVisible: boolean;
   onDismiss: () => void;
-}) {
-
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    setVisible(requestVisible);
-  }, [requestVisible]);
+}
+const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
   return (
     <Provider>
       <Portal>
@@ -26,12 +18,14 @@ export default function RequestRidePopUp({
             height: 450,
             alignSelf: "center",
           }}
-          visible={visible}
+          visible={requestVisible}
           onDismiss={() => {
-            onDismiss()
+            onDismiss();
           }}
         ></Dialog>
       </Portal>
     </Provider>
   );
-}
+};
+
+export default RequestRidePopUp;

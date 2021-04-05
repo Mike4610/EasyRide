@@ -11,25 +11,30 @@ import MenuButton from "../../components/Buttons/MenuButton";
 import Button from "../../components/Buttons/Button";
 import firebase from "firebase/app";
 import "firebase/firestore";
-import AsyncStorage from "@react-native-community/async-storage";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import { useFetch } from "../../hooks/useFetch";
 import AddVehiclePopUp from "../../components/PopUp/AddVehiclePopUp";
-import { Vehicle } from "../../types";
+import { Vehicle, ScreenNavigationProps } from "../../types";
 import VehicleCard from "../../components/Cards/VehicleCard";
 
-export default function VehiclesScreen({ navigation }: { navigation: any }) {
+
+const VehiclesScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   //POPUP
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [correct, setCorrect] = useState(false);
   //CUSTOM HOOKS
   const [getUser, setUser] = useAsyncStorage();
-  const [fetchData, changeData] = useFetch();
+  const [fetchData, updateData] = useFetch();
 
   useEffect(() => {
     getUserVehicles();
   }, []);
+
+  const sleep = (ms: number) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
 
   const getUserVehicles = async () => {
     const vehicles = await getUser("vehicles");
@@ -40,10 +45,13 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
   const setUserVehicles = async (vehicle: Vehicle) => {
     const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
     const uid = await getUser("id");
-    await changeData(uid, { vehicles: arrayUnion(vehicle) });
+    await updateData(uid, { vehicles: arrayUnion(vehicle) });
     const response = await fetchData(uid);
     await setUser(response);
     getUserVehicles();
+    setCorrect(true);
+    await sleep(1000);
+    setCorrect(false);
   };
 
   const handleRegisterVehicle = (vehicle: Vehicle) => {
@@ -56,7 +64,7 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
   const handleDeleteVehicle = async (vehicle: Vehicle) => {
     const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
     const uid = await getUser("id");
-    await changeData(uid, { vehicles: arrayRemove(vehicle) });
+    await updateData(uid, { vehicles: arrayRemove(vehicle) });
   };
 
   return (
@@ -89,6 +97,7 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
           <Button
             full={true}
             loading={loading}
+            correct={correct}
             press={() => {
               setVisible(true);
             }}
@@ -106,6 +115,8 @@ export default function VehiclesScreen({ navigation }: { navigation: any }) {
     </SafeAreaView>
   );
 }
+
+export default VehiclesScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -154,7 +165,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    borderBottomColor: "#a3a3a3",
+    borderBottomColor: "#151a21",
     borderBottomWidth: 1,
   },
   info: {

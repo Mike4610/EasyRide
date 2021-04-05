@@ -6,12 +6,11 @@ import { Snackbar } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import firebase from "firebase/app";
 import "firebase/auth";
+import { ScreenNavigationProps } from "../../types";
 
-export default function ForgotPasswordScreen({
+const ForgotPasswordScreen: React.FC<ScreenNavigationProps> = ({
   navigation,
-}: {
-  navigation: any;
-}) {
+}) => {
   const [email, setEmail] = useState("");
   //SNACKBAR
   const [visible, setVisible] = useState(false);
@@ -102,7 +101,9 @@ export default function ForgotPasswordScreen({
       </Snackbar>
     </KeyboardAwareScrollView>
   );
-}
+};
+
+export default ForgotPasswordScreen;
 
 const styles = StyleSheet.create({
   container: {

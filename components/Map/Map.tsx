@@ -7,7 +7,7 @@ import SearchBar from "../SearchBar/SearchBar";
 import Marker from "./Marker";
 import LocationButtons from "../Buttons/LocationButtons";
 
-export default function Map() {
+const Map: React.FC<{}> = () => {
   const [location, setLocation] = useState<object | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -82,8 +82,7 @@ export default function Map() {
             }}
           />
         </MapView>
-        
-        
+
         {/* <LocationButton
           loading={loading}
           setCurrentLocation={setCurrentLocation}
@@ -91,7 +90,9 @@ export default function Map() {
       </View>
     );
   }
-}
+};
+
+export default Map;
 
 const styles = StyleSheet.create({
   map: {

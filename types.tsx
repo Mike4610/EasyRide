@@ -1,34 +1,42 @@
-type Vehicle = {
+import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { RouteProp } from "@react-navigation/native";
+
+interface Vehicle {
   brand: string;
   model: string;
   seats: string;
   licensePlate: string;
-};
+}
 
-type Driver = {
+interface Driver {
   name: {
     firstName: string;
     lastName: string;
   };
   age: number;
   phoneNumber: string;
-};
+}
 
-type Ride = {
+interface Ride {
   from: string;
   to: string;
   date: string;
   driver: Driver;
-};
+}
 
-type User = {
+interface User {
   id?: string;
   fullName: string;
   email: string;
   phoneNumber: string;
   birthDate: string;
-  profileImgURL?:string,
+  profileImgURL?: string;
   createdAt: string;
-};
+}
 
-export { Vehicle, Driver, Ride, User };
+interface ScreenNavigationProps {
+  navigation: DrawerNavigationProp<any, any>;
+  route?: RouteProp<any, any>;
+}
+
+export { Vehicle, Driver, Ride, User, ScreenNavigationProps };

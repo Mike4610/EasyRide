@@ -15,18 +15,23 @@ export const useFetch = () => {
     }
   };
 
-  const changeData = (uid: string, value: object) => {
+  const updateData = (uid: string, value: object) => {
     try {
-      firebase
-        .firestore()
-        .collection("users")
-        .doc(uid)
-        .update(value);
+      firebase.firestore().collection("users").doc(uid).update(value);
       return;
     } catch (error) {
       return error;
     }
   };
 
-  return [fetchData, changeData] as const;
+  const setData = (uid: string, value: object) => {
+    try {
+      firebase.firestore().collection("users").doc(uid).set(value);
+      return;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  return [fetchData, updateData, setData] as const;
 };

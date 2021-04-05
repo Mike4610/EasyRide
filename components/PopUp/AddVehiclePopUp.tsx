@@ -7,18 +7,17 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import carList from "../../car-list.json";
 import { Vehicle } from "../../types";
 
-export default function AddVehiclePopUp({
-  visible,
-  onDismiss,
-  handleRegisterVehicle,
-}: {
+interface Props {
   visible: boolean;
   onDismiss: () => void;
   handleRegisterVehicle: (vehicle: Vehicle) => void;
-}) {
-  useEffect(() => {
-    setIsVisible(visible);
-  }, [visible]);
+}
+
+const AddVehiclePopUp: React.FC<Props> = ({
+  visible,
+  onDismiss,
+  handleRegisterVehicle,
+}) => {
   //PICKER
   const seatNumbers = ["2", "3", "4", "5", "6", "7", "8"];
   const [modelList, setModelList] = useState(carList[0].models);
@@ -28,7 +27,6 @@ export default function AddVehiclePopUp({
     seats: "2",
     licensePlate: "",
   });
-  const [isVisible, setIsVisible] = useState(false);
 
   const handleBrandChange = (itemValue: any) => {
     carList.forEach(({ brand, models }) => {
@@ -49,7 +47,7 @@ export default function AddVehiclePopUp({
       <Portal>
         <Dialog
           style={styles.popup}
-          visible={isVisible}
+          visible={visible}
           onDismiss={() => {
             onDismiss();
           }}
@@ -131,7 +129,9 @@ export default function AddVehiclePopUp({
       </Portal>
     </Provider>
   );
-}
+};
+
+export default AddVehiclePopUp;
 
 const styles = StyleSheet.create({
   buttons: {
