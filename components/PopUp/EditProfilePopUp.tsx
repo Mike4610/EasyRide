@@ -34,6 +34,7 @@ const EditProfilePopUp: React.FC<Props> = ({
     phoneNumber: "",
     birthDate: "",
     createdAt: "",
+    vehicles:[]
   });
   const [buttonState, setButtonState] = useState({
     loading: false,

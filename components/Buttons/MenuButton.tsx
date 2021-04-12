@@ -18,7 +18,7 @@ const MenuButton: React.FC<Props> = ({
       style={{
         flex: 1,
         marginTop: 20,
-        zIndex: 1,
+        zIndex: 0,
         position: "absolute",
         //@ts-ignore
         top: StatusBar.currentHeight * 1.5,

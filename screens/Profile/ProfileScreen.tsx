@@ -11,6 +11,7 @@ import MenuButton from "../../components/Buttons/MenuButton";
 import Button from "../../components/Buttons/Button";
 import ProfileCard from "../../components/Cards/ProfileCard";
 import EditProfilePopUp from "../../components/PopUp/EditProfilePopUp";
+import LoadingPopUp from "../../components/PopUp/LoadingPopUp";
 import { User, ScreenNavigationProps } from "../../types";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { Snackbar, Avatar } from "react-native-paper";
@@ -34,9 +35,15 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   });
   const [label, setLabel] = useState<string>("");
   const [visible, setVisible] = useState(false);
+  const [loadingVisible, setLoadingVisible] = useState<boolean>(false);
   const [buttonState, setButtonState] = useState({
     loading: false,
     correct: false,
+  });
+  const [loadingState, setLoadingState] = useState({
+    loading: false,
+    correct: false,
+    error: false,
   });
   const [snackBarVisible, setSnackBarVisible] = useState(false);
   const [getValue] = useAsyncStorage();
@@ -56,6 +63,11 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     }
   };
   async function uploadImageAsync(uri: string) {
+    setLoadingVisible(true);
+    setLoadingState({
+      ...loadingState,
+      loading: true,
+    });
     // Why are we using XMLHttpRequest? See:
     // https://github.com/expo/expo/issues/2402#issuecomment-443726662
     const blob = await new Promise<any>((resolve, reject) => {
@@ -107,6 +119,13 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
           console.log(error);
         });
     }
+    setLoadingState({
+      ...loadingState,
+      correct: true,
+      loading: false,
+    });
+    await sleep(1000);
+    setLoadingVisible(false);
   };
 
   const getUserDetails = async () => {
@@ -154,12 +173,8 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
       <View style={styles.profileDetails}>
         {userData.profileImgURL === "" ? (
           <TouchableOpacity
-            onPress={pickImage}
-            style={{
-              width: 100,
-              height: 100,
-              display: "flex",
-              justifyContent: "center",
+            onPress={() => {
+              pickImage();
             }}
           >
             <Avatar.Text
@@ -171,12 +186,8 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
-            onPress={pickImage}
-            style={{
-              width: 100,
-              height: 100,
-              flex: 1,
-              justifyContent: "center",
+            onPress={() => {
+              pickImage();
             }}
           >
             <Image
@@ -192,7 +203,7 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
         </Text>
       </View>
       <View style={styles.footer}>
-        <ScrollView style={{ height: 200 }}>
+        <ScrollView style={{ height: 240 }}>
           <ProfileCard
             title={"Email"}
             info={userData.email}
@@ -252,6 +263,7 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
           setVisible(false);
         }}
       />
+      <LoadingPopUp visible={loadingVisible} {...loadingState} />
     </SafeAreaView>
   );
 };
