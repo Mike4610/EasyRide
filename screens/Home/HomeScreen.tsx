@@ -42,7 +42,7 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Map />
+      {/* <Map /> */}
       
       <SearchBar visible={transform.searchBar} setAddressLocation={() => {}} />
 

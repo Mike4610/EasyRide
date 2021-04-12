@@ -1,5 +1,14 @@
 import React, { useState, useRef } from "react";
-import { View, Text, TextInput, StyleSheet, Image, Platform, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Image,
+  Platform,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Button from "../../components/Buttons/Button";
@@ -13,7 +22,7 @@ import { Snackbar } from "react-native-paper";
 import { ScreenNavigationProps } from "../../types";
 
 const SignUpScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
-  const recaptchaVerifierRef: any = useRef(null);
+  const recaptchaVerifierRef: React.MutableRefObject<any> = useRef(null);
   const onDismissSnackBar = () => setVisible(false);
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");
@@ -26,7 +35,7 @@ const SignUpScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     password: "",
   });
   const [titleDate, setTitleDate] = useState("Select Birth Date");
-  const [date,setDate] = useState(new Date())
+  const [date, setDate] = useState(new Date());
   const handleSignUp = () => {
     if (emailValidator(user.email) !== "") {
       setVisible(true);
@@ -57,8 +66,6 @@ const SignUpScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     phoneProvider
       .verifyPhoneNumber(user.phoneNumber, recaptchaVerifierRef.current)
       .then((verificationId: any) => {
-        console.log("VerificationID:");
-        console.log(verificationId);
         navigation.navigate("VerifyPhoneNumber", {
           userData: user,
           verificationId: verificationId,
@@ -103,100 +110,109 @@ const SignUpScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footer_text}>Name</Text>
-        <View style={styles.inputContainer}>
-          <AntDesign name="user" size={24} color="#151a21" />
-          <TextInput
-            placeholder="First and Last Name"
-            placeholderTextColor="#151a21"
-            style={styles.textInput}
-            onChangeText={(text) => setUser({ ...user, fullName: text })}
-            value={user.fullName}
-            autoCapitalize="none"
-          />
-        </View>
-        <Text style={styles.footer_text}>Email</Text>
-        <View style={styles.inputContainer}>
-          <MaterialCommunityIcons
-            name="email-outline"
-            size={24}
-            color="#151a21"
-          />
-          <TextInput
-            autoCompleteType="email"
-            placeholder="Your Email"
-            placeholderTextColor="#151a21"
-            style={styles.textInput}
-            onChangeText={(text) => setUser({ ...user, email: text })}
-            value={user.email}
-            autoCapitalize="none"
-          />
-        </View>
-        <Text style={styles.footer_text}>Phone Number</Text>
-        <View style={styles.inputContainer}>
-          <AntDesign name="phone" size={24} color="#151a21" />
-          <TextInput
-            keyboardType="decimal-pad"
-            placeholder="Your Phone Number"
-            placeholderTextColor="#151a21"
-            style={styles.textInput}
-            onChangeText={(text) => setUser({ ...user, phoneNumber: text })}
-            value={user.phoneNumber}
-            autoCapitalize="none"
-          />
-        </View>
+        <ScrollView style={{ height: 300 }}>
+          <Text style={styles.footer_text}>Name</Text>
+          <View style={styles.inputContainer}>
+            <AntDesign name="user" size={24} color="#151a21" />
+            <TextInput
+              placeholder="First and Last Name"
+              placeholderTextColor="#151a21"
+              style={styles.textInput}
+              onChangeText={(text) => setUser({ ...user, fullName: text })}
+              value={user.fullName}
+              autoCapitalize="none"
+            />
+          </View>
+          <Text style={styles.footer_text}>Email</Text>
+          <View style={styles.inputContainer}>
+            <MaterialCommunityIcons
+              name="email-outline"
+              size={24}
+              color="#151a21"
+            />
+            <TextInput
+              autoCompleteType="email"
+              placeholder="Your Email"
+              placeholderTextColor="#151a21"
+              style={styles.textInput}
+              onChangeText={(text) => setUser({ ...user, email: text })}
+              value={user.email}
+              autoCapitalize="none"
+            />
+          </View>
+          <Text style={styles.footer_text}>Phone Number</Text>
+          <View style={styles.inputContainer}>
+            <AntDesign name="phone" size={24} color="#151a21" />
+            <TextInput
+              keyboardType="decimal-pad"
+              placeholder="Your Phone Number"
+              placeholderTextColor="#151a21"
+              style={styles.textInput}
+              onChangeText={(text) => setUser({ ...user, phoneNumber: text })}
+              value={user.phoneNumber}
+              autoCapitalize="none"
+            />
+          </View>
 
-        <Text style={styles.footer_text}>Password</Text>
-        <View style={styles.inputContainer}>
-          <AntDesign name="lock" size={24} color="#151a21" />
-          <TextInput
-            placeholder="Your Password"
-            placeholderTextColor="#151a21"
-            style={styles.textInput}
-            onChangeText={(text) => setUser({ ...user, password: text })}
-            value={user.password}
-            autoCapitalize="none"
-            secureTextEntry={true}
-          />
-        </View>
+          <Text style={styles.footer_text}>Password</Text>
+          <View style={styles.inputContainer}>
+            <AntDesign name="lock" size={24} color="#151a21" />
+            <TextInput
+              placeholder="Your Password"
+              placeholderTextColor="#151a21"
+              style={styles.textInput}
+              onChangeText={(text) => setUser({ ...user, password: text })}
+              value={user.password}
+              autoCapitalize="none"
+              secureTextEntry={true}
+            />
+          </View>
 
-        <Text style={styles.footer_text}>Birth Date</Text>
-        <View style={styles.inputContainer}>
-
-          <AntDesign name="calendar" size={24} color="#151a21" />
-          {Platform.OS === 'ios' && (<DatePicker
-            display='default'
-            style={styles.datePickerStyle}
-            value={date}
-            mode="date"
-            onChange={(e, d) => {
-              //setShow(false);
-              if (d !== undefined) {
-                setUser({ ...user, birthDate: d.toDateString() })
-                console.log(d.toLocaleDateString())
-                setDate(d)
-                //setTitleDate(d.toLocaleDateString())
-              }
-            }}
-          />)}
-          {Platform.OS==='android' &&  <TouchableOpacity style={styles.textInput} onPress={() => setShow(!show)} >
-            <Text>{titleDate}</Text>
-          </TouchableOpacity>
-      
-          }{show && <DatePicker
-            display='default'
-            style={styles.datePickerStyle}
-            value={new Date()}
-            mode="date"
-            onChange={(e, d) => {
-              setShow(false);
-              if (d !== undefined) {
-                setUser({ ...user, birthDate: d.toDateString() })
-                setTitleDate(d.toLocaleDateString())
-              }
-            }}
-          />}
-        </View>
+          <Text style={styles.footer_text}>Birth Date</Text>
+          <View style={styles.inputContainer}>
+            <AntDesign name="calendar" size={24} color="#151a21" />
+            {Platform.OS === "ios" && (
+              <DatePicker
+                display="default"
+                style={styles.datePickerStyle}
+                value={date}
+                mode="date"
+                onChange={(e, d) => {
+                  //setShow(false);
+                  if (d !== undefined) {
+                    setUser({ ...user, birthDate: d.toDateString() });
+                    console.log(d.toLocaleDateString());
+                    setDate(d);
+                    //setTitleDate(d.toLocaleDateString())
+                  }
+                }}
+              />
+            )}
+            {Platform.OS === "android" && (
+              <TouchableOpacity
+                style={styles.textInput}
+                onPress={() => setShow(!show)}
+              >
+                <Text>{titleDate}</Text>
+              </TouchableOpacity>
+            )}
+            {show && (
+              <DatePicker
+                display="default"
+                style={styles.datePickerStyle}
+                value={new Date()}
+                mode="date"
+                onChange={(e, d) => {
+                  setShow(false);
+                  if (d !== undefined) {
+                    setUser({ ...user, birthDate: d.toDateString() });
+                    setTitleDate(d.toLocaleDateString());
+                  }
+                }}
+              />
+            )}
+          </View>
+        </ScrollView>
         <View style={styles.buttons}>
           <Button full={false} text={"Sign Up"} press={handleSignUp} />
           <Button
@@ -212,7 +228,7 @@ const SignUpScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
         duration={4000}
         visible={visible}
         onDismiss={onDismissSnackBar}
-        style={{ backgroundColor: "#151a21" }}
+        style={{ backgroundColor: "#151a21", marginBottom: 20 }}
         action={{
           label: "",
           onPress: () => {
@@ -224,7 +240,7 @@ const SignUpScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
       </Snackbar>
     </KeyboardAwareScrollView>
   );
-}
+};
 
 export default SignUpScreen;
 
@@ -237,7 +253,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: 'black'
+    backgroundColor: "black",
   },
   header: {
     flex: 0.5,
@@ -277,7 +293,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   textInput: {
     flex: 1,
@@ -288,7 +304,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   buttons: {
-    marginTop: 30,
+    marginTop: 10
   },
   datePickerStyle: {
     marginLeft: 20,

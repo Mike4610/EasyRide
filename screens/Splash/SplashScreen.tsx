@@ -84,8 +84,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   illustration: {
-    width: 200,
-    height: 150,
+    width: 250,
+    height: 180,
   },
   title_text: {
     fontSize: 25,

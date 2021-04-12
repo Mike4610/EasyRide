@@ -15,7 +15,9 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
   navigation,
 }) => {
   const [code, setCode] = useState("");
+  //@ts-ignore
   const [user] = useState(route.params.userData);
+  //@ts-ignore
   const [verificationId] = useState(route.params.verificationId);
   //SNACKBAR
   const [visible, setVisible] = useState(false);
@@ -28,7 +30,6 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
     console.log(verificationId);
   }, []);
   const handleConfirmCode = () => {
-    console.log(user);
     setVisible(true);
     const credential = firebase.auth.PhoneAuthProvider.credential(
       verificationId,
@@ -40,6 +41,12 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
       .signInWithCredential(credential)
       .then(() => {
         registerUser();
+      })
+      .catch((error) => {
+        if (error.code === "auth/invalid-verification-code") {
+          setVisible(true);
+          setMessage("Invalid verification code!");
+        }
       });
   };
 
@@ -58,13 +65,20 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
           createdAt: new Date().toDateString(),
           birthDate: user.birthDate,
           vehicles: [],
+          profileImgURL: ""
         };
+<<<<<<< HEAD
         console.log("User info:\n")
         console.log(data)
         if(setData(uid, data)){
           setVisible(false);
         }
         
+=======
+        console.log("DATA" + JSON.stringify(data));
+        await setData(uid, data);
+        setVisible(false);
+>>>>>>> 2c0fc6913b22fff56983a21a3e223d73363932db
       })
       .catch((error: any) => {
         console.log(error);
