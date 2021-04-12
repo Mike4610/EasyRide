@@ -8,7 +8,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import { useFetch } from "../../hooks/useFetch";
-import { ScreenNavigationProps } from "../../types";
+import { ScreenNavigationProps, User } from "../../types";
 
 const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
   route,
@@ -54,8 +54,8 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
     firebase
       .auth()
       .createUserWithEmailAndPassword(user.email, user.password)
-      .then(async ({ user }: any) => {
-        const uid = user.uid;
+      .then( ({ userR }:any) => {
+        const uid = userR.uid;
         console.log(uid);
         const data = {
           id: uid,
@@ -67,9 +67,18 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
           vehicles: [],
           profileImgURL: ""
         };
+<<<<<<< HEAD
+        console.log("User info:\n")
+        console.log(data)
+        if(setData(uid, data)){
+          setVisible(false);
+        }
+        
+=======
         console.log("DATA" + JSON.stringify(data));
         await setData(uid, data);
         setVisible(false);
+>>>>>>> 2c0fc6913b22fff56983a21a3e223d73363932db
       })
       .catch((error: any) => {
         console.log(error);
