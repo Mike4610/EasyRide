@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
+import { User } from "../types";
 
 export const useFetch = () => {
   const fetchData = async (uid: string) => {
@@ -15,21 +16,22 @@ export const useFetch = () => {
     }
   };
 
-  const updateData = (uid: string, value: object) => {
+  const updateData = async (uid: string, value: object) => {
     try {
-      firebase.firestore().collection("users").doc(uid).update(value);
-      return;
+      await firebase.firestore().collection("users").doc(uid).update(value);
+      return true;
     } catch (error) {
-      return error;
+      return false;
     }
   };
 
-  const setData = (uid: string, value: object) => {
+  const setData = async (uid: string, value: User) => {
     try {
-      firebase.firestore().collection("users").doc(uid).set(value);
-      return;
+      await firebase.firestore().collection("users").doc(uid).set(value);
+      return true;
     } catch (error) {
-      return error;
+      console.log(error);
+      return false;
     }
   };
 
