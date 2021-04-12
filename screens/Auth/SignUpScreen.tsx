@@ -110,7 +110,7 @@ const SignUpScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
       </View>
 
       <View style={styles.footer}>
-        <ScrollView style={{ height: 300 }}>
+        {/* <ScrollView style={{ height: 300 }}> */}
           <Text style={styles.footer_text}>Name</Text>
           <View style={styles.inputContainer}>
             <AntDesign name="user" size={24} color="#151a21" />
@@ -212,7 +212,7 @@ const SignUpScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
               />
             )}
           </View>
-        </ScrollView>
+        {/* </ScrollView> */}
         <View style={styles.buttons}>
           <Button full={false} text={"Sign Up"} press={handleSignUp} />
           <Button

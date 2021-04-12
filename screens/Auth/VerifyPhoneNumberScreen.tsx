@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { View, Text, TextInput, StyleSheet, Image } from "react-native";
 import Button from "../../components/Buttons/Button";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -16,7 +16,7 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
 }) => {
   const [code, setCode] = useState("");
   //@ts-ignore
-  const [user] = useState(route.params.userData);
+  const [superUser] = useState(route.params.userData);
   //@ts-ignore
   const [verificationId] = useState(route.params.verificationId);
   //SNACKBAR
@@ -26,7 +26,7 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
   const onDismissSnackBar = () => setVisible(false);
 
   useEffect(() => {
-    console.log(user);
+    console.log(superUser);
     console.log(verificationId);
   }, []);
   const handleConfirmCode = () => {
@@ -51,19 +51,21 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
   };
 
   const registerUser = async () => {
+    const fullName = superUser.fullName;
     firebase
       .auth()
-      .createUserWithEmailAndPassword(user.email, user.password)
-      .then(({ userR }: any) => {
-        const uid = userR.uid;
+      .createUserWithEmailAndPassword(superUser.email, superUser.password)
+      .then(({ user }: any) => {
+        console.log("user" + user);
+        const uid = user.uid;
         console.log(uid);
         const data = {
           id: uid,
-          email: user.email,
-          fullName: user.fullName,
-          phoneNumber: user.phoneNumber,
+          email: superUser.email,
+          fullName: fullName,
+          phoneNumber: superUser.phoneNumber,
           createdAt: new Date().toDateString(),
-          birthDate: user.birthDate,
+          birthDate: superUser.birthDate,
           vehicles: [],
           profileImgURL: "",
         };
@@ -72,6 +74,7 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
         console.log(data);
         if (setData(uid, data)) {
           setVisible(false);
+          navigation.navigate('SignIn');
         }
       })
       .catch((error: any) => {
