@@ -93,9 +93,10 @@ const SignInScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   const storeData = async (uid: any) => {
     try {
       const response = await fetchData(uid);
+      await setUser(response);
+      console.log("RESPONSE" + JSON.stringify(response));
       setLoggedIn(true);
       navigation.navigate("Home");
-      await setUser(response);
     } catch (error) {
       console.log(error);
     }
