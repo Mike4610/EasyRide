@@ -62,9 +62,13 @@ const VehiclesScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   };
 
   const handleDeleteVehicle = async (vehicle: Vehicle) => {
+    console.log("delete")
+    console.log(vehicle)
     const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
     const uid = await getUser("id");
     await updateData(uid, { vehicles: arrayRemove(vehicle) });
+    const updatedVehicles = await fetchData(uid)
+    setVehicles(updatedVehicles.vehicles)
   };
 
   return (

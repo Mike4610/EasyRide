@@ -109,14 +109,7 @@ const SignInScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
             source={require("../../assets/images/RMLogo.png")}
           ></Image>
         </View>
-        <View
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text style={styles.headerTitle}>🖕</Text>
+        <View>
           <Text style={styles.headerTitle}>
             Welcome<Text style={{ color: "#fd4d4d" }}>!</Text>
           </Text>
@@ -166,9 +159,7 @@ const SignInScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
             full={true}
             text={"Sign In"}
             press={handleSignIn}
-            loading={buttonState.loading}
-            correct={buttonState.correct}
-            error={buttonState.error}
+            {...buttonState}
           />
           <Button
             full={false}
@@ -197,7 +188,7 @@ const SignInScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
       </Snackbar>
     </KeyboardAwareScrollView>
   );
-}
+};
 
 export default SignInScreen;
 

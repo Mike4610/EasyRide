@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Text, TouchableOpacity, StyleSheet, GestureResponderEvent } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import { AntDesign, Feather } from "@expo/vector-icons";
+import { GestureHandlerGestureEvent } from "react-native-gesture-handler";
 
 interface Props {
   text: string;
-  press: () => void;
+  press: (event: GestureResponderEvent) => void;
   loading?: boolean;
   correct?: boolean;
   error?: boolean;

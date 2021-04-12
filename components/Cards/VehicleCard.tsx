@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    borderBottomColor: "#a3a3a3",
-    borderBottomWidth: 1,
+    borderBottomColor: "#151a21",
+    borderBottomWidth: 0.5,
   },
   info: {
     flexDirection: "row",

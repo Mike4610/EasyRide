@@ -32,6 +32,7 @@ interface User {
   birthDate: string;
   profileImgURL?: string;
   createdAt: string;
+  vehicles: object[]
 }
 
 interface ScreenNavigationProps {

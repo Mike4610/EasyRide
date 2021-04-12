@@ -3,7 +3,7 @@ import { TouchableOpacity, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 interface Props {
-  onDismiss: () => void;
+  onDismiss?: () => void;
   returnButton?: boolean;
   navigation: any;
 }
@@ -40,7 +40,8 @@ const MenuButton: React.FC<Props> = ({
           size={45}
           color="#fd4d4d"
           onPress={() => {
-            onDismiss();
+            if(onDismiss)
+              onDismiss();
           }}
         />
       )}

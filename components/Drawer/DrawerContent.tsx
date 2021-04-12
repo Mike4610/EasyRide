@@ -8,6 +8,7 @@ import {
   Text,
   StatusBar,
 } from "react-native";
+import {Avatar} from 'react-native-paper'
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -15,7 +16,7 @@ import {
   DrawerContentComponentProps,
   DrawerContentOptions,
 } from "@react-navigation/drawer";
-import AsyncStorage from "@react-native-community/async-storage";
+import {User} from '../../types'
 import { UserContext } from "../../context/UserContext";
 import { AntDesign } from "@expo/vector-icons";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
@@ -28,6 +29,7 @@ interface Props {
 const DrawerContent: React.FC<Props> = ({ drawerProps }) => {
   const [fullName, setFullName] = useState("");
   const [imgURL, setImgURL] = useState("");
+  const [label, setLabel] = useState<string>("")
   //@ts-ignore
   const { setLoggedIn } = useContext(UserContext);
   const [getUser, setUser, removeUser] = useAsyncStorage();
@@ -41,9 +43,20 @@ const DrawerContent: React.FC<Props> = ({ drawerProps }) => {
     if (user !== null) {
       const { fullName, profileImgURL } = user;
       setFullName(fullName || "");
-      setImgURL(profileImgURL || "");
+      setImgURL( profileImgURL || "");
+    }
+
+    if(imgURL === ""){
+      const label = getUserLabel(user)
+      setLabel(label[0] + label[1])
     }
   };
+
+  const getUserLabel = (user: User) => {
+    let n = user.fullName.split(" ");
+    return [n[0][0], n[n.length - 1][0]];
+  };
+
   const handleSignOut = () => {
     console.log("click");
     firebase
@@ -62,12 +75,17 @@ const DrawerContent: React.FC<Props> = ({ drawerProps }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.profile}>
         {imgURL === "" ? (
-          <Image
-            style={styles.profilePic}
-            source={require("../../assets/images/avatar.png")}
+          <Avatar.Text
+            color="#a3a3a3"
+            size={60}
+            label={label}
+            style={{ backgroundColor: "#fd4d4d" }}
           />
         ) : (
-          <Image style={styles.profilePic} source={{ uri: imgURL }} />
+          <Image
+            style={styles.profilePic}
+            source={{ uri: imgURL }}
+          />
         )}
         <View style={styles.textContainer}>
           <Text style={styles.profileName}>{fullName}</Text>

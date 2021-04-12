@@ -18,3 +18,7 @@ export const emailValidator = (email: string) => {
   
     return '';
   };
+
+  export const ageValidator = (date: Date) => {
+    
+  }

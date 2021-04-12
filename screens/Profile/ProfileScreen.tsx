@@ -11,9 +11,9 @@ import MenuButton from "../../components/Buttons/MenuButton";
 import Button from "../../components/Buttons/Button";
 import ProfileCard from "../../components/Cards/ProfileCard";
 import EditProfilePopUp from "../../components/PopUp/EditProfilePopUp";
-import { User, ScreenNavigationProps} from "../../types";
+import { User, ScreenNavigationProps } from "../../types";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
-import { Snackbar } from "react-native-paper";
+import { Snackbar, Avatar } from "react-native-paper";
 import firebase from "firebase/app";
 import "firebase/auth";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -27,10 +27,12 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     fullName: "",
     email: "",
     phoneNumber: "",
-    createdAt: "",
     birthDate: "",
     profileImgURL: "",
+    createdAt: "",
+    vehicles: [],
   });
+  const [label, setLabel] = useState<string>("");
   const [visible, setVisible] = useState(false);
   const [buttonState, setButtonState] = useState({
     loading: false,
@@ -109,8 +111,18 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
 
   const getUserDetails = async () => {
     const user = await getValue();
-    console.log(user)
+    if (user.profileImgURL === "") {
+      const label = getUserLabel(user);
+      setLabel(label[0] + label[1]);
+    }
+    console.log(user);
     setUserData(user);
+    if (userData.profileImgURL === "") console.log(userData.fullName);
+  };
+
+  const getUserLabel = (user: User) => {
+    let n = user.fullName.split(" ");
+    return [n[0][0], n[n.length - 1][0]];
   };
 
   const sleep = (ms: number) => {
@@ -140,50 +152,63 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
       <MenuButton navigation={navigation} />
 
       <View style={styles.profileDetails}>
-        {userData.profileImgURL == "" ? (
-          <Image
-            style={styles.profilePic}
-            source={require("../../assets/images/avatar.png")}
-          />
+        {userData.profileImgURL === "" ? (
+          <TouchableOpacity
+            onPress={pickImage}
+            style={{
+              width: 100,
+              height: 100,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Avatar.Text
+              color="#a3a3a3"
+              size={100}
+              label={label}
+              style={{ backgroundColor: "#fd4d4d" }}
+            />
+          </TouchableOpacity>
         ) : (
-          <Image
-            style={styles.profilePic}
-            source={{ uri: userData.profileImgURL }}
-          />
+          <TouchableOpacity
+            onPress={pickImage}
+            style={{
+              width: 100,
+              height: 100,
+              flex: 1,
+              justifyContent: "center",
+            }}
+          >
+            <Image
+              style={styles.profilePic}
+              source={{ uri: userData.profileImgURL }}
+            />
+          </TouchableOpacity>
         )}
 
-        <TouchableOpacity
-          onPress={pickImage}
-          style={{ width: 40, height: 40, alignSelf: "center" }}
-        >
-          <MaterialCommunityIcons
-            style={{ alignSelf: "center" }}
-            name="image-plus"
-            size={30}
-            color="white"
-          />
-        </TouchableOpacity>
         <Text style={styles.profileName}>{userData.fullName}</Text>
         <Text style={styles.memberSince}>
           Member since {userData.createdAt}
         </Text>
       </View>
-      <ScrollView style={styles.footer}>
-        <ProfileCard
-          title={"Email"}
-          info={userData.email}
-          icon={"email-outline"}
-        />
-        <ProfileCard
-          title={"Phone Number"}
-          info={userData.phoneNumber}
-          icon={"phone"}
-        />
-        <ProfileCard
-          title={"Birth Date"}
-          info={userData.birthDate}
-          icon={"calendar"}
-        />
+      <View style={styles.footer}>
+        <ScrollView style={{ height: 200 }}>
+          <ProfileCard
+            title={"Email"}
+            info={userData.email}
+            icon={"email-outline"}
+          />
+          <ProfileCard
+            title={"Phone Number"}
+            info={userData.phoneNumber}
+            icon={"phone"}
+          />
+          <ProfileCard
+            title={"Birth Date"}
+            info={userData.birthDate}
+            icon={"calendar"}
+          />
+        </ScrollView>
         <View style={styles.buttons}>
           <Button
             full={true}
@@ -202,7 +227,23 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
             text={"Reset Password"}
           />
         </View>
-      </ScrollView>
+        <Snackbar
+          duration={1500}
+          visible={snackBarVisible}
+          onDismiss={dismissSnackBar}
+          style={{ backgroundColor: "#151a21" }}
+          action={{
+            label: "",
+            onPress: () => {
+              dismissSnackBar();
+            },
+          }}
+        >
+          <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+            Check your email!
+          </Text>
+        </Snackbar>
+      </View>
       <EditProfilePopUp
         user={userData}
         getUserDetails={getUserDetails}
@@ -211,22 +252,6 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
           setVisible(false);
         }}
       />
-      <Snackbar
-        duration={1500}
-        visible={snackBarVisible}
-        onDismiss={dismissSnackBar}
-        style={{ backgroundColor: "#151a21" }}
-        action={{
-          label: "",
-          onPress: () => {
-            dismissSnackBar();
-          },
-        }}
-      >
-        <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-          Check your email!
-        </Text>
-      </Snackbar>
     </SafeAreaView>
   );
 };
@@ -257,9 +282,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   profilePic: {
-    borderRadius: 50,
-    height: 100,
-    width: 100,
+    borderRadius: 60,
+    height: 120,
+    width: 120,
   },
   memberSince: {
     color: "#fd4d4d",
@@ -267,9 +292,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   buttons: {
-    marginTop: 20,
     padding: 30,
     display: "flex",
     alignItems: "center",
+    backgroundColor: "white",
   },
 });
