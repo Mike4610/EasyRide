@@ -6,8 +6,10 @@ import Loading from "../Loading/Loading";
 import SearchBar from "../SearchBar/SearchBar";
 import Marker from "./Marker";
 import LocationButtons from "../Buttons/LocationButtons";
-
-const Map: React.FC<{}> = () => {
+interface Props{
+  locationVisible: boolean,
+}
+const Map: React.FC<Props> = ({locationVisible}) => {
   const [location, setLocation] = useState<object | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -87,6 +89,7 @@ const Map: React.FC<{}> = () => {
           loading={loading}
           setCurrentLocation={setCurrentLocation}
         /> */}
+        <LocationButtons visible={locationVisible} setCurrentLocation={setCurrentLocation} />
       </View>
     );
   }

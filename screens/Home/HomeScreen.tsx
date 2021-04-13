@@ -42,7 +42,7 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <Map /> */}
+      <Map locationVisible={transform.locationButtons}/>
       
       <SearchBar visible={transform.searchBar} setAddressLocation={() => {}} />
 
@@ -73,7 +73,7 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
           setGiveVisible(false);
         }}
       />
-      <LocationButtons visible={transform.locationButtons} />
+     {/*  <LocationButtons visible={transform.locationButtons} /> */}
     </SafeAreaView>
   );
 }
