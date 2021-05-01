@@ -76,5 +76,5 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom:40,
   },
-  text: { fontSize: 14, color: "#151a21" },
+  text: { fontSize: 14, color: "#151a21", marginTop: -35 },
 });
