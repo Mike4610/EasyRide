@@ -38,7 +38,6 @@ const DrawerContent: React.FC<Props> = ({ drawerProps }) => {
 
   useEffect(() => {
     getUserData();
-    console.log(profile);
   }, []);
 
   useEffect(() => {
@@ -48,7 +47,6 @@ const DrawerContent: React.FC<Props> = ({ drawerProps }) => {
 
   const getUserData = async () => {
     const user = await getUser();
-    console.log(user)
     if (user !== null) {
       const { fullName, profileImgURL } = user;
       console.log(profileImgURL)

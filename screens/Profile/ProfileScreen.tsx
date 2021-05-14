@@ -53,6 +53,13 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     getUserDetails();
   }, []);
 
+  useEffect(() => {
+    console.log("USER DATA", userData);
+    (async () => {
+      await setValue(userData);
+    })();
+  }, [userData]);
+
   const requestPermission = async () => {
     if (Platform.OS !== "web") {
       const {
@@ -113,8 +120,6 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
       console.log("URL" + url);
       const usersRef = firebase.firestore().collection("users");
       setUserData({ ...userData, profileImgURL: url });
-      await setValue(userData);
-      console.log(await getValue())
       usersRef
         .doc(userData.id)
         .update({ profileImgURL: url })
@@ -129,7 +134,6 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     });
     await sleep(1000);
     setLoadingVisible(false);
-    console.log(profile);
     setProfile(!profile);
   };
 
@@ -139,7 +143,6 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
       const label = getUserLabel(user);
       setLabel(label[0] + label[1]);
     }
-    console.log(user);
     setUserData(user);
     if (userData.profileImgURL === "") console.log(userData.fullName);
   };
@@ -247,7 +250,7 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
           duration={1500}
           visible={snackBarVisible}
           onDismiss={dismissSnackBar}
-          style={{ backgroundColor: "#151a21", marginBottom: 30}}
+          style={{ backgroundColor: "#151a21", marginBottom: 30 }}
           action={{
             label: "",
             onPress: () => {
