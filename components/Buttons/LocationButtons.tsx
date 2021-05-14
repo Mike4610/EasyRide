@@ -4,15 +4,12 @@ import { FAB } from "react-native-paper";
 
 interface Props {
   visible: boolean;
-  setCurrentLocation: ()=>void;
+  setCurrentLocation: () => void;
 }
 
-const LocationButtons: React.FC<Props> = ({ visible,setCurrentLocation}) => {
-
+const LocationButtons: React.FC<Props> = ({ visible, setCurrentLocation }) => {
   return (
-    <View
-      style={visible ? styles.visibleContainer : styles.invisibleContainer}
-    >
+    <View style={visible ? styles.visibleContainer : styles.invisibleContainer}>
       <View style={styles.fabContainer}>
         <FAB
           style={styles.fab}
@@ -37,7 +34,7 @@ const LocationButtons: React.FC<Props> = ({ visible,setCurrentLocation}) => {
           style={styles.fab}
           color="white"
           icon="compass-outline"
-          onPress={()=>setCurrentLocation()}
+          onPress={() => setCurrentLocation()}
         />
         <Text style={styles.text}>Current Location</Text>
       </View>
@@ -66,8 +63,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     zIndex: 30,
-    justifyContent: 'flex-end',
-    marginBottom: 50
+    justifyContent: "flex-end",
+    marginBottom: 50,
   },
   fab: {
     marginLeft: 16,
@@ -75,7 +72,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fd4d4d",
     zIndex: 30,
     position: "absolute",
-    bottom:40,
+    bottom: 40,
   },
-  text: { fontSize: 14, color: "#151a21"},
+  text: { fontSize: 14, color: "#151a21" },
 });
