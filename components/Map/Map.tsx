@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { StyleSheet, Dimensions, View } from "react-native";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
 import Loading from "../Loading/Loading";
-import SearchBar from "../SearchBar/SearchBar";
 import Marker from "./Marker";
 import LocationButtons from "../Buttons/LocationButtons";
-interface Props{
-  locationVisible: boolean,
+import LocationButton from "../Buttons/LocationButton";
+import { SearchContext } from "../../context/SearchContext";
+interface Props {
+  locationVisible: boolean;
 }
-const Map: React.FC<Props> = ({locationVisible}) => {
+const Map: React.FC<Props> = ({ locationVisible }) => {
   const [location, setLocation] = useState<object | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+  const { searchLocation } = useContext(SearchContext);
   //@ts-ignore
   useEffect(() => {
     (async () => {
@@ -25,6 +27,13 @@ const Map: React.FC<Props> = ({locationVisible}) => {
       // });
     })();
   }, []);
+
+  useEffect(() => {
+    setLocation({
+      latitude: searchLocation.lat,
+      longitude: searchLocation.lng
+    })
+  }, [searchLocation]);
 
   const setAddressLocation = async (address: string) => {
     if (address !== "") {
@@ -85,11 +94,14 @@ const Map: React.FC<Props> = ({locationVisible}) => {
           />
         </MapView>
 
-        {/* <LocationButton
+        <LocationButton
           loading={loading}
           setCurrentLocation={setCurrentLocation}
-        /> */}
-        <LocationButtons visible={locationVisible} setCurrentLocation={setCurrentLocation} />
+        />
+        <LocationButtons
+          visible={locationVisible}
+          setCurrentLocation={setCurrentLocation}
+        />
       </View>
     );
   }

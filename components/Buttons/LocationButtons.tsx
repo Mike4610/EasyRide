@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     zIndex: 30,
     justifyContent: 'flex-end',
+    marginBottom: 50
   },
   fab: {
     marginLeft: 16,
@@ -76,5 +77,5 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom:40,
   },
-  text: { fontSize: 14, color: "#151a21" },
+  text: { fontSize: 14, color: "#151a21"},
 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -17,9 +17,9 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { Snackbar, Avatar } from "react-native-paper";
 import firebase from "firebase/app";
 import "firebase/auth";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
+import { ProfileContext } from "../../context/ProfileContext";
 
 const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   const [image, setImage] = useState("");
@@ -46,7 +46,8 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     error: false,
   });
   const [snackBarVisible, setSnackBarVisible] = useState(false);
-  const [getValue] = useAsyncStorage();
+  const [getValue, setValue] = useAsyncStorage();
+  const { profile, setProfile } = useContext(ProfileContext);
 
   useEffect(() => {
     getUserDetails();
@@ -109,9 +110,11 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     if (!result.cancelled) {
       setImage(result.uri);
       const url = await uploadImageAsync(result.uri);
-      console.log(url);
+      console.log("URL" + url);
       const usersRef = firebase.firestore().collection("users");
       setUserData({ ...userData, profileImgURL: url });
+      await setValue(userData);
+      console.log(await getValue())
       usersRef
         .doc(userData.id)
         .update({ profileImgURL: url })
@@ -126,6 +129,8 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     });
     await sleep(1000);
     setLoadingVisible(false);
+    console.log(profile);
+    setProfile(!profile);
   };
 
   const getUserDetails = async () => {
@@ -242,7 +247,7 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
           duration={1500}
           visible={snackBarVisible}
           onDismiss={dismissSnackBar}
-          style={{ backgroundColor: "#151a21" }}
+          style={{ backgroundColor: "#151a21", marginBottom: 30}}
           action={{
             label: "",
             onPress: () => {

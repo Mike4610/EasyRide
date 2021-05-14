@@ -8,7 +8,7 @@ import {
   Text,
   StatusBar,
 } from "react-native";
-import {Avatar} from 'react-native-paper'
+import { Avatar } from "react-native-paper";
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -16,8 +16,9 @@ import {
   DrawerContentComponentProps,
   DrawerContentOptions,
 } from "@react-navigation/drawer";
-import {User} from '../../types'
+import { User } from "../../types";
 import { UserContext } from "../../context/UserContext";
+import { ProfileContext } from "../../context/ProfileContext";
 import { AntDesign } from "@expo/vector-icons";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import firebase from "firebase";
@@ -29,26 +30,35 @@ interface Props {
 const DrawerContent: React.FC<Props> = ({ drawerProps }) => {
   const [fullName, setFullName] = useState("");
   const [imgURL, setImgURL] = useState("");
-  const [label, setLabel] = useState<string>("")
+  const [label, setLabel] = useState<string>("");
   //@ts-ignore
   const { setLoggedIn } = useContext(UserContext);
+  const { profile } = useContext(ProfileContext);
   const [getUser, setUser, removeUser] = useAsyncStorage();
 
   useEffect(() => {
     getUserData();
+    console.log(profile);
   }, []);
+
+  useEffect(() => {
+    getUserData();
+    console.log("update")
+  }, [profile]);
 
   const getUserData = async () => {
     const user = await getUser();
+    console.log(user)
     if (user !== null) {
       const { fullName, profileImgURL } = user;
-      setFullName(fullName || "");
-      setImgURL( profileImgURL || "");
+      console.log(profileImgURL)
+      setFullName(fullName);
+      setImgURL(profileImgURL);
     }
 
-    if(imgURL === ""){
-      const label = getUserLabel(user)
-      setLabel(label[0] + label[1])
+    if (imgURL === "") {
+      const label = getUserLabel(user);
+      setLabel(label[0] + label[1]);
     }
   };
 
@@ -82,10 +92,7 @@ const DrawerContent: React.FC<Props> = ({ drawerProps }) => {
             style={{ backgroundColor: "#fd4d4d" }}
           />
         ) : (
-          <Image
-            style={styles.profilePic}
-            source={{ uri: imgURL }}
-          />
+          <Image style={styles.profilePic} source={{ uri: imgURL }} />
         )}
         <View style={styles.textContainer}>
           <Text style={styles.profileName}>{fullName}</Text>

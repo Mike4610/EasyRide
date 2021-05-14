@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { AntDesign, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
+import { SearchContext } from "../../context/SearchContext";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { Icon } from "react-native-paper/lib/typescript/components/Avatar/Avatar";
 
@@ -9,54 +10,8 @@ interface Props {
   setAddressLocation: (address: string) => void;
 }
 const SearchBar: React.FC<Props> = ({ visible, setAddressLocation }) => {
-  const [isVisible, setIsVisible] = useState(true);
-  const [searchLocation, setSearchLocation] = useState("");
+  const { setSearchLocation } = useContext(SearchContext);
 
-  useEffect(() => {
-    setIsVisible(visible);
-  }, [visible]);
-  //   const handleTextChange = (text: string) => {
-  //     if (text === "") {
-  //       console.log("hey");
-  //       setSearchLocation(text);
-  //       setVisible(false);
-  //     }
-  //     setSearchLocation(text);
-  //     setVisible(true);
-  //   };
-
-  //   const handleEraseText = () => {
-  //     setSearchLocation("");
-  //     setVisible(false);
-  //   };
-
-  //   return (
-  //     <View style={styles.searchBar}>
-  //       <View style={styles.searchIcon}>
-  //         <AntDesign name="search1" size={20} color="#fd4d4d" />
-  //       </View>
-
-  //       <TextInput
-  //         placeholder="Type a location"
-  //         placeholderTextColor="#151a21"
-  //         style={styles.input}
-  //         value={searchLocation}
-  //         onChangeText={(text) => {
-  //           handleTextChange(text);
-  //         }}
-  //         onSubmitEditing = {()=>{
-  //             setAddressLocation(searchLocation)
-  //         }}
-  //       ></TextInput>
-
-  //       <View style={visible ? styles.showCross : styles.hideCross}>
-  //         <TouchableOpacity onPress={handleEraseText}>
-  //           <Entypo name="cross" size={24} color="#fd4d4d" />
-  //         </TouchableOpacity>
-  //       </View>
-  //     </View>
-  //   );
-  // }
   return (
     <View style={styles.container}>
       <GooglePlacesAutocomplete
@@ -64,10 +19,10 @@ const SearchBar: React.FC<Props> = ({ visible, setAddressLocation }) => {
         minLength={2}
         isRowScrollable={true}
         fetchDetails={true}
-        textInputHide={isVisible ? false : true}
+        textInputHide={visible ? false : true}
         onPress={(data, details = null) => {
-          // 'details' is provided when fetchDetails = true
-          console.log(data, details);
+          console.log(details?.geometry.location);
+          setSearchLocation(details?.geometry.location);
         }}
         styles={styles}
         query={{
@@ -94,7 +49,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     padding: 20,
     marginTop: 75,
-    // zIndex: 0
   },
   textInput: {
     padding: 12,
