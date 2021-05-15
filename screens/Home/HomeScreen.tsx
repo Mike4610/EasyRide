@@ -16,8 +16,8 @@ import { ScreenNavigationProps } from "../../types";
 const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   //POPUP
   const [requestVisible, setRequestVisible] = useState(false);
-  const [searchLocation, setSearchLocation] = useState("");
   const [giveVisible, setGiveVisible] = useState(false);
+  const [searchLocation, setSearchLocation] = useState("");
   const [transform, setTransform] = useState({
     fabVisible: true,
     returnButton: false,
@@ -47,10 +47,10 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     <SearchContext.Provider value={{ searchLocation, setSearchLocation }}>
       <SafeAreaView style={styles.container}>
         <Map locationVisible={transform.locationButtons} />
-        <SearchBar
+        {/* <SearchBar
           visible={transform.searchBar}
           setAddressLocation={() => {}}
-        />
+        /> */}
         <MenuButton
           onDismiss={onDismiss}
           returnButton={transform.returnButton}
@@ -63,19 +63,20 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
             setGiveVisible(true);
           }}
           onRequest={() => {
-            requestRideHandler();
+            setRequestVisible(true);
+            // requestRideHandler();
           }}
         />
-        {/* <RequestRidePopUp
-        requestVisible={requestVisible}
-        onDismiss={() => {
-          setRequestVisible(false);
-        }}
-      /> */}
         <GiveRidePopUp
           giveVisible={giveVisible}
           onDismiss={() => {
             setGiveVisible(false);
+          }}
+        />
+        <RequestRidePopUp
+          requestVisible={requestVisible}
+          onDismiss={() => {
+            setRequestVisible(false);
           }}
         />
         {/*  <LocationButtons visible={transform.locationButtons} /> */}
