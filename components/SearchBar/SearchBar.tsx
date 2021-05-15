@@ -1,38 +1,54 @@
-import React, { useState, useContext } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import { AntDesign, Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useContext } from "react";
+import { View, StyleSheet } from "react-native";
 import { SearchContext } from "../../context/SearchContext";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { Icon } from "react-native-paper/lib/typescript/components/Avatar/Avatar";
+import { Place } from "../../types";
 
 interface Props {
   visible: boolean;
   setAddressLocation?: (address: string) => void;
   placeholder: string;
+  from?: Place;
+  to?: Place;
 }
 const SearchBar: React.FC<Props> = ({
   visible,
   setAddressLocation,
   placeholder,
+  from,
+  to,
 }) => {
   const { setSearchLocation } = useContext(SearchContext);
 
   return (
     <View style={styles.container}>
       <GooglePlacesAutocomplete
-        predefinedPlaces={[{description: "Home", geometry: {location: {lat: 0, lng: 0}}}]}
+        predefinedPlaces={[
+          { description: "Home", geometry: { location: { lat: 0, lng: 0 } } },
+          { description: "Work", geometry: { location: { lat: 0, lng: 0 } } },
+        ]}
+        currentLocation={true}
         placeholder={placeholder}
         minLength={2}
         isRowScrollable={true}
         fetchDetails={true}
         textInputHide={visible ? false : true}
         onPress={(data, details = null) => {
-          if(details?.description === "Home" || details?.description === "Work"){
-            console.log("hey")
+          console.log(details?.geometry.location.lat)
+          if (
+            details?.description === "Home" ||
+            details?.description === "Work"
+          ) {
+            console.log("hey");
+          } else {
+            if (from) {
+              from.latitude = details?.geometry.location.lat;
+              from.longitude = details?.geometry.location.lng;
+            } else if (to) {
+              to.latitude = details?.geometry.location.lat;
+              to.longitude = details?.geometry.location.lng;
+            }
           }
-          //console.log(details?.geometry.location);
-    
-         // setSearchLocation(details?.geometry.location);
         }}
         styles={styles}
         query={{
@@ -70,10 +86,12 @@ const styles = StyleSheet.create({
     borderColor: "#a3a3a3",
   },
   predefinedPlacesDescription: {
-    color: "#151a21",
+    color: "#fd4d4d",
+    fontWeight: "bold",
   },
   row: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "white",
+    borderColor: "#151a21",
     padding: 13,
     height: 44,
     flexDirection: "row",

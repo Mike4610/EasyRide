@@ -32,7 +32,7 @@ interface User {
   birthDate: string;
   profileImgURL?: string;
   createdAt: string;
-  vehicles: object[];
+  vehicles: Vehicle[];
 }
 
 interface Place {
@@ -40,9 +40,14 @@ interface Place {
   longitude?: number;
 }
 
+interface Route {
+  from?: Place;
+  to?: Place;
+}
+
 interface ScreenNavigationProps {
   navigation: DrawerNavigationProp<any, any>;
   route?: RouteProp<any, any>;
 }
 
-export { Vehicle, Driver, Ride, User, ScreenNavigationProps, Place };
+export { Vehicle, Driver, Ride, User, ScreenNavigationProps, Place, Route };

@@ -35,7 +35,7 @@ const SignUpScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     password: "",
   });
   const [titleDate, setTitleDate] = useState("Select Birth Date");
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState<Date>(new Date());
   const handleSignUp = () => {
     if (emailValidator(user.email) !== "") {
       setVisible(true);
