@@ -51,7 +51,6 @@ const App: React.FC<{}> = () => {
     return (
       <SafeAreaProvider>
         {/* @ts-ignore */}
-
         <UserContext.Provider value={{ loggedIn, setLoggedIn }}>
           <NavigationContainer>
             <Stack.Navigator initialRouteName="Splash">

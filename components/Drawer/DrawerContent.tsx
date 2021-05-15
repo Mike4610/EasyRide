@@ -42,14 +42,12 @@ const DrawerContent: React.FC<Props> = ({ drawerProps }) => {
 
   useEffect(() => {
     getUserData();
-    console.log("update")
   }, [profile]);
 
   const getUserData = async () => {
     const user = await getUser();
     if (user !== null) {
       const { fullName, profileImgURL } = user;
-      console.log(profileImgURL)
       setFullName(fullName);
       setImgURL(profileImgURL);
     }
@@ -66,7 +64,6 @@ const DrawerContent: React.FC<Props> = ({ drawerProps }) => {
   };
 
   const handleSignOut = () => {
-    console.log("click");
     firebase
       .auth()
       .signOut()

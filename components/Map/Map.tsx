@@ -7,11 +7,15 @@ import Marker from "./Marker";
 import LocationButtons from "../Buttons/LocationButtons";
 import LocationButton from "../Buttons/LocationButton";
 import { SearchContext } from "../../context/SearchContext";
+import { Place } from "../../types";
 interface Props {
   locationVisible: boolean;
 }
 const Map: React.FC<Props> = ({ locationVisible }) => {
-  const [location, setLocation] = useState<object | null>(null);
+  const [location, setLocation] = useState<Place>({
+    latitude: undefined,
+    longitude: undefined,
+  });
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -31,8 +35,8 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   useEffect(() => {
     setLocation({
       latitude: searchLocation.lat,
-      longitude: searchLocation.lng
-    })
+      longitude: searchLocation.lng,
+    });
   }, [searchLocation]);
 
   const setAddressLocation = async (address: string) => {
@@ -59,10 +63,11 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
       return;
     }
     let { coords } = await Location.getCurrentPositionAsync({});
+    console.log(coords);
     setLocation(coords);
   };
 
-  if (location === null) {
+  if (location.latitude === undefined || location.longitude === undefined) {
     return <Loading />;
   } else {
     return (
@@ -114,5 +119,5 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
     zIndex: -40,
-  }
+  },
 });
