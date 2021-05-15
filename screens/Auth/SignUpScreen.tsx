@@ -181,7 +181,6 @@ const SignUpScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
                   //setShow(false);
                   if (d !== undefined) {
                     setUser({ ...user, birthDate: d.toDateString() });
-                    console.log(d.toLocaleDateString());
                     setDate(d);
                     //setTitleDate(d.toLocaleDateString())
                   }
