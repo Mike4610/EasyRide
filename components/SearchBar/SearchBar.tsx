@@ -7,22 +7,32 @@ import { Icon } from "react-native-paper/lib/typescript/components/Avatar/Avatar
 
 interface Props {
   visible: boolean;
-  setAddressLocation: (address: string) => void;
+  setAddressLocation?: (address: string) => void;
+  placeholder: string;
 }
-const SearchBar: React.FC<Props> = ({ visible, setAddressLocation }) => {
+const SearchBar: React.FC<Props> = ({
+  visible,
+  setAddressLocation,
+  placeholder,
+}) => {
   const { setSearchLocation } = useContext(SearchContext);
 
   return (
     <View style={styles.container}>
       <GooglePlacesAutocomplete
-        placeholder="Where to?"
+        predefinedPlaces={[{description: "Home", geometry: {location: {lat: 0, lng: 0}}}]}
+        placeholder={placeholder}
         minLength={2}
         isRowScrollable={true}
         fetchDetails={true}
         textInputHide={visible ? false : true}
         onPress={(data, details = null) => {
-          console.log(details?.geometry.location);
-          setSearchLocation(details?.geometry.location);
+          if(details?.description === "Home" || details?.description === "Work"){
+            console.log("hey")
+          }
+          //console.log(details?.geometry.location);
+    
+         // setSearchLocation(details?.geometry.location);
         }}
         styles={styles}
         query={{
@@ -56,6 +66,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     color: "#151a21",
     height: 45,
+    borderWidth: 1,
+    borderColor: "#a3a3a3",
   },
   predefinedPlacesDescription: {
     color: "#151a21",
