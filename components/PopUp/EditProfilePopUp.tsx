@@ -12,6 +12,7 @@ import { Snackbar } from "react-native-paper";
 import DatePicker from "@react-native-community/datetimepicker";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import { useFetch } from "../../hooks/useFetch";
+import { ProfileContext } from "../../context/ProfileContext";
 
 interface Props {
   user: User;
@@ -34,7 +35,7 @@ const EditProfilePopUp: React.FC<Props> = ({
     phoneNumber: "",
     birthDate: "",
     createdAt: "",
-    vehicles:[]
+    vehicles: [],
   });
   const [buttonState, setButtonState] = useState({
     loading: false,
@@ -44,6 +45,7 @@ const EditProfilePopUp: React.FC<Props> = ({
   const [snackBarVisible, setSnackBarVisible] = useState(false);
   const [getUser, setUser, removeUser] = useAsyncStorage();
   const [fetchData, updateData] = useFetch();
+  const { profile, setProfile } = useContext(ProfileContext);
 
   const dismissSnackBar = () => {
     setSnackBarVisible(false);
@@ -55,7 +57,6 @@ const EditProfilePopUp: React.FC<Props> = ({
   const updateEmail = (id: string, obj: object) => {
     setButtonState({ ...buttonState, loading: true });
     const userCredential = firebase.auth().currentUser;
-    console.log(userCredential);
     userCredential
       ?.updateEmail(userData.email)
       .then(async () => {
@@ -77,14 +78,13 @@ const EditProfilePopUp: React.FC<Props> = ({
     user.fullName = userData.fullName;
     await setUser(user);
     getUserDetails();
+    setProfile(!profile);
   };
 
   const updateProfileHandler = async () => {
     const storedUser = await AsyncStorage.getItem("user");
     if (storedUser !== null) {
       const { id } = JSON.parse(storedUser);
-      console.log(id);
-
       if (userData.fullName !== "") {
         updateProfile(id, { fullName: userData.fullName });
       }
