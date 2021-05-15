@@ -25,10 +25,6 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
   const [getData, changeData, setData] = useFetch();
   const onDismissSnackBar = () => setVisible(false);
 
-  useEffect(() => {
-    console.log(superUser);
-    console.log(verificationId);
-  }, []);
   const handleConfirmCode = () => {
     setVisible(true);
     const credential = firebase.auth.PhoneAuthProvider.credential(
@@ -56,9 +52,7 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
       .auth()
       .createUserWithEmailAndPassword(superUser.email, superUser.password)
       .then(({ user }: any) => {
-        console.log("user" + user);
         const uid = user.uid;
-        console.log(uid);
         const data = {
           id: uid,
           email: superUser.email,
@@ -70,8 +64,6 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
           profileImgURL: "",
         };
 
-        console.log("User info:\n");
-        console.log(data);
         if (setData(uid, data)) {
           setVisible(false);
           navigation.navigate('SignIn');
