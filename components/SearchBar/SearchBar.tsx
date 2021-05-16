@@ -39,7 +39,7 @@ const SearchBar: React.FC<Props> = ({
             details?.description === "Home" ||
             details?.description === "Work"
           ) {
-            console.log("hey");
+            
           } else {
             if (from) {
               from.latitude = details?.geometry.location.lat;

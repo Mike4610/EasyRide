@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Image,
+  Platform,
 } from "react-native";
 import { Dialog, Portal, Provider } from "react-native-paper";
 import { Dimensions } from "react-native";
@@ -19,13 +20,36 @@ import { Picker } from "@react-native-picker/picker";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import { User, Vehicle } from "../../types";
 import { Route } from "../../types";
-import MenuButton from "../../components/Buttons/MenuButton";
+import DateTimePicker from "@react-native-community/datetimepicker";
 interface Props {
   giveVisible: boolean;
   onDismiss: () => void;
 }
 
 const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+
+  const onChange = (event: any, selectedDate: Date) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === "ios");
+    setDate(currentDate);
+  };
+
+  const showMode = (currentMode: React.SetStateAction<string>) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode("date");
+  };
+
+  const showTimepicker = () => {
+    showMode("time");
+  };
+
   const [userData, setUserData] = useState<User>({
     id: "",
     email: "",
@@ -53,15 +77,14 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     },
   });
 
-  const [date, setDate] = useState<Date>(new Date());
+  // const [date, setDate] = useState<Date>(new Date());
 
   useEffect(() => {
-    
     (async () => {
       const user = await getValue();
       setUserData(user);
     })();
-    console.log("aabb")
+    console.log("aabb");
   }, []);
 
   useEffect(() => {
@@ -86,24 +109,23 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
         >
           <Dialog.Content>
             <ScrollView
+              keyboardShouldPersistTaps="handled"
               style={{ height: Dimensions.get("window").height - 100 }}
             >
-           
-                <TouchableOpacity
-                  style={{
-                    display: "flex",
-                    //@ts-ignore
-                    marginBottom: -25,
-                    position: "absolute",
-                  }}
-                  onPress={() => {
-                    console.log("CLICKKKKKKK");
-                    onDismiss();
-                  }}
-                >
-                  <Ionicons name="arrow-back" size={45} color="#fd4d4d" />
-                </TouchableOpacity>
-          
+              <TouchableOpacity
+                style={{
+                  display: "flex",
+                  //@ts-ignore
+                  marginBottom: -25,
+                  position: "absolute",
+                }}
+                onPress={() => {
+                  console.log("CLICKKKKKKK");
+                  onDismiss();
+                }}
+              >
+                <Ionicons name="arrow-back" size={45} color="#fd4d4d" />
+              </TouchableOpacity>
               <Image
                 style={styles.profilePic}
                 source={require("../../assets/images/ride.png")}
@@ -159,17 +181,28 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                   <AntDesign name="calendar" size={24} color="#fd4d4d" />
                   Date
                 </Text>
-                <DatePicker
-                  display="default"
-                  value={date}
-                  mode="date"
-                  style={styles.datePicker}
-                  onChange={(e, d) => {
-                    if (d !== undefined) {
-                      setDate(d);
-                    }
-                  }}
-                />
+                <View style={styles.datePickerContainer}>
+                  <DatePicker
+                    display="default"
+                    value={date}
+                    mode="date"
+                    style={styles.datePicker}
+                    onChange={(e, d) => {
+                      if (d !== undefined) {
+                        setDate(d);
+                      }
+                    }}
+                  />
+                  <DateTimePicker
+                    testID="dateTimePicker"
+                    value={date}
+                    mode={"time"}
+                    is24Hour={true}
+                    display="default"
+                    onChange={onChange}
+                    style={styles.datePicker}
+                  />
+                </View>
               </View>
               <Divider style={{ backgroundColor: "#151a21", zIndex: -1 }} />
               <View style={{ zIndex: -1 }}>
@@ -233,6 +266,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     alignSelf: "center",
     marginTop: 60,
+  },
+  datePickerContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
   },
   datePicker: {
     alignSelf: "center",
