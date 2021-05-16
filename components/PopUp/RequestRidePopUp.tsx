@@ -34,7 +34,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
         <Dialog.Content>
           <KeyboardAwareScrollView style={{ height: 370 }}>
             <View style={styles.pickerContainer}>
-              <Text style={styles.popup_title}>To?</Text>
+              {/* <Text style={styles.popup_title}>To?</Text> */}
             </View>
           </KeyboardAwareScrollView>
         </Dialog.Content>

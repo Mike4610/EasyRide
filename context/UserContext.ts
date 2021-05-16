@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 
-const UserContext = createContext(null)
+const UserContext: React.Context<any> = createContext(null)
 
 export {UserContext}
 

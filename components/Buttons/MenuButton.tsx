@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 interface Props {
   onDismiss?: () => void;
   returnButton?: boolean;
-  navigation: any;
+  navigation?: any;
 }
 
 const MenuButton: React.FC<Props> = ({
@@ -40,8 +40,7 @@ const MenuButton: React.FC<Props> = ({
           size={45}
           color="#fd4d4d"
           onPress={() => {
-            if(onDismiss)
-              onDismiss();
+            if (onDismiss) onDismiss();
           }}
         />
       )}

@@ -55,7 +55,7 @@ const VehiclesScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   };
 
   const handleRegisterVehicle = (vehicle: Vehicle) => {
-    console.log(vehicle);
+    console.log(vehicle);    
     setLoading(true);
     setVisible(false);
     setUserVehicles(vehicle);

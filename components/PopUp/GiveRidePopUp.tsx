@@ -19,6 +19,7 @@ import { Picker } from "@react-native-picker/picker";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import { User, Vehicle } from "../../types";
 import { Route } from "../../types";
+import MenuButton from "../../components/Buttons/MenuButton";
 interface Props {
   giveVisible: boolean;
   onDismiss: () => void;
@@ -55,10 +56,12 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   const [date, setDate] = useState<Date>(new Date());
 
   useEffect(() => {
+    
     (async () => {
       const user = await getValue();
       setUserData(user);
     })();
+    console.log("aabb")
   }, []);
 
   useEffect(() => {
@@ -85,13 +88,13 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
             <ScrollView
               style={{ height: Dimensions.get("window").height - 100 }}
             >
-              <View>
+           
                 <TouchableOpacity
                   style={{
                     display: "flex",
                     //@ts-ignore
-                    top: StatusBar.currentHeight * 1.5,
-                    marginBottom: -35,
+                    marginBottom: -25,
+                    position: "absolute",
                   }}
                   onPress={() => {
                     console.log("CLICKKKKKKK");
@@ -100,7 +103,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                 >
                   <Ionicons name="arrow-back" size={45} color="#fd4d4d" />
                 </TouchableOpacity>
-              </View>
+          
               <Image
                 style={styles.profilePic}
                 source={require("../../assets/images/ride.png")}
@@ -142,7 +145,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                 </View>
               </View>
               <Divider
-                style={{ backgroundColor: "#fd4d4d", zIndex: -1 }}
+                style={{ backgroundColor: "#151a21", zIndex: -1 }}
               ></Divider>
               <View style={{ zIndex: -1 }}>
                 <Text
@@ -168,7 +171,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                   }}
                 />
               </View>
-              <Divider style={{ backgroundColor: "#fd4d4d", zIndex: -1 }} />
+              <Divider style={{ backgroundColor: "#151a21", zIndex: -1 }} />
               <View style={{ zIndex: -1 }}>
                 <Text
                   style={{
@@ -183,7 +186,12 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                   Vehicle
                 </Text>
                 <Picker
-                  style={{ width: 250, height: 44, alignSelf: "center", marginBottom: 30 }}
+                  style={{
+                    width: 250,
+                    height: 44,
+                    alignSelf: "center",
+                    marginBottom: 30,
+                  }}
                   itemStyle={{ height: 50 }}
                   selectedValue={vehicle}
                   onValueChange={(itemValue) => setVehicle(itemValue)}
@@ -205,9 +213,10 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                 press={() => {
                   console.log(route);
                   console.log(vehicle);
+                  onDismiss();
                 }}
                 full={true}
-                text={"Confirm"}
+                text={"Continue"}
               />
             </View>
           </Dialog.Content>
@@ -232,9 +241,9 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   profilePic: {
-    height: 220,
-    width: 220,
+    height: 185,
+    width: 185,
     alignSelf: "center",
-    marginBottom: -35
+    marginBottom: -35,
   },
 });

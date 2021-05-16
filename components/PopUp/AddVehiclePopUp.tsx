@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, Animated } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { Dialog, Portal, Provider } from "react-native-paper";
+import { Dialog, Portal, Provider, Snackbar } from "react-native-paper";
 import Button from "../../components/Buttons/Button";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import carList from "../../car-list.json";
 import { Vehicle } from "../../types";
-
+import { licensePlateValidator } from "../../utils";
 interface Props {
   visible: boolean;
   onDismiss: () => void;
@@ -27,6 +27,11 @@ const AddVehiclePopUp: React.FC<Props> = ({
     seats: "2",
     licensePlate: "",
   });
+  const [snackBarVisible, setSnackBarVisible] = useState(false);
+
+  const dismissSnackBar = () => {
+    setSnackBarVisible(false);
+  };
 
   const handleBrandChange = (itemValue: any) => {
     carList.forEach(({ brand, models }) => {
@@ -40,6 +45,14 @@ const AddVehiclePopUp: React.FC<Props> = ({
         setModelList(models);
       }
     });
+  };
+
+  const registerVehicle = () => {
+    if (licensePlateValidator(vehicle.licensePlate) === "") {
+      handleRegisterVehicle(vehicle);
+    }else{
+      setSnackBarVisible(true)
+    }
   };
 
   return (
@@ -119,13 +132,29 @@ const AddVehiclePopUp: React.FC<Props> = ({
               <Button
                 full={true}
                 press={() => {
-                  handleRegisterVehicle(vehicle);
+                  registerVehicle();
                 }}
                 text={"Add"}
               />
             </View>
           </Dialog.Content>
         </Dialog>
+        <Snackbar
+          duration={1500}
+          visible={snackBarVisible}
+          onDismiss={dismissSnackBar}
+          style={{ backgroundColor: "#151a21" }}
+          action={{
+            label: "",
+            onPress: () => {
+              dismissSnackBar();
+            },
+          }}
+        >
+          <Text style={{ fontSize: 15, fontWeight: "bold", color: "white" }}>
+            Invalid license plate!
+          </Text>
+        </Snackbar>
       </Portal>
     </Provider>
   );

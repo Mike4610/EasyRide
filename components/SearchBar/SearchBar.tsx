@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 20,
     right: 20,
-    top: 10,
+    top: 10
   },
   textInputContainer: {
     flexDirection: "row",
