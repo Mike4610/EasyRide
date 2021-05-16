@@ -9,7 +9,6 @@ interface Props {
 }
 
 const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
-
   // <Provider>
   // <Portal>
   //   <Dialog
@@ -23,21 +22,19 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
   return (
     <Provider>
       <Portal>
-        {/* @ts-ignore */}
         <Dialog
           style={styles.popup}
           visible={requestVisible}
           onDismiss={() => {
             onDismiss();
           }}
-        ></Dialog>
-        <Dialog.Content>
-          <KeyboardAwareScrollView style={{ height: 370 }}>
-            <View style={styles.pickerContainer}>
-              <Text style={styles.popup_title}>To?</Text>
+        >
+          <Dialog.Content>
+            <View>
+              <Text>O queijo é gay</Text>
             </View>
-          </KeyboardAwareScrollView>
-        </Dialog.Content>
+          </Dialog.Content>
+        </Dialog>
       </Portal>
     </Provider>
   );
