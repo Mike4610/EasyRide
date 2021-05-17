@@ -87,15 +87,15 @@ const LocationsScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
 
       <View style={styles.footer}>
         <ScrollView style={{ height: 280 }}>
-          {/* {locations.map((location, index) => {
+          {locations.map((location, index) => {
             return (
               <LocationCard
-                key={vehicle.brand + vehicle.model + vehicle.licensePlate}
-                vehicle={vehicle}
-                handleDeleteVehicle={handleDeleteVehicle}
+                key={location.name + location.description}
+                location={location}
+                handleDeleteLocation={handleDeleteLocation}
               />
             );
-          })} */}
+          })}
         </ScrollView>
         <View style={styles.buttons}>
           <Button
@@ -109,13 +109,13 @@ const LocationsScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
           />
         </View>
       </View>
-      {/* <AddLocationPopUp
+      <AddLocationPopUp
         onDismiss={() => {
           setVisible(false);
         }}
         visible={visible}
         handleRegisterLocation={handleRegisterLocation}
-      /> */}
+      />
     </SafeAreaView>
   );
 }

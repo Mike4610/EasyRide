@@ -41,14 +41,14 @@ interface Place {
 }
 
 interface Route {
-  from?: Place | null
-  to?: Place | null
+  from?: Place | null;
+  to?: Place | null;
 }
 
 interface Location {
-  name: string;
-  description: string;
-  location?: Place;
+  name?: string;
+  description?: string;
+  place?: Place;
 }
 
 interface ScreenNavigationProps {
@@ -56,4 +56,13 @@ interface ScreenNavigationProps {
   route?: RouteProp<any, any>;
 }
 
-export { Location, Vehicle, Driver, Ride, User, ScreenNavigationProps, Place, Route };
+export {
+  Location,
+  Vehicle,
+  Driver,
+  Ride,
+  User,
+  ScreenNavigationProps,
+  Place,
+  Route,
+};
