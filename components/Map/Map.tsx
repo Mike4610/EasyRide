@@ -5,15 +5,17 @@ import React, {
   useRef,
   LegacyRef,
 } from "react";
-import { StyleSheet, Dimensions, View } from "react-native";
+import { StyleSheet, Dimensions, View, Text } from "react-native";
 import MapView, { Camera } from "react-native-maps";
 import * as Location from "expo-location";
 import Loading from "../Loading/Loading";
 import Marker from "./Marker";
 import LocationButton from "../Buttons/LocationButton";
 import { RouteContext } from "../../context/RouteContext";
-import { Place } from "../../types";
+import { Place, RouteDetails } from "../../types";
 import MapViewDirections from "react-native-maps-directions";
+import Button from "../../components/Buttons/Button";
+import RouteDetailsPopUp from "../PopUp/RouteDetailsPopUp";
 interface Props {
   locationVisible: boolean;
 }
@@ -26,18 +28,15 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const { route } = useContext(RouteContext);
-  const [coordinates] = useState([
-    {
-      latitude: 48.8587741,
-      longitude: 2.2069771,
-    },
-    {
-      latitude: 48.8323785,
-      longitude: 2.3361663,
-    },
-  ]);
   const [region, setRegion] = useState(null);
   const map: LegacyRef<MapView> = useRef(null);
+  const [routeDetails, setRouteDetails] = useState<RouteDetails>({
+    from: "",
+    to: "",
+    date: "",
+    distance: 0,
+    duration: 0,
+  });
   //@ts-ignore
   useEffect(() => {
     (async () => {
@@ -50,38 +49,35 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     })();
   }, []);
 
-  useEffect(() => {
-    setRegion({
-      //@ts-ignore
-      latitude: location.latitude,
-      //@ts-ignore
-      longitude: location.longitude,
-      longitudeDelta: 0.045,
-      latitudeDelta: 0.045,
-    });
-  }, [location]);
+  // useEffect(() => {
+  //   setRegion({
+  //     //@ts-ignore
+  //     latitude: location.latitude,
+  //     //@ts-ignore
+  //     longitude: location.longitude,
+  //     longitudeDelta: 0.045,
+  //     latitudeDelta: 0.045,
+  //   });
+  // }, [location]);
 
   useEffect(() => {
+    console.log("ROOOUTE", route);
     if (route) {
       map.current?.fitToCoordinates([route.from, route.to], {
         edgePadding: {
-          top: 30,
-          bottom: 30,
-          left: 30,
-          right: 30,
+          top: 60,
+          bottom: 60,
+          left: 60,
+          right: 60,
         },
+        animated: false,
       });
     }
   }, [route]);
 
-  const setAddressLocation = async (address: string) => {
-    if (address !== "") {
-      let addressLocation = await Location.geocodeAsync(address);
-      let { latitude, longitude } = await addressLocation[0];
-      setLocation({ latitude, longitude });
-      setVisible(true);
-    }
-  };
+  useEffect(() => {
+    console.log(routeDetails);
+  }, [routeDetails]);
 
   const setCurrentLocation = async () => {
     setLoading(true);
@@ -101,20 +97,27 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     setLocation(coords);
   };
 
-  if (location.latitude === undefined || location.longitude === undefined) {
+  if (location.latitude === 0 && location.longitude === 0) {
     return <Loading />;
   } else {
     return (
       <View>
         <MapView
           ref={map}
-          region={region}
+          region={{
+            //@ts-ignore
+            latitude: location.latitude,
+            //@ts-ignore
+            longitude: location.longitude,
+            longitudeDelta: 0.045,
+            latitudeDelta: 0.045,
+          }}
           showsCompass={true}
           rotateEnabled={false}
           // showsTraffic={true}
           showsUserLocation={true}
           showsMyLocationButton={true}
-          style={styles.map}
+          style={route ? styles.halfScreenMap : styles.fullScreenMap}
         >
           {route && (
             <>
@@ -124,6 +127,18 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
                 apikey={"AIzaSyCk08TOprTNr1B9tIrztczcoqEcgtCJpVM"} // insert your API Key here
                 strokeWidth={4}
                 strokeColor="#fd4d4d"
+                onReady={(result) => {
+                  setRouteDetails({
+                    duration: result.duration.toFixed(2),
+                    distance: result.distance.toFixed(2),
+                    from: route.from.description,
+                    to: route.to.description,
+                    date: "",
+                  });
+                }}
+                onError={(error) => {
+                  console.log(error);
+                }}
               />
               {Object.keys(route).map((key, index) => {
                 if (route) {
@@ -140,10 +155,11 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
             </>
           )}
         </MapView>
-        <LocationButton
+        {route && <RouteDetailsPopUp details={routeDetails} />}
+        {/* <LocationButton
           loading={loading}
           setCurrentLocation={setCurrentLocation}
-        />
+        /> */}
       </View>
     );
   }
@@ -152,9 +168,14 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
 export default Map;
 
 const styles = StyleSheet.create({
-  map: {
+  fullScreenMap: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
+    zIndex: -40,
+  },
+  halfScreenMap: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height * 0.55,
     zIndex: -40,
   },
 });

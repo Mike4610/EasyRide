@@ -71,10 +71,12 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   const from: Place = {
     latitude: 0,
     longitude: 0,
+    description: "",
   };
   const to: Place = {
     latitude: 0,
     longitude: 0,
+    description: "",
   };
   const [route] = useState<Route>({
     from,
@@ -244,8 +246,6 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
               <Button
                 press={() => {
                   console.log(route);
-                  console.log(vehicle);
-                  console.log(getDistance(route.from, route.to))
                   setRoute(route);
                   onDismiss();
                 }}

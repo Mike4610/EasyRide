@@ -25,6 +25,7 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   });
 
   const [route, setRoute] = useState<Route | null>(null);
+  const [visible, setVisible] = useState(true);
 
   const requestRideHandler = () => {
     setTransform({
@@ -45,17 +46,16 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
-    console.log(route);
+    if (route?.from?.latitude !== 0 && route?.to?.longitude! == 0) {
+      setVisible(false);
+    }
   }, [route]);
 
   return (
     <RouteContext.Provider value={{ route, setRoute }}>
       <SafeAreaView style={styles.container}>
         <Map locationVisible={transform.locationButtons} />
-        {/* <SearchBar
-          visible={transform.searchBar}
-          setAddressLocation={() => {}}
-        /> */}
+
         <MenuButton
           onDismiss={onDismiss}
           returnButton={transform.returnButton}
@@ -63,7 +63,7 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
         />
 
         <FabButton
-          visible={transform.fabVisible}
+          visible={visible}
           onGive={() => {
             setGiveVisible(true);
           }}

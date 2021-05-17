@@ -38,11 +38,19 @@ interface User {
 interface Place {
   latitude: number;
   longitude: number;
+  description?: string;
 }
-
+interface RouteDetails {
+  from: string;
+  to: string;
+  date: string;
+  distance: number;
+  duration: number;
+}
 interface Route {
-  from?: Place | null
-  to?: Place | null
+  from?: Place | null;
+  to?: Place | null;
+  details?: RouteDetails;
 }
 
 interface Location {
@@ -56,4 +64,15 @@ interface ScreenNavigationProps {
   route?: RouteProp<any, any>;
 }
 
-export { Location, Vehicle, Driver, Ride, User, ScreenNavigationProps, Place, Route };
+export {
+  Vehicle,
+  Driver,
+  Ride,
+  User,
+  ScreenNavigationProps,
+  Place,
+  Route,
+  RouteDetails,
+  Location
+};
+

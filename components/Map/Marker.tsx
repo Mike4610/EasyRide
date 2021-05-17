@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Image, View } from "react-native";
+import { StyleSheet, Image, View, Text } from "react-native";
 import { LatLng, MarkerAnimated } from "react-native-maps";
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 

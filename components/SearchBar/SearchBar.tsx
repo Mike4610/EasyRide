@@ -31,7 +31,7 @@ const SearchBar: React.FC<Props> = ({
         fetchDetails={true}
         textInputHide={visible ? false : true}
         onPress={(data, details = null) => {
-          console.log(details?.geometry.location.lat);
+          console.log(details?.formatted_address);
           if (
             details?.description === "Home" ||
             details?.description === "Work"
@@ -40,9 +40,11 @@ const SearchBar: React.FC<Props> = ({
             if (from) {
               from.latitude = details?.geometry.location.lat || 0;
               from.longitude = details?.geometry.location.lng || 0;
+              from.description = details?.formatted_address;
             } else if (to) {
               to.latitude = details?.geometry.location.lat || 0;
               to.longitude = details?.geometry.location.lng || 0;
+              to.description = details?.formatted_address;
             }
           }
         }}
