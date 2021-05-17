@@ -53,9 +53,9 @@ interface Route {
 }
 
 interface Location {
-  name?: string;
-  description?: string;
-  place?: Place;
+  name: string;
+  description: string;
+  place: Place;
 }
 
 interface ScreenNavigationProps {
