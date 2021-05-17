@@ -1,6 +1,12 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  LegacyRef,
+} from "react";
 import { StyleSheet, Dimensions, View } from "react-native";
-import MapView from "react-native-maps";
+import MapView, { Camera } from "react-native-maps";
 import * as Location from "expo-location";
 import Loading from "../Loading/Loading";
 import Marker from "./Marker";
@@ -30,6 +36,8 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
       longitude: 2.3361663,
     },
   ]);
+  const [region, setRegion] = useState(null);
+  const map: LegacyRef<MapView> = useRef(null);
   //@ts-ignore
   useEffect(() => {
     (async () => {
@@ -40,12 +48,31 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
       //   setLocation(coords);
       // });
     })();
-    console.log("aaroute", route);
   }, []);
 
-  // useEffect(() => {
-  //   console.log(route);
-  // }, [route]);
+  useEffect(() => {
+    setRegion({
+      //@ts-ignore
+      latitude: location.latitude,
+      //@ts-ignore
+      longitude: location.longitude,
+      longitudeDelta: 0.045,
+      latitudeDelta: 0.045,
+    });
+  }, [location]);
+
+  useEffect(() => {
+    if (route) {
+      map.current?.fitToCoordinates([route.from, route.to], {
+        edgePadding: {
+          top: 30,
+          bottom: 30,
+          left: 30,
+          right: 30,
+        },
+      });
+    }
+  }, [route]);
 
   const setAddressLocation = async (address: string) => {
     if (address !== "") {
@@ -80,14 +107,8 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     return (
       <View>
         <MapView
-          region={{
-            //@ts-ignore
-            latitude: location.latitude,
-            //@ts-ignore
-            longitude: location.longitude,
-            longitudeDelta: 0.045,
-            latitudeDelta: 0.045,
-          }}
+          ref={map}
+          region={region}
           showsCompass={true}
           rotateEnabled={false}
           // showsTraffic={true}
@@ -108,7 +129,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
                 if (route) {
                   return (
                     <Marker
-                      key={route[key][index]}
+                      key={index}
                       type={index + 1}
                       visible={true}
                       location={route[key]}

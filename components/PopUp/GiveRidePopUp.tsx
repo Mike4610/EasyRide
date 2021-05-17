@@ -22,6 +22,7 @@ import { Place, User, Vehicle } from "../../types";
 import { Route } from "../../types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { RouteContext } from "../../context/RouteContext";
+import { getDistance, getPreciseDistance } from "geolib";
 interface Props {
   giveVisible: boolean;
   onDismiss: () => void;
@@ -244,6 +245,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                 press={() => {
                   console.log(route);
                   console.log(vehicle);
+                  console.log(getDistance(route.from, route.to))
                   setRoute(route);
                   onDismiss();
                 }}
