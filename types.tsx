@@ -36,13 +36,13 @@ interface User {
 }
 
 interface Place {
-  latitude?: number;
-  longitude?: number;
+  latitude: number;
+  longitude: number;
 }
 
 interface Route {
-  from?: Place;
-  to?: Place;
+  from?: Place | null
+  to?: Place | null
 }
 
 interface Location {

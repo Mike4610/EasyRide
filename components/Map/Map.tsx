@@ -1,25 +1,43 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  LegacyRef,
+} from "react";
 import { StyleSheet, Dimensions, View } from "react-native";
-import MapView from "react-native-maps";
+import MapView, { Camera } from "react-native-maps";
 import * as Location from "expo-location";
 import Loading from "../Loading/Loading";
 import Marker from "./Marker";
-import LocationButtons from "../Buttons/LocationButtons";
 import LocationButton from "../Buttons/LocationButton";
-import { SearchContext } from "../../context/SearchContext";
+import { RouteContext } from "../../context/RouteContext";
 import { Place } from "../../types";
+import MapViewDirections from "react-native-maps-directions";
 interface Props {
   locationVisible: boolean;
 }
 const Map: React.FC<Props> = ({ locationVisible }) => {
   const [location, setLocation] = useState<Place>({
-    latitude: undefined,
-    longitude: undefined,
+    latitude: 0,
+    longitude: 0,
   });
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const { searchLocation } = useContext(SearchContext);
+  const { route } = useContext(RouteContext);
+  const [coordinates] = useState([
+    {
+      latitude: 48.8587741,
+      longitude: 2.2069771,
+    },
+    {
+      latitude: 48.8323785,
+      longitude: 2.3361663,
+    },
+  ]);
+  const [region, setRegion] = useState(null);
+  const map: LegacyRef<MapView> = useRef(null);
   //@ts-ignore
   useEffect(() => {
     (async () => {
@@ -33,11 +51,28 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   }, []);
 
   useEffect(() => {
-    setLocation({
-      latitude: searchLocation.lat,
-      longitude: searchLocation.lng,
+    setRegion({
+      //@ts-ignore
+      latitude: location.latitude,
+      //@ts-ignore
+      longitude: location.longitude,
+      longitudeDelta: 0.045,
+      latitudeDelta: 0.045,
     });
-  }, [searchLocation]);
+  }, [location]);
+
+  useEffect(() => {
+    if (route) {
+      map.current?.fitToCoordinates([route.from, route.to], {
+        edgePadding: {
+          top: 30,
+          bottom: 30,
+          left: 30,
+          right: 30,
+        },
+      });
+    }
+  }, [route]);
 
   const setAddressLocation = async (address: string) => {
     if (address !== "") {
@@ -63,7 +98,6 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
       return;
     }
     let { coords } = await Location.getCurrentPositionAsync({});
-    console.log(coords);
     setLocation(coords);
   };
 
@@ -73,14 +107,8 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     return (
       <View>
         <MapView
-          region={{
-            //@ts-ignore
-            latitude: location.latitude,
-            //@ts-ignore
-            longitude: location.longitude,
-            longitudeDelta: 0.045,
-            latitudeDelta: 0.045,
-          }}
+          ref={map}
+          region={region}
           showsCompass={true}
           rotateEnabled={false}
           // showsTraffic={true}
@@ -88,23 +116,32 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
           showsMyLocationButton={true}
           style={styles.map}
         >
-          <Marker
-            visible={visible}
-            location={{
-              //  @ts-ignore
-              longitude: location.longitude,
-              //  @ts-ignore
-              latitude: location.latitude,
-            }}
-          />
+          {route && (
+            <>
+              <MapViewDirections
+                origin={route.from}
+                destination={route.to}
+                apikey={"AIzaSyCk08TOprTNr1B9tIrztczcoqEcgtCJpVM"} // insert your API Key here
+                strokeWidth={4}
+                strokeColor="#fd4d4d"
+              />
+              {Object.keys(route).map((key, index) => {
+                if (route) {
+                  return (
+                    <Marker
+                      key={index}
+                      type={index + 1}
+                      visible={true}
+                      location={route[key]}
+                    />
+                  );
+                }
+              })}
+            </>
+          )}
         </MapView>
-
         <LocationButton
           loading={loading}
-          setCurrentLocation={setCurrentLocation}
-        />
-        <LocationButtons
-          visible={locationVisible}
           setCurrentLocation={setCurrentLocation}
         />
       </View>

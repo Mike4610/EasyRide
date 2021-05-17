@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   TouchableOpacity,
@@ -12,15 +12,17 @@ import {
 import { Dialog, Portal, Provider } from "react-native-paper";
 import { Dimensions } from "react-native";
 import SearchBar from "../SearchBar/SearchBar";
-import { List, Divider } from "react-native-paper";
+import { Divider } from "react-native-paper";
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
 import DatePicker from "@react-native-community/datetimepicker";
 import Button from "../Buttons/Button";
 import { Picker } from "@react-native-picker/picker";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
-import { User, Vehicle } from "../../types";
+import { Place, User, Vehicle } from "../../types";
 import { Route } from "../../types";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { RouteContext } from "../../context/RouteContext";
+import { getDistance, getPreciseDistance } from "geolib";
 interface Props {
   giveVisible: boolean;
   onDismiss: () => void;
@@ -66,16 +68,19 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     licensePlate: "",
     seats: "",
   });
-  const [route, setRoute] = useState<Route>({
-    from: {
-      latitude: 0,
-      longitude: 0,
-    },
-    to: {
-      latitude: 0,
-      longitude: 0,
-    },
+  const from: Place = {
+    latitude: 0,
+    longitude: 0,
+  };
+  const to: Place = {
+    latitude: 0,
+    longitude: 0,
+  };
+  const [route] = useState<Route>({
+    from,
+    to,
   });
+  const { setRoute } = useContext(RouteContext);
 
   // const [date, setDate] = useState<Date>(new Date());
 
@@ -84,12 +89,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
       const user = await getValue();
       setUserData(user);
     })();
-    console.log("aabb");
   }, []);
-
-  useEffect(() => {
-    console.log(route);
-  }, [route.from]);
 
   return (
     <Provider>
@@ -120,7 +120,6 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                   position: "absolute",
                 }}
                 onPress={() => {
-                  console.log("CLICKKKKKKK");
                   onDismiss();
                 }}
               >
@@ -246,6 +245,8 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                 press={() => {
                   console.log(route);
                   console.log(vehicle);
+                  console.log(getDistance(route.from, route.to))
+                  setRoute(route);
                   onDismiss();
                 }}
                 full={true}

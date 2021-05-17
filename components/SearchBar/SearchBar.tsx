@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
-import { SearchContext } from "../../context/SearchContext";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { Place } from "../../types";
 
@@ -18,8 +17,6 @@ const SearchBar: React.FC<Props> = ({
   from,
   to,
 }) => {
-  const { setSearchLocation } = useContext(SearchContext);
-
   return (
     <View style={styles.container}>
       <GooglePlacesAutocomplete
@@ -34,19 +31,18 @@ const SearchBar: React.FC<Props> = ({
         fetchDetails={true}
         textInputHide={visible ? false : true}
         onPress={(data, details = null) => {
-          console.log(details?.geometry.location.lat)
+          console.log(details?.geometry.location.lat);
           if (
             details?.description === "Home" ||
             details?.description === "Work"
           ) {
-            
           } else {
             if (from) {
-              from.latitude = details?.geometry.location.lat;
-              from.longitude = details?.geometry.location.lng;
+              from.latitude = details?.geometry.location.lat || 0;
+              from.longitude = details?.geometry.location.lng || 0;
             } else if (to) {
-              to.latitude = details?.geometry.location.lat;
-              to.longitude = details?.geometry.location.lng;
+              to.latitude = details?.geometry.location.lat || 0;
+              to.longitude = details?.geometry.location.lng || 0;
             }
           }
         }}
@@ -68,7 +64,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 20,
     right: 20,
-    top: 10
+    top: 10,
   },
   textInputContainer: {
     flexDirection: "row",

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, SafeAreaView, View } from "react-native";
-import { SearchContext } from "../../context/SearchContext";
+import { RouteContext } from "../../context/RouteContext";
 import RequestRidePopUp from "../../components/PopUp/RequestRidePopUp";
 import GiveRidePopUp from "../../components/PopUp/GiveRidePopUp";
 import Map from "../../components/Map/Map";
@@ -11,19 +11,20 @@ import LocationButtons from "../../components/Buttons/LocationButtons";
 import firebase from "firebase/app";
 
 import "firebase/auth";
-import { ScreenNavigationProps } from "../../types";
+import { Route, ScreenNavigationProps } from "../../types";
 
 const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   //POPUP
   const [requestVisible, setRequestVisible] = useState(false);
   const [giveVisible, setGiveVisible] = useState(false);
-  const [searchLocation, setSearchLocation] = useState("");
   const [transform, setTransform] = useState({
     fabVisible: true,
     returnButton: false,
     searchBar: false,
     locationButtons: false,
   });
+
+  const [route, setRoute] = useState<Route | null>(null);
 
   const requestRideHandler = () => {
     setTransform({
@@ -43,8 +44,12 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     });
   };
 
+  useEffect(() => {
+    console.log(route);
+  }, [route]);
+
   return (
-    <SearchContext.Provider value={{ searchLocation, setSearchLocation }}>
+    <RouteContext.Provider value={{ route, setRoute }}>
       <SafeAreaView style={styles.container}>
         <Map locationVisible={transform.locationButtons} />
         {/* <SearchBar
@@ -79,9 +84,8 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
             setRequestVisible(false);
           }}
         />
-        {/*  <LocationButtons visible={transform.locationButtons} /> */}
       </SafeAreaView>
-    </SearchContext.Provider>
+    </RouteContext.Provider>
   );
 };
 
