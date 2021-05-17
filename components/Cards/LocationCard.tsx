@@ -41,11 +41,11 @@ const LocationCard: React.FC<Props> = ({ location, handleDeleteLocation }) => {
 
         <View style={styles.info}>
           <AntDesign name="idcard" size={28} color="#fd4d4d" />
-          <Text style={styles.footer_text}>{location.location}</Text>
+          <Text style={styles.footer_text}>{location.place}</Text>
         </View>
         <View style={styles.info}>
           <Ionicons name="person-outline" size={24} color="#fd4d4d" />
-          <Text style={styles.footer_text}>{location.location}</Text>
+          <Text style={styles.footer_text}>{location.place}</Text>
         </View>
       </View>
     </Swipeable>
