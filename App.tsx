@@ -20,6 +20,7 @@ import VehiclesScreen from "./screens/Vehicles/VehiclesScreen";
 import Loading from "./components/Loading/Loading";
 import { useAsyncStorage } from "./hooks/useAsyncStorage";
 import { firebaseConfig } from "./firebaseConfig";
+import LocationsScreen from "./screens/Locations/LocationsScreen";
 
 const App: React.FC<{}> = () => {
   const Drawer = createDrawerNavigator();
@@ -155,6 +156,20 @@ const App: React.FC<{}> = () => {
                     ),
                     drawerIcon: ({ focused, color, size }) => (
                       <AntDesign name="car" size={24} color="#fd4d4d" />
+                    ),
+                  }}
+                />
+                <Drawer.Screen
+                  name="LocationsScreen"
+                  component={LocationsScreen}
+                  options={{
+                    drawerLabel: ({ focused, color }) => (
+                      <Text style={{ fontSize: 16, color: "#151a21" }}>
+                        Locations
+                      </Text>
+                    ),
+                    drawerIcon: ({ focused, color, size }) => (
+                      <AntDesign name="save" size={24} color="#fd4d4d" />
                     ),
                   }}
                 />

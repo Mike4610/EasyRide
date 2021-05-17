@@ -45,9 +45,15 @@ interface Route {
   to?: Place;
 }
 
+interface Location {
+  name: string;
+  description: string;
+  location?: Place;
+}
+
 interface ScreenNavigationProps {
   navigation: DrawerNavigationProp<any, any>;
   route?: RouteProp<any, any>;
 }
 
-export { Vehicle, Driver, Ride, User, ScreenNavigationProps, Place, Route };
+export { Location, Vehicle, Driver, Ride, User, ScreenNavigationProps, Place, Route };

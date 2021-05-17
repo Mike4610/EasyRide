@@ -5,14 +5,18 @@ import { Vehicle } from "../../types";
 
 interface Props {
   handleDeleteVehicle: (vehicle: Vehicle) => void;
+  handleDeleteLocation: (location: Location) => void;
   dragX: any;
   vehicle: Vehicle;
+  location: Location;
 }
 
 const SwipeToDelete: React.FC<Props> = ({
   handleDeleteVehicle,
+  handleDeleteLocation,
   dragX,
   vehicle,
+  location,
 }) => {
   const AnimatedIcon = Animated.createAnimatedComponent(Ionicons);
   const scale = dragX.interpolate({
@@ -21,17 +25,31 @@ const SwipeToDelete: React.FC<Props> = ({
     extrapolate: "clamp",
   });
 
-  return (
-    <TouchableOpacity onPress={() => handleDeleteVehicle(vehicle)}>
-      <View style={styles.rightAction}>
-        <AnimatedIcon
-          name="trash-outline"
-          size={40}
-          style={[styles.actionIcon, { transform: [{ scale }] }]}
-        />
-      </View>
-    </TouchableOpacity>
-  );
+  if (handleDeleteVehicle) {
+    return (
+      <TouchableOpacity onPress={() => handleDeleteVehicle(vehicle)}>
+        <View style={styles.rightAction}>
+          <AnimatedIcon
+            name="trash-outline"
+            size={40}
+            style={[styles.actionIcon, { transform: [{ scale }] }]}
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  } else {
+    return (
+      <TouchableOpacity onPress={() => handleDeleteLocation(location)}>
+        <View style={styles.rightAction}>
+          <AnimatedIcon
+            name="trash-outline"
+            size={40}
+            style={[styles.actionIcon, { transform: [{ scale }] }]}
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  }
 };
 
 export default SwipeToDelete;

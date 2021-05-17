@@ -93,7 +93,7 @@ const DrawerContent: React.FC<Props> = ({ drawerProps }) => {
           <Text style={styles.profileName}>{fullName}</Text>
         </View>
       </View>
-      <DrawerContentScrollView {...drawerProps}>
+      <View {...drawerProps}>
         {/* @ts-ignore */}
         <DrawerItemList {...drawerProps} />
         <DrawerItem
@@ -104,7 +104,7 @@ const DrawerContent: React.FC<Props> = ({ drawerProps }) => {
           )}
           onPress={handleSignOut}
         />
-      </DrawerContentScrollView>
+      </View>
       <View style={styles.logoContainer}>
         <Image
           style={styles.logo}
