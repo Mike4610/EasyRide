@@ -70,7 +70,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
           left: 60,
           right: 60,
         },
-        animated: false,
+        animated: true,
       });
     }
   }, [route]);
