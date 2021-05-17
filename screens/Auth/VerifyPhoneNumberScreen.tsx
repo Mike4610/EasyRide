@@ -61,6 +61,7 @@ const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
           createdAt: new Date().toDateString(),
           birthDate: superUser.birthDate,
           vehicles: [],
+          locations: [],
           profileImgURL: "",
         };
 

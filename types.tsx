@@ -50,13 +50,12 @@ interface RouteDetails {
 interface Route {
   from?: Place | null;
   to?: Place | null;
-  details?: RouteDetails;
 }
 
 interface Location {
-  name: string;
-  description: string;
-  location?: Place;
+  name?: string;
+  description?: string;
+  place?: Place;
 }
 
 interface ScreenNavigationProps {

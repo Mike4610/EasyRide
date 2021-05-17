@@ -13,43 +13,41 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import { Location } from "../../types";
 import SwipeToDelete from "../../components/Actions/SwipeToDelete";
 
-// Verificar se o SwipeToDelete pode ser global para o vehicle e location, pois o SwipeToDelete recebe como props um vehicle, quero enviar uma location
-
 interface Props {
   location: Location;
-  handleDeleteVehicle: (location: Location) => void;
+  handleDeleteLocation: (location: Location) => void;
 }
-const LocationCard: React.FC<Props> = ({ location,  }) => {
+const LocationCard: React.FC<Props> = ({ location, handleDeleteLocation }) => {
   return (
     <Swipeable
-    //   renderRightActions={(progress, dragX) => (
-    //     <SwipeToDelete
-    //       handleDeleteLocation={handleDeleteLocation}
-    //       dragX={dragX}
-    //       location={location}
-    //     />
-    //   )}
+      renderRightActions={(progress, dragX) => (
+        <SwipeToDelete
+          handleDeleteLocation={handleDeleteLocation}
+          dragX={dragX}
+          location={location}
+        />
+      )}
     >
-      {/* <View key={vehicle.licensePlate} style={styles.infoContainer}>
+      <View key={location.name} style={styles.infoContainer}>
         <View
           style={{
             marginTop: 20,
           }}
         >
           <Text style={styles.footer_title}>
-            {vehicle.brand} {vehicle.model}
+            {location.description}
           </Text>
         </View>
 
         <View style={styles.info}>
           <AntDesign name="idcard" size={28} color="#fd4d4d" />
-          <Text style={styles.footer_text}>{vehicle.licensePlate}</Text>
+          <Text style={styles.footer_text}>{location.place}</Text>
         </View>
         <View style={styles.info}>
           <Ionicons name="person-outline" size={24} color="#fd4d4d" />
-          <Text style={styles.footer_text}>{vehicle.seats}</Text>
+          <Text style={styles.footer_text}>{location.place}</Text>
         </View>
-      </View> */}
+      </View>
     </Swipeable>
   );
 };
