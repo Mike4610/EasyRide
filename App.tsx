@@ -21,6 +21,7 @@ import Loading from "./components/Loading/Loading";
 import { useAsyncStorage } from "./hooks/useAsyncStorage";
 import { firebaseConfig } from "./firebaseConfig";
 import LocationsScreen from "./screens/Locations/LocationsScreen";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const App: React.FC<{}> = () => {
   const Drawer = createDrawerNavigator();
@@ -169,7 +170,11 @@ const App: React.FC<{}> = () => {
                       </Text>
                     ),
                     drawerIcon: ({ focused, color, size }) => (
-                      <AntDesign name="save" size={24} color="#fd4d4d" />
+                      <MaterialCommunityIcons
+                        name="office-building"
+                        size={24}
+                        color="#fd4d4d"
+                      />
                     ),
                   }}
                 />
