@@ -47,10 +47,6 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
 
   useEffect(() => {
     if (route?.from?.latitude !== 0 && route?.to?.longitude! == 0) {
-<<<<<<< Updated upstream
-      console.log("ababsdjsadhajs")
-=======
->>>>>>> Stashed changes
       setVisible(false);
     }
   }, [route]);
