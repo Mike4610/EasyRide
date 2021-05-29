@@ -47,6 +47,7 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
 
   useEffect(() => {
     if (route?.from?.latitude !== 0 && route?.to?.longitude! == 0) {
+      console.log("ababsdjsadhajs")
       setVisible(false);
     }
   }, [route]);

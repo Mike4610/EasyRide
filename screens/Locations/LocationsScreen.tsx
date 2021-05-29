@@ -77,7 +77,7 @@ const LocationsScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
       <View style={styles.profileDetails}>
         <Image
           style={styles.profilePic}
-          source={require("../../assets/images/driver.png")}
+          source={require("../../assets/images/locations.png")}
         />
         <Text style={styles.profileName}>Registered locations</Text>
         <Text style={styles.memberSince}>
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   },
   profilePic: {
     height: 150,
-    width: 290,
+    width: 180,
     marginTop: 20,
   },
   memberSince: {

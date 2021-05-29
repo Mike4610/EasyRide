@@ -2,6 +2,8 @@ import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { Place } from "../../types";
+import { GOOGLE_API_KEY } from "../../googleConfig";
+
 
 interface Props {
   visible: boolean;
@@ -50,7 +52,7 @@ const SearchBar: React.FC<Props> = ({
         }}
         styles={styles}
         query={{
-          key: "AIzaSyCk08TOprTNr1B9tIrztczcoqEcgtCJpVM",
+          key: GOOGLE_API_KEY,
           language: "pt",
         }}
       />

@@ -5,17 +5,16 @@ import React, {
   useRef,
   LegacyRef,
 } from "react";
-import { StyleSheet, Dimensions, View, Text } from "react-native";
-import MapView, { Camera } from "react-native-maps";
+import { StyleSheet, Dimensions, View } from "react-native";
+import MapView from "react-native-maps";
 import * as Location from "expo-location";
 import Loading from "../Loading/Loading";
 import Marker from "./Marker";
-import LocationButton from "../Buttons/LocationButton";
 import { RouteContext } from "../../context/RouteContext";
 import { Place, RouteDetails } from "../../types";
 import MapViewDirections from "react-native-maps-directions";
-import Button from "../../components/Buttons/Button";
 import RouteDetailsPopUp from "../PopUp/RouteDetailsPopUp";
+import { GOOGLE_API_KEY } from "../../googleConfig";
 interface Props {
   locationVisible: boolean;
 }
@@ -28,7 +27,6 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const { route } = useContext(RouteContext);
-  const [region, setRegion] = useState(null);
   const map: LegacyRef<MapView> = useRef(null);
   const [routeDetails, setRouteDetails] = useState<RouteDetails>({
     from: "",
@@ -37,28 +35,12 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     distance: 0,
     duration: 0,
   });
-  //@ts-ignore
+
   useEffect(() => {
     (async () => {
       await getInitialLocation();
-      // await getGeocodeAddress()
-      // await Location.watchPositionAsync({ distanceInterval: 1 }, async () => {
-      //   let { coords } = await Location.getCurrentPositionAsync({});
-      //   setLocation(coords);
-      // });
     })();
   }, []);
-
-  // useEffect(() => {
-  //   setRegion({
-  //     //@ts-ignore
-  //     latitude: location.latitude,
-  //     //@ts-ignore
-  //     longitude: location.longitude,
-  //     longitudeDelta: 0.045,
-  //     latitudeDelta: 0.045,
-  //   });
-  // }, [location]);
 
   useEffect(() => {
     console.log("ROOOUTE", route);
@@ -70,7 +52,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
           left: 60,
           right: 60,
         },
-        animated: true,
+        animated: false,
       });
     }
   }, [route]);
@@ -124,7 +106,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
               <MapViewDirections
                 origin={route.from}
                 destination={route.to}
-                apikey={"AIzaSyCk08TOprTNr1B9tIrztczcoqEcgtCJpVM"} // insert your API Key here
+                apikey={GOOGLE_API_KEY}
                 strokeWidth={4}
                 strokeColor="#fd4d4d"
                 onReady={(result) => {
@@ -156,10 +138,6 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
           )}
         </MapView>
         {route && <RouteDetailsPopUp details={routeDetails} />}
-        {/* <LocationButton
-          loading={loading}
-          setCurrentLocation={setCurrentLocation}
-        /> */}
       </View>
     );
   }
