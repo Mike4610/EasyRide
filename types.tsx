@@ -56,6 +56,7 @@ interface Location {
   name: string;
   description: string;
   place: Place;
+  details?: RouteDetails;
 }
 
 interface ScreenNavigationProps {
@@ -72,6 +73,5 @@ export {
   Place,
   Route,
   RouteDetails,
-  Location
+  Location,
 };
-
