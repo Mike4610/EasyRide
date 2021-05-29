@@ -5,26 +5,19 @@ import React, {
   useRef,
   LegacyRef,
 } from "react";
-<<<<<<< Updated upstream
+
 import { StyleSheet, Dimensions, View } from "react-native";
 import MapView from "react-native-maps";
-=======
-import { StyleSheet, Dimensions, View, Text } from "react-native";
-import MapView, { Camera } from "react-native-maps";
->>>>>>> Stashed changes
-import * as Location from "expo-location";
 import Loading from "../Loading/Loading";
 import Marker from "./Marker";
 import { RouteContext } from "../../context/RouteContext";
 import { Place, RouteDetails } from "../../types";
 import MapViewDirections from "react-native-maps-directions";
-<<<<<<< Updated upstream
 import RouteDetailsPopUp from "../PopUp/RouteDetailsPopUp";
+import * as Location from 'expo-location';
 import { GOOGLE_API_KEY } from "../../googleConfig";
-=======
-import Button from "../../components/Buttons/Button";
-import RouteDetailsPopUp from "../PopUp/RouteDetailsPopUp";
->>>>>>> Stashed changes
+
+
 interface Props {
   locationVisible: boolean;
 }
@@ -37,10 +30,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const { route } = useContext(RouteContext);
-<<<<<<< Updated upstream
-=======
-  const [region, setRegion] = useState(null);
->>>>>>> Stashed changes
+
   const map: LegacyRef<MapView> = useRef(null);
   const [routeDetails, setRouteDetails] = useState<RouteDetails>({
     from: "",
@@ -49,31 +39,14 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     distance: 0,
     duration: 0,
   });
-<<<<<<< Updated upstream
 
-=======
-  //@ts-ignore
->>>>>>> Stashed changes
   useEffect(() => {
     (async () => {
       await getInitialLocation();
     })();
   }, []);
 
-<<<<<<< Updated upstream
-=======
-  // useEffect(() => {
-  //   setRegion({
-  //     //@ts-ignore
-  //     latitude: location.latitude,
-  //     //@ts-ignore
-  //     longitude: location.longitude,
-  //     longitudeDelta: 0.045,
-  //     latitudeDelta: 0.045,
-  //   });
-  // }, [location]);
 
->>>>>>> Stashed changes
   useEffect(() => {
     console.log("ROOOUTE", route);
     if (route) {
@@ -170,13 +143,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
           )}
         </MapView>
         {route && <RouteDetailsPopUp details={routeDetails} />}
-<<<<<<< Updated upstream
-=======
-        {/* <LocationButton
-          loading={loading}
-          setCurrentLocation={setCurrentLocation}
-        /> */}
->>>>>>> Stashed changes
+
       </View>
     );
   }
