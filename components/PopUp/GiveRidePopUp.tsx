@@ -14,7 +14,9 @@ import { Dimensions } from "react-native";
 import SearchBar from "../SearchBar/SearchBar";
 import { Divider } from "react-native-paper";
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
-import DatePicker from "@react-native-community/datetimepicker";
+import DatePicker, {
+  AndroidEvent,
+} from "@react-native-community/datetimepicker";
 import Button from "../Buttons/Button";
 import { Picker } from "@react-native-picker/picker";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
@@ -29,27 +31,24 @@ interface Props {
 }
 
 const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
-  const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
-  const onChange = (event: any, selectedDate: Date) => {
-    const currentDate = selectedDate || date;
+  const onChange = (event: Event, selectedDate?: Date) => {
     setShow(Platform.OS === "ios");
-    setDate(currentDate);
+    if (selectedDate) {
+      setLocalRoute({
+        ...route,
+        date: selectedDate,
+      });
+
+      console.log(selectedDate);
+    }
   };
 
   const showMode = (currentMode: React.SetStateAction<string>) => {
     setShow(true);
     setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode("date");
-  };
-
-  const showTimepicker = () => {
-    showMode("time");
   };
 
   const [userData, setUserData] = useState<User>({
@@ -62,26 +61,27 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     vehicles: [],
   });
   const [getValue] = useAsyncStorage();
-  const [vehicle, setVehicle] = useState<Vehicle>({
-    brand: "",
-    model: "",
-    licensePlate: "",
-    seats: "",
+
+
+
+  const [route, setLocalRoute] = useState<Route>({
+    from: {} as Place,
+    to: {} as Place,
+    date: new Date(),
+    duration: 0,
+    distance: 0,
+    vehicle: {} as Vehicle,
   });
-  const from: Place = {
-    latitude: 0,
-    longitude: 0,
-    description: "",
-  };
-  const to: Place = {
-    latitude: 0,
-    longitude: 0,
-    description: "",
-  };
-  const [route] = useState<Route>({
-    from,
-    to,
-  });
+
+  useEffect(() => {
+    console.log(route);
+  }, [route]);
+
+  useEffect(() => {
+    console.log("User Data");
+    setLocalRoute({ ...route, vehicle: userData.vehicles[0] });
+  }, [userData]);
+
   const { setRoute } = useContext(RouteContext);
 
   // const [date, setDate] = useState<Date>(new Date());
@@ -185,18 +185,14 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                 <View style={styles.datePickerContainer}>
                   <DatePicker
                     display="default"
-                    value={date}
+                    value={route.date}
                     mode="date"
                     style={styles.datePicker}
-                    onChange={(e, d) => {
-                      if (d !== undefined) {
-                        setDate(d);
-                      }
-                    }}
+                    onChange={onChange}
                   />
                   <DateTimePicker
                     testID="dateTimePicker"
-                    value={date}
+                    value={route.date}
                     mode={"time"}
                     is24Hour={true}
                     display="default"
@@ -227,15 +223,17 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     marginBottom: 30,
                   }}
                   itemStyle={{ height: 50 }}
-                  selectedValue={vehicle}
-                  onValueChange={(itemValue) => setVehicle(itemValue)}
+                  selectedValue={route.vehicle}
+                  onValueChange={(itemValue) =>
+                    setLocalRoute({ ...route, vehicle: itemValue })
+                  }
                 >
-                  {userData.vehicles.map(({ brand, model, licensePlate }) => {
+                  {userData.vehicles.map((vehicle: Vehicle) => {
                     return (
                       <Picker.Item
-                        key={licensePlate}
-                        label={brand + " " + model}
-                        value={brand + " " + model}
+                        key={vehicle.licensePlate}
+                        label={vehicle.brand + " " + vehicle.model}
+                        value={vehicle}
                       />
                     );
                   })}

@@ -75,7 +75,8 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
         <GiveRidePopUp
           giveVisible={giveVisible}
           onDismiss={() => {
-            setGiveVisible(false);
+            setGiveVisible(false)
+            setVisible(false);
           }}
         />
         <RequestRidePopUp

@@ -48,8 +48,12 @@ interface RouteDetails {
   duration: number;
 }
 interface Route {
-  from?: Place | null;
-  to?: Place | null;
+  from?: Place;
+  to?: Place;
+  date: Date;
+  distance: number;
+  duration: number;
+  vehicle?: Vehicle;
 }
 
 interface Location {

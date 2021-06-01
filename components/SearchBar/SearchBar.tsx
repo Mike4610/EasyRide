@@ -1,9 +1,12 @@
 import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import {
+  GooglePlaceData,
+  GooglePlaceDetail,
+  GooglePlacesAutocomplete,
+} from "react-native-google-places-autocomplete";
 import { Place } from "../../types";
 import { GOOGLE_API_KEY } from "../../googleConfig";
-
 
 interface Props {
   visible: boolean;
@@ -19,6 +22,24 @@ const SearchBar: React.FC<Props> = ({
   from,
   to,
 }) => {
+  const setLocation = (
+    data: GooglePlaceData,
+    details: GooglePlaceDetail | null
+  ) => {
+    console.log(details?.formatted_address);
+    if (details?.description === "Home" || details?.description === "Work") {
+    } else {
+      if (from) {
+        from.latitude = details?.geometry.location.lat || 0;
+        from.longitude = details?.geometry.location.lng || 0;
+        from.description = details?.formatted_address;
+      } else if (to) {
+        to.latitude = details?.geometry.location.lat || 0;
+        to.longitude = details?.geometry.location.lng || 0;
+        to.description = details?.formatted_address;
+      }
+    }
+  };
   return (
     <View style={styles.container}>
       <GooglePlacesAutocomplete
@@ -32,24 +53,7 @@ const SearchBar: React.FC<Props> = ({
         isRowScrollable={true}
         fetchDetails={true}
         textInputHide={visible ? false : true}
-        onPress={(data, details = null) => {
-          console.log(details?.formatted_address);
-          if (
-            details?.description === "Home" ||
-            details?.description === "Work"
-          ) {
-          } else {
-            if (from) {
-              from.latitude = details?.geometry.location.lat || 0;
-              from.longitude = details?.geometry.location.lng || 0;
-              from.description = details?.formatted_address;
-            } else if (to) {
-              to.latitude = details?.geometry.location.lat || 0;
-              to.longitude = details?.geometry.location.lng || 0;
-              to.description = details?.formatted_address;
-            }
-          }
-        }}
+        onPress={setLocation}
         styles={styles}
         query={{
           key: GOOGLE_API_KEY,
