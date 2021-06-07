@@ -45,10 +45,9 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     }
   };
 
-  // const showMode = (currentMode: React.SetStateAction<string>) => {
-  //   setShow(true);
-  //   setMode(currentMode);
-  // };
+  const [titleDate, setTitleDate] = useState("Select Time and Date");
+  const [titleD, setTitleD] = useState("");
+  const [titleTime, setTitleTime] = useState("");
 
   const [userData, setUserData] = useState<User>({
     id: "",
@@ -145,6 +144,10 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     });
   };
 
+  useEffect(() => {
+    setTitleDate("DATE : " + titleD + " TIME : " + titleTime);
+  }, [titleTime]);
+
   return (
     <Provider>
       <Portal>
@@ -234,23 +237,76 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                   <AntDesign name="calendar" size={24} color="#fd4d4d" />
                   Date
                 </Text>
+
                 <View style={styles.datePickerContainer}>
-                  <DatePicker
-                    display="default"
-                    value={routeDetails.date}
-                    mode="date"
-                    style={styles.datePicker}
-                    onChange={onChange}
-                  />
-                  <DateTimePicker
-                    testID="dateTimePicker"
-                    value={routeDetails.date}
-                    mode={"time"}
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChange}
-                    style={styles.datePicker}
-                  />
+                  {Platform.OS === "ios" && (
+                    <DatePicker
+                      display="default"
+                      value={routeDetails.date}
+                      mode="date"
+                      style={styles.datePicker}
+                      onChange={onChange}
+                    />
+                  )}
+
+                  {Platform.OS === "android" && (
+                    <TouchableOpacity
+                      style={styles.textInput}
+                      onPress={() => setShow(!show)}
+                    >
+                      <Text style={{ textAlign: "center" }}>{titleDate}</Text>
+                    </TouchableOpacity>
+                  )}
+                  {show && (
+                    <DatePicker
+                      display="default"
+                      style={styles.datePickerStyle}
+                      value={new Date()}
+                      mode="time"
+                      onChange={(e, d) => {
+                        setShow(false);
+                        if (d !== undefined) {
+                          setRouteDetails({ ...routeDetails, date: d });
+                          setTitleTime(d.toLocaleTimeString());
+                        }
+                      }}
+                    />
+                  )}
+
+                  {Platform.OS === "ios" && (
+                    <DateTimePicker
+                      testID="dateTimePicker"
+                      value={routeDetails.date}
+                      mode={"time"}
+                      is24Hour={true}
+                      display="default"
+                      onChange={onChange}
+                      style={styles.datePicker}
+                    />
+                  )}
+
+                  {Platform.OS === "android" && (
+                    <TouchableOpacity
+                      style={styles.textInput}
+                      onPress={() => setShow(!show)}
+                    ></TouchableOpacity>
+                  )}
+
+                  {show && (
+                    <DatePicker
+                      display="default"
+                      style={styles.datePickerStyle}
+                      value={new Date()}
+                      mode="date"
+                      onChange={(e, d) => {
+                        setShow(false);
+                        if (d !== undefined) {
+                          setRouteDetails({ ...routeDetails, date: d });
+                          setTitleD(d.toLocaleDateString());
+                        }
+                      }}
+                    />
+                  )}
                 </View>
               </View>
               <Divider style={{ backgroundColor: "#151a21", zIndex: -1 }} />
@@ -373,5 +429,21 @@ const styles = StyleSheet.create({
     width: 185,
     alignSelf: "center",
     marginBottom: -35,
+  },
+  textInput: {
+    flex: 1,
+    height: 40,
+    borderBottomWidth: 1,
+    borderColor: "#fd4d4d",
+    color: "black",
+    padding: 12,
+  },
+  datePickerStyle: {
+    flex: 1,
+    height: 40,
+    borderBottomWidth: 1,
+    borderColor: "#fd4d4d",
+    color: "black",
+    padding: 12,
   },
 });

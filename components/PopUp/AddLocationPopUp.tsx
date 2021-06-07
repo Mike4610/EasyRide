@@ -4,9 +4,8 @@ import { Picker } from "@react-native-picker/picker";
 import { Dialog, Portal, Provider, Snackbar } from "react-native-paper";
 import Button from "../../components/Buttons/Button";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import carList from "../../car-list.json";
-import { Location } from "../../types";
-import { licensePlateValidator } from "../../utils";
+import { Location, Place } from "../../types";
+import SearchBar from "../SearchBar/SearchBar";
 interface Props {
   visible: boolean;
   onDismiss: () => void;
@@ -19,40 +18,22 @@ const AddLocationPopUp: React.FC<Props> = ({
   handleRegisterLocation,
 }) => {
   //PICKER
-//   const seatNumbers = ["2", "3", "4", "5", "6", "7", "8"];
-//   const [modelList, setModelList] = useState(carList[0].models);
-//   const [vehicle, setVehicle] = useState({
-//     brand: carList[0].brand,
-//     model: carList[0].models[0],
-//     seats: "2",
-//     licensePlate: "",
-//   });
+  const [location, setLocation] = useState({
+    name: "",
+    place: {} as Place,
+  });
   const [snackBarVisible, setSnackBarVisible] = useState(false);
 
   const dismissSnackBar = () => {
     setSnackBarVisible(false);
   };
 
-//   const handleBrandChange = (itemValue: any) => {
-//     carList.forEach(({ brand, models }) => {
-//       if (brand === itemValue) {
-//         setVehicle({
-//           ...vehicle,
-//           brand: brand,
-//           model: models[0],
-//         });
-
-//         setModelList(models);
-//       }
-//     });
-//   };
-
   const registerLocation = () => {
-    // if (licensePlateValidator(vehicle.licensePlate) === "") {
-    //   handleRegisterLocation(location);
-    // }else{
-    //   setSnackBarVisible(true)
-    // }
+    if (location.name != "" && Object.keys(location.place).length != 0) {
+      handleRegisterLocation(location);
+    } else {
+      setSnackBarVisible(true);
+    }
   };
 
   return (
@@ -67,7 +48,37 @@ const AddLocationPopUp: React.FC<Props> = ({
         >
           <Dialog.Content>
             <KeyboardAwareScrollView style={{ height: 370 }}>
-              
+              <View style={styles.pickerContainer}>
+                <Text style={styles.popup_title}>Name</Text>
+                <TextInput
+                  placeholder="Home"
+                  placeholderTextColor="#151a21"
+                  onChangeText={(text) => {
+                    setLocation({ ...location, name: text });
+                  }}
+                  value={location.name}
+                  style={styles.textInput}
+                  autoCapitalize="none"
+                />
+              </View>
+              <View style={styles.pickerContainer}>
+                <Text style={styles.popup_title}>Location</Text>
+                <View
+                  style={{
+                    width: 400,
+                    alignSelf: "center",
+                    zIndex: 1,
+                    position: "absolute"
+                  }}
+                >
+                  <SearchBar // O componente já vem com o styling fdd
+                    // from={route.from}
+                    placeholder="Location"
+                    visible={true}
+                  ></SearchBar>
+                </View>
+                
+              </View>
             </KeyboardAwareScrollView>
             <View style={styles.buttons}>
               <Button
@@ -92,9 +103,6 @@ const AddLocationPopUp: React.FC<Props> = ({
             },
           }}
         >
-          {/* <Text style={{ fontSize: 15, fontWeight: "bold", color: "white" }}>
-            Invalid license plate!
-          </Text> */}
         </Snackbar>
       </Portal>
     </Provider>
