@@ -83,8 +83,10 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   }, [userData]);
 
   const { setRoute } = useContext(RouteContext);
-
-  // const [date, setDate] = useState<Date>(new Date());
+  const [titleDate, setTitleDate] = useState("Select Time and Date");
+  const [titleD, setTitleD] = useState("");
+  const [titleTime, setTitleTime] = useState("");
+ // const [date, setDate] = useState<Date>(new Date());
 
   useEffect(() => {
     (async () => {
@@ -92,6 +94,11 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
       setUserData(user);
     })();
   }, []);
+
+  useEffect(() => {
+    setTitleDate("DATE : "+titleD + " TIME : " + titleTime );
+  }, [titleTime]);
+  
 
   return (
     <Provider>
@@ -182,7 +189,9 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                   <AntDesign name="calendar" size={24} color="#fd4d4d" />
                   Date
                 </Text>
+                
                 <View style={styles.datePickerContainer}>
+                {Platform.OS === "ios" && (
                   <DatePicker
                     display="default"
                     value={route.date}
@@ -190,6 +199,35 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     style={styles.datePicker}
                     onChange={onChange}
                   />
+
+                   )}
+
+                {Platform.OS === "android" && (
+                <TouchableOpacity
+                style={styles.textInput}
+                onPress={() => setShow(!show)}
+               >
+                <Text style={{textAlign:"center"}} >{titleDate}</Text>
+              </TouchableOpacity>
+                  )}
+                {show && (
+              <DatePicker
+                display="default"
+                style={styles.datePickerStyle}
+                value={new Date()}
+                mode="time"
+                onChange={(e, d) => {
+                  setShow(false);
+                  if (d !== undefined) {
+                    setLocalRoute({ ...route, date: d });
+                    setTitleTime(d.toLocaleTimeString());
+                  }
+                }}
+              />
+            )}
+
+
+                {Platform.OS === "ios" && (
                   <DateTimePicker
                     testID="dateTimePicker"
                     value={route.date}
@@ -199,6 +237,34 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     onChange={onChange}
                     style={styles.datePicker}
                   />
+                  )}
+
+                {Platform.OS === "android" && (
+                <TouchableOpacity
+                style={styles.textInput}
+                onPress={() => setShow(!show)}
+               >
+              </TouchableOpacity>
+                  )}
+
+                {show && (
+              <DatePicker
+                display="default"
+                style={styles.datePickerStyle}
+                value={new Date()}
+                mode="date"
+                onChange={(e, d) => {
+                  setShow(false);
+                  if (d !== undefined) {
+                    setLocalRoute({ ...route, date: d });
+                    setTitleD(d.toLocaleDateString())
+
+                  
+                  }
+                }}
+              />
+            )}      
+
                 </View>
               </View>
               <Divider style={{ backgroundColor: "#151a21", zIndex: -1 }} />
@@ -283,4 +349,21 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: -35,
   },
+  textInput: {
+    flex: 1,
+    height: 40,
+    borderBottomWidth: 1,
+    borderColor: "#fd4d4d",
+    color: "black",
+    padding: 12,
+  },
+  datePickerStyle: {
+    flex: 1,
+    height: 40,
+    borderBottomWidth: 1,
+    borderColor: "#fd4d4d",
+    color: "black",
+    padding: 12,
+  },
+  
 });
