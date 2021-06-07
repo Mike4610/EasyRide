@@ -271,7 +271,11 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
           setVisible(false);
         }}
       />
-      <LoadingPopUp visible={loadingVisible} {...loadingState} />
+      <LoadingPopUp
+        message={"Uploading profile picture..."}
+        visible={loadingVisible}
+        {...loadingState}
+      />
     </SafeAreaView>
   );
 };

@@ -16,6 +16,10 @@ import MapViewDirections from "react-native-maps-directions";
 import RouteDetailsPopUp from "../PopUp/RouteDetailsPopUp";
 import * as Location from "expo-location";
 import { GOOGLE_API_KEY } from "../../googleConfig";
+import LoadingPopUp from "../PopUp/LoadingPopUp";
+import { sleep } from "../../utils";
+import firebase from "firebase/app";
+import "firebase/firestore";
 
 interface Props {
   locationVisible: boolean;
@@ -29,6 +33,11 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const { route } = useContext(RouteContext);
+  const [loadingState, setLoadingState] = useState({
+    loading: false,
+    correct: false,
+    error: false,
+  });
 
   const map: LegacyRef<MapView> = useRef(null);
   const [routeDetails, setRouteDetails] = useState<Route | null>(null);
@@ -48,6 +57,20 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     console.log("RouteDetails", routeDetails);
     traceRoute();
   }, [routeDetails]);
+
+  const confirmRide = async () => {
+    setRouteDetails(null);
+    setVisible(true);
+    setLoadingState({ ...loadingState, loading: true });
+    try {
+      await firebase.firestore().collection("rides").add(routeDetails);
+    } catch (error) {
+      console.error(error);
+    }
+    setLoadingState({ ...loadingState, loading: false, correct: true });
+    sleep(3000);
+    setVisible(false);
+  };
 
   const traceRoute = () => {
     if (routeDetails?.from && routeDetails.to)
@@ -112,7 +135,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
           // showsTraffic={true}
           showsUserLocation={true}
           showsMyLocationButton={true}
-          style={route ? styles.halfScreenMap : styles.fullScreenMap}
+          style={routeDetails ? styles.halfScreenMap : styles.fullScreenMap}
         >
           {routeDetails && (
             <>
@@ -150,7 +173,14 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
             </>
           )}
         </MapView>
-        {routeDetails && <RouteDetailsPopUp details={routeDetails} />}
+        {routeDetails && (
+          <RouteDetailsPopUp confirmRide={confirmRide} details={routeDetails} />
+        )}
+        <LoadingPopUp
+          {...loadingState}
+          visible={visible}
+          message={"Publishing your ride..."}
+        />
       </View>
     );
   }

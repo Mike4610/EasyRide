@@ -14,25 +14,17 @@ import "firebase/firestore";
 
 interface Props {
   details: Route;
+  confirmRide: () => void;
 }
 
-const RouteDetailsPopUp: React.FC<Props> = ({ details }) => {
-
-  const publishRideHandler = async () => {
-    try {
-      await firebase.firestore().collection("rides").add(details);
-    } catch (error) {
-      console.error(error);
-    }
-    details = null
-  };
-
+const RouteDetailsPopUp: React.FC<Props> = ({ details, confirmRide }) => {
   return (
     <View
       style={{
         height: Dimensions.get("window").height / 2,
         backgroundColor: "white",
         padding: 20,
+        zIndex: 1,
       }}
     >
       <View>
@@ -82,11 +74,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({ details }) => {
         </Text>
       </View>
       <View>
-        <Button
-          text={"Confirm"}
-          full={true}
-          press={publishRideHandler}
-        ></Button>
+        <Button text={"Confirm"} full={true} press={confirmRide}></Button>
       </View>
     </View>
   );
