@@ -54,6 +54,7 @@ interface Route {
   distance: number;
   duration: number;
   vehicle?: Vehicle;
+  availableSeats?: string;
 }
 
 interface Location {

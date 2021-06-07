@@ -24,7 +24,6 @@ import { Place, User, Vehicle } from "../../types";
 import { Route } from "../../types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { RouteContext } from "../../context/RouteContext";
-import { getDistance, getPreciseDistance } from "geolib";
 interface Props {
   giveVisible: boolean;
   onDismiss: () => void;
@@ -37,8 +36,8 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   const onChange = (event: Event, selectedDate?: Date) => {
     setShow(Platform.OS === "ios");
     if (selectedDate) {
-      setLocalRoute({
-        ...route,
+      setRouteDetails({
+        ...routeDetails,
         date: selectedDate,
       });
 
@@ -46,10 +45,10 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     }
   };
 
-  const showMode = (currentMode: React.SetStateAction<string>) => {
-    setShow(true);
-    setMode(currentMode);
-  };
+  // const showMode = (currentMode: React.SetStateAction<string>) => {
+  //   setShow(true);
+  //   setMode(currentMode);
+  // };
 
   const [userData, setUserData] = useState<User>({
     id: "",
@@ -62,36 +61,89 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   });
   const [getValue] = useAsyncStorage();
 
-
-
-  const [route, setLocalRoute] = useState<Route>({
+  const initialState: Route = {
     from: {} as Place,
     to: {} as Place,
     date: new Date(),
     duration: 0,
     distance: 0,
     vehicle: {} as Vehicle,
+    availableSeats: "",
+  };
+
+  const [vehicle, setVehicle] = useState({
+    label: "",
+    seats: [] as string[] | undefined,
   });
 
+  const [routeDetails, setRouteDetails] = useState<Route>(initialState);
+
+  const { route, setRoute } = useContext(RouteContext);
+
   useEffect(() => {
-    console.log(route);
+    setRouteDetails({
+      from: {} as Place,
+      to: {} as Place,
+      date: new Date(),
+      duration: 0,
+      distance: 0,
+      vehicle: userData?.vehicles[0],
+      availableSeats: String(parseInt(userData.vehicles[0]?.seats) - 1),
+    });
+    setVehicle({
+      label: userData.vehicles[0]?.brand + " " + userData.vehicles[0]?.model,
+      seats: getSeatNumber(userData.vehicles[0]?.seats),
+    });
+    console.log("give ride route mudou");
   }, [route]);
 
   useEffect(() => {
-    console.log("User Data");
-    setLocalRoute({ ...route, vehicle: userData.vehicles[0] });
+    setVehicle({
+      label: userData.vehicles[0]?.brand + " " + userData.vehicles[0]?.model,
+      seats: getSeatNumber(userData.vehicles[0]?.seats),
+    });
+    setRouteDetails({
+      ...routeDetails,
+      vehicle: userData.vehicles[0],
+      availableSeats: String(parseInt(userData.vehicles[0]?.seats) - 1),
+    });
   }, [userData]);
-
-  const { setRoute } = useContext(RouteContext);
-
-  // const [date, setDate] = useState<Date>(new Date());
 
   useEffect(() => {
     (async () => {
       const user = await getValue();
+
       setUserData(user);
     })();
   }, []);
+
+  const getSeatNumber = (s: string) => {
+    if (s !== undefined) {
+      let availableSeats: number = parseInt(s);
+      let seatsArray = [...Array(availableSeats)].map((item, index) =>
+        String(index + 1)
+      );
+      seatsArray.pop();
+      seatsArray.reverse();
+      return seatsArray;
+    }
+  };
+
+  const chooseVehicle = (car: string) => {
+    userData.vehicles.map((vehicle: Vehicle) => {
+      if (vehicle.brand + " " + vehicle.model === car) {
+        setVehicle({
+          label: vehicle.brand + " " + vehicle.model,
+          seats: getSeatNumber(vehicle.seats),
+        });
+        setRouteDetails({
+          ...routeDetails,
+          vehicle: vehicle,
+          availableSeats: String(parseInt(vehicle.seats) - 1),
+        });
+      }
+    });
+  };
 
   return (
     <Provider>
@@ -146,7 +198,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     }}
                   >
                     <SearchBar
-                      from={route.from}
+                      location={routeDetails.from}
                       placeholder="From"
                       visible={true}
                     ></SearchBar>
@@ -160,7 +212,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     }}
                   >
                     <SearchBar
-                      to={route.to}
+                      location={routeDetails.to}
                       placeholder="To"
                       visible={true}
                     ></SearchBar>
@@ -185,14 +237,14 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                 <View style={styles.datePickerContainer}>
                   <DatePicker
                     display="default"
-                    value={route.date}
+                    value={routeDetails.date}
                     mode="date"
                     style={styles.datePicker}
                     onChange={onChange}
                   />
                   <DateTimePicker
                     testID="dateTimePicker"
-                    value={route.date}
+                    value={routeDetails.date}
                     mode={"time"}
                     is24Hour={true}
                     display="default"
@@ -223,17 +275,56 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     marginBottom: 30,
                   }}
                   itemStyle={{ height: 50 }}
-                  selectedValue={route.vehicle}
-                  onValueChange={(itemValue) =>
-                    setLocalRoute({ ...route, vehicle: itemValue })
-                  }
+                  selectedValue={vehicle.label}
+                  onValueChange={(itemValue) => chooseVehicle(itemValue)}
                 >
                   {userData.vehicles.map((vehicle: Vehicle) => {
                     return (
                       <Picker.Item
                         key={vehicle.licensePlate}
                         label={vehicle.brand + " " + vehicle.model}
-                        value={vehicle}
+                        value={vehicle.brand + " " + vehicle.model}
+                      />
+                    );
+                  })}
+                </Picker>
+              </View>
+              <Divider style={{ backgroundColor: "#151a21", zIndex: -1 }} />
+              <View style={{ zIndex: -1 }}>
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 22,
+                    alignSelf: "center",
+                    marginTop: 25,
+                    marginBottom: 20,
+                  }}
+                >
+                  <AntDesign name="car" size={24} color="#fd4d4d" />
+                  Avaiable Seats
+                </Text>
+                <Picker
+                  style={{
+                    width: 250,
+                    height: 44,
+                    alignSelf: "center",
+                    marginBottom: 30,
+                  }}
+                  itemStyle={{ height: 50 }}
+                  selectedValue={routeDetails.availableSeats}
+                  onValueChange={(itemValue) =>
+                    setRouteDetails({
+                      ...routeDetails,
+                      availableSeats: itemValue,
+                    })
+                  }
+                >
+                  {vehicle.seats?.map((seatNumber) => {
+                    return (
+                      <Picker.Item
+                        key={seatNumber}
+                        label={String(seatNumber)}
+                        value={String(seatNumber)}
                       />
                     );
                   })}
@@ -243,8 +334,8 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
             <View>
               <Button
                 press={() => {
-                  console.log(route);
-                  setRoute(route);
+                  console.log(routeDetails);
+                  setRoute(routeDetails);
                   onDismiss();
                 }}
                 full={true}

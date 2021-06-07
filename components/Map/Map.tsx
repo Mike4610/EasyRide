@@ -32,7 +32,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const { route } = useContext(RouteContext);
+  const { route, setRoute } = useContext(RouteContext);
   const [loadingState, setLoadingState] = useState({
     loading: false,
     correct: false,
@@ -50,7 +50,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
 
   useEffect(() => {
     setRouteDetails(route);
-    console.log("ROOOUTE", route);
+    console.log("Map route mudou", route);
   }, [route]);
 
   useEffect(() => {
@@ -59,16 +59,19 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   }, [routeDetails]);
 
   const confirmRide = async () => {
-    setRouteDetails(null);
+    let routeAux = {} as Route | null;
+    routeAux = routeDetails;
+    setRoute(null);
     setVisible(true);
     setLoadingState({ ...loadingState, loading: true });
     try {
-      await firebase.firestore().collection("rides").add(routeDetails);
+      await firebase.firestore().collection("rides").add(routeAux);
     } catch (error) {
       console.error(error);
     }
+
     setLoadingState({ ...loadingState, loading: false, correct: true });
-    sleep(3000);
+    await sleep(2000);
     setVisible(false);
   };
 
@@ -196,7 +199,7 @@ const styles = StyleSheet.create({
   },
   halfScreenMap: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height * 0.55,
+    height: Dimensions.get("window").height * 0.5,
     zIndex: -40,
   },
 });

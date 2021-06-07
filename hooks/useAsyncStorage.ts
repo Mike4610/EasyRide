@@ -8,7 +8,6 @@ export const useAsyncStorage = () => {
         const user = JSON.parse(value);
         return key !== undefined ? user[key] : user;
       }
-      console.log("NULL")
       return null;
     } catch (error) {
       console.error(error);
