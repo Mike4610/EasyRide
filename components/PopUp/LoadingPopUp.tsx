@@ -13,6 +13,7 @@ interface Props {
   loading?: boolean;
   error?: boolean;
   correct?: boolean;
+  message?: string;
 }
 
 const LoadingPopUp: React.FC<Props> = ({
@@ -20,6 +21,7 @@ const LoadingPopUp: React.FC<Props> = ({
   correct,
   error,
   visible,
+  message,
 }) => {
   return (
     <Provider>
@@ -48,7 +50,7 @@ const LoadingPopUp: React.FC<Props> = ({
             error && <Feather name="x" size={34} color={"#fd4d4d"} />
           )}
           <Text style={{ fontSize: 14, color: "#151a21", marginTop: 30 }}>
-            Uploading profile picture...
+            {message}
           </Text>
         </Dialog>
       </Portal>
