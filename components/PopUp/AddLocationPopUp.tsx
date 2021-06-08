@@ -32,9 +32,14 @@ const AddLocationPopUp: React.FC<Props> = ({
     if (location.name != "" && Object.keys(location.place).length != 0) {
       handleRegisterLocation(location);
     } else {
+      console.log(location);
       setSnackBarVisible(true);
     }
   };
+
+  useEffect(() => {
+    console.log(location.place);
+  }, [location.place]);
 
   return (
     <Provider>
@@ -61,24 +66,27 @@ const AddLocationPopUp: React.FC<Props> = ({
                   autoCapitalize="none"
                 />
               </View>
-              <View style={styles.pickerContainer}>
-                <Text style={styles.popup_title}>Location</Text>
-                <View
-                  style={{
-                    width: 400,
-                    alignSelf: "center",
-                    zIndex: 1,
-                    position: "absolute"
-                  }}
-                >
-                  <SearchBar // O componente já vem com o styling fdd
-                    // from={route.from}
-                    placeholder="Location"
-                    visible={true}
-                  ></SearchBar>
+
+              <View style={{ height: 500 }}>   
+                <View style={styles.pickerContainer}>
+                  <Text style={styles.popup_title}>Location</Text>
+                  <View
+                    style={{
+                      width: 400,
+                      alignSelf: "center",
+                      zIndex: 1,
+                      position: "absolute",
+                    }}
+                  >
+                    <SearchBar // O componente já vem com o styling fdd
+                      from={location.place}
+                      placeholder="Location"
+                      visible={true}
+                    ></SearchBar>
+                  </View>
                 </View>
-                
               </View>
+
             </KeyboardAwareScrollView>
             <View style={styles.buttons}>
               <Button
@@ -103,6 +111,9 @@ const AddLocationPopUp: React.FC<Props> = ({
             },
           }}
         >
+          <Text style={{ fontSize: 15, fontWeight: "bold", color: "white" }}>
+            Unable to set new Location!
+          </Text>
         </Snackbar>
       </Portal>
     </Provider>

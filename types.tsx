@@ -58,12 +58,9 @@ interface Route {
   driverId?: string;
   passengersId?: string[];
 }
-
 interface Location {
   name: string;
-  description: string;
   place: Place;
-  details?: RouteDetails;
 }
 
 interface ScreenNavigationProps {
