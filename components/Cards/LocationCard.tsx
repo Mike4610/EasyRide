@@ -35,17 +35,13 @@ const LocationCard: React.FC<Props> = ({ location, handleDeleteLocation }) => {
           }}
         >
           <Text style={styles.footer_title}>
-            {location.description}
+            {location.name}
           </Text>
         </View>
 
         <View style={styles.info}>
-          <AntDesign name="idcard" size={28} color="#fd4d4d" />
-          <Text style={styles.footer_text}>{location.place}</Text>
-        </View>
-        <View style={styles.info}>
-          <Ionicons name="person-outline" size={24} color="#fd4d4d" />
-          <Text style={styles.footer_text}>{location.place}</Text>
+          <AntDesign name="enviromento" size={28} color="#fd4d4d" />
+          <Text style={styles.textDescription}>{location.place.description}</Text>
         </View>
       </View>
     </Swipeable>
@@ -58,6 +54,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#151a21",
+  },
+  textDescription: {
+    fontSize: 14,
+    color: "#151a21",
+    // fontWeight: "bold",
+    marginLeft: 5,
   },
   footer: {
     backgroundColor: "white",

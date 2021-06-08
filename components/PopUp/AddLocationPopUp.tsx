@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, Animated } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Animated,
+  ScrollView,
+  Dimensions,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Dialog, Portal, Provider, Snackbar } from "react-native-paper";
 import Button from "../../components/Buttons/Button";
@@ -32,7 +40,7 @@ const AddLocationPopUp: React.FC<Props> = ({
     if (location.name != "" && Object.keys(location.place).length != 0) {
       handleRegisterLocation(location);
     } else {
-      console.log(location);
+      console.log(location.place.latitude);
       setSnackBarVisible(true);
     }
   };
@@ -52,7 +60,10 @@ const AddLocationPopUp: React.FC<Props> = ({
           }}
         >
           <Dialog.Content>
-            <KeyboardAwareScrollView style={{ height: 370 }}>
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              style={{ height: 370 }}
+            >
               <View style={styles.pickerContainer}>
                 <Text style={styles.popup_title}>Name</Text>
                 <TextInput
@@ -67,27 +78,26 @@ const AddLocationPopUp: React.FC<Props> = ({
                 />
               </View>
 
-              <View style={{ height: 500 }}>   
+              <View style={{ height: 400 }}>
                 <View style={styles.pickerContainer}>
                   <Text style={styles.popup_title}>Location</Text>
                   <View
                     style={{
-                      width: 400,
+                      width: 380,
                       alignSelf: "center",
-                      zIndex: 1,
+                      // zIndex: 1,
                       position: "absolute",
                     }}
                   >
-                    <SearchBar // O componente já vem com o styling fdd
-                      from={location.place}
+                    <SearchBar
+                      location={location.place}
                       placeholder="Location"
                       visible={true}
                     ></SearchBar>
                   </View>
                 </View>
               </View>
-
-            </KeyboardAwareScrollView>
+            </ScrollView>
             <View style={styles.buttons}>
               <Button
                 full={true}
