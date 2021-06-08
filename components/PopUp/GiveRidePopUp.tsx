@@ -86,6 +86,8 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
       date: new Date(),
       duration: 0,
       distance: 0,
+      driverId: userData.id,
+      passengersId: [] as string[],
       vehicle: userData?.vehicles[0],
       availableSeats: String(parseInt(userData.vehicles[0]?.seats) - 1),
     });
@@ -103,6 +105,8 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     });
     setRouteDetails({
       ...routeDetails,
+      driverId: userData.id,
+      passengersId: [] as string[],
       vehicle: userData.vehicles[0],
       availableSeats: String(parseInt(userData.vehicles[0]?.seats) - 1),
     });
