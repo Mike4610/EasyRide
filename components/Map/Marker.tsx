@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Image, View, Text } from "react-native";
 import { LatLng, MarkerAnimated } from "react-native-maps";
 import { FontAwesome, Entypo, Ionicons } from "@expo/vector-icons";
+import { Route } from "../../types";
 
 interface Props {
   location: LatLng;
   visible: boolean;
   type: number;
+  details?: Route;
 }
 
-const Marker: React.FC<Props> = ({ location, visible, type }) => {
+const Marker: React.FC<Props> = ({ location, visible, type, details }) => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
@@ -19,11 +21,11 @@ const Marker: React.FC<Props> = ({ location, visible, type }) => {
   return (
     <View>
       {type === 1 ? (
-        <MarkerAnimated coordinate={location} anchor={{ x: 0.35, y: 0.32 }}>
+        <MarkerAnimated onPress={()=>{console.log(details)}} coordinate={location} anchor={{ x: 0.35, y: 0.32 }}>
           <Ionicons name="car" size={30} color="#151a21" />
         </MarkerAnimated>
       ) : type === 2 ? (
-        <MarkerAnimated coordinate={location} anchor={{ x: 0.35, y: 0.32 }}>
+        <MarkerAnimated onPress={()=>{console.log("PRESSSSS")}} coordinate={location} anchor={{ x: 0.35, y: 0.32 }}>
           <Entypo name="location-pin" size={30} color="#151a21" />
         </MarkerAnimated>
       ) : (

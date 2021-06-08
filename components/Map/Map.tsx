@@ -6,12 +6,12 @@ import React, {
   LegacyRef,
 } from "react";
 
-import { StyleSheet, Dimensions, View } from "react-native";
+import { StyleSheet, Dimensions, View, TouchableOpacity } from "react-native";
 import MapView, { LatLng } from "react-native-maps";
 import Loading from "../Loading/Loading";
 import Marker from "./Marker";
 import { RouteContext } from "../../context/RouteContext";
-import { Place, Route, Vehicle } from "../../types";
+import { Place, Route, User, Vehicle } from "../../types";
 import MapViewDirections from "react-native-maps-directions";
 import RouteDetailsPopUp from "../PopUp/RouteDetailsPopUp";
 import * as Location from "expo-location";
@@ -43,51 +43,62 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   const map: LegacyRef<MapView> = useRef(null);
   const [routeDetails, setRouteDetails] = useState<Route | null>(null);
   const [currentRides, setCurrentRides] = useState<Route[] | null>(null);
+  const [userData, setUserData] = useState<User>({} as User);
   const [getUser] = useAsyncStorage();
 
   useEffect(() => {
     (async () => {
       await getInitialLocation();
-      await fetchUserRides();
+      const user = await getUser();
+      setUserData(user);
     })();
   }, []);
 
   useEffect(() => {
     setRouteDetails(route);
-    console.log("Map route mudou", route);
   }, [route]);
 
   useEffect(() => {
-    console.log("RouteDetails", routeDetails);
-    fitToCoordinates([
-      {
-        latitude: routeDetails?.from?.latitude,
-        longitude: routeDetails?.from?.longitude,
-      },
-      {
-        latitude: routeDetails?.to?.latitude,
-        longitude: routeDetails?.to?.longitude,
-      },
-    ]);
+    (async () => {
+      await fetchUserRides(userData.id);
+    })();
+  }, [userData]);
+
+  useEffect(() => {
+    if (
+      routeDetails?.from.latitude !== undefined &&
+      routeDetails?.to.latitude !== undefined
+    )
+      fitToCoordinates([
+        {
+          latitude: routeDetails?.from?.latitude,
+          longitude: routeDetails?.from?.longitude,
+        },
+        {
+          latitude: routeDetails?.to?.latitude,
+          longitude: routeDetails?.to?.longitude,
+        },
+      ]);
   }, [routeDetails]);
 
   useEffect(() => {
-    showUserRides();
-    console.log(currentRides);
+    if (currentRides?.length) showUserRides();
   }, [currentRides]);
 
-  const fetchUserRides = async () => {
-    let ridesAux = [] as Route[];
-    const ridesSnapshot = await firebase
-      .firestore()
-      .collection("rides")
-      .where("driverId", "==", "f68ONR5JpGbKWNNx235phHNZfj33")
-      .get();
-    ridesSnapshot.docs.forEach((doc) => {
-      ridesAux.push(doc.data());
-    });
-    console.log("ridesaux", ridesAux);
-    setCurrentRides(ridesAux);
+  const fetchUserRides = async (id?: string) => {
+    if (id !== undefined) {
+      let ridesAux = [] as Route[];
+      const ridesSnapshot = await firebase
+        .firestore()
+        .collection("rides")
+        .where("driverId", "==", id)
+        .get();
+      ridesSnapshot.docs.forEach((doc) => {
+        ridesAux.push(doc.data());
+      });
+
+      setCurrentRides(ridesAux);
+    }
   };
 
   const confirmRide = async () => {
@@ -104,13 +115,13 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
 
     setLoadingState({ ...loadingState, loading: false, correct: true });
     await sleep(2000);
-    setVisible(false);
 
-    await fetchUserRides();
-    showUserRides();
+    await fetchUserRides(userData.id);
+    setVisible(false);
   };
 
   const fitToCoordinates = (coordinateArray: LatLng[]) => {
+    console.log("ARRAY DE COORDENADAS", coordinateArray);
     map.current?.fitToCoordinates(coordinateArray, {
       edgePadding: {
         top: 60,
@@ -123,6 +134,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   };
 
   const showUserRides = () => {
+    console.log("show user rides");
     let ridesArray = [
       {
         latitude: location.latitude,
@@ -159,7 +171,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     setLocation(coords);
   };
 
-  if ((location.latitude === 0 && location.longitude === 0) || !currentRides) {
+  if (location.latitude === 0 && location.longitude === 0 && !currentRides) {
     return <Loading />;
   } else {
     return (
@@ -181,17 +193,24 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
           showsMyLocationButton={true}
           style={routeDetails ? styles.halfScreenMap : styles.fullScreenMap}
         >
-          {currentRides?.map(({ from }, index) => {
+          {currentRides?.map((ride, index) => {
             return (
-              <Marker
-                key={index}
-                type={1}
-                visible={true}
-                location={{
-                  latitude: from?.latitude,
-                  longitude: from?.longitude,
+              <TouchableOpacity
+                onPress={() => {
+                  console.log("aabbbbbbb");
                 }}
-              />
+                key={index}
+              >
+                <Marker
+                  details={ride}
+                  type={1}
+                  visible={true}
+                  location={{
+                    latitude: ride.from?.latitude,
+                    longitude: ride.from?.longitude,
+                  }}
+                />
+              </TouchableOpacity>
             );
           })}
           {routeDetails && (

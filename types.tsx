@@ -33,6 +33,7 @@ interface User {
   profileImgURL?: string;
   createdAt: string;
   vehicles: Vehicle[];
+  locations: Location[];
 }
 
 interface Place {

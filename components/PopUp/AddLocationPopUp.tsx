@@ -6,7 +6,10 @@ import {
   StyleSheet,
   Animated,
   ScrollView,
+<<<<<<< Updated upstream
   Dimensions,
+=======
+>>>>>>> Stashed changes
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Dialog, Portal, Provider, Snackbar } from "react-native-paper";
@@ -60,12 +63,17 @@ const AddLocationPopUp: React.FC<Props> = ({
           }}
         >
           <Dialog.Content>
+<<<<<<< Updated upstream
             <ScrollView
               keyboardShouldPersistTaps="handled"
               style={{ height: 370 }}
             >
+=======
+            <ScrollView style={{ height: 370 }}>
+>>>>>>> Stashed changes
               <View style={styles.pickerContainer}>
                 <Text style={styles.popup_title}>Name</Text>
+
                 <TextInput
                   placeholder="Home"
                   placeholderTextColor="#151a21"
@@ -78,14 +86,24 @@ const AddLocationPopUp: React.FC<Props> = ({
                 />
               </View>
 
+<<<<<<< Updated upstream
               <View style={{ height: 400 }}>
+=======
+              <View style={{ height: 500 }}>
+>>>>>>> Stashed changes
                 <View style={styles.pickerContainer}>
                   <Text style={styles.popup_title}>Location</Text>
                   <View
                     style={{
+<<<<<<< Updated upstream
                       width: 380,
                       alignSelf: "center",
                       // zIndex: 1,
+=======
+                      width: 390,
+                      alignSelf: "center",
+                      zIndex: 0,
+>>>>>>> Stashed changes
                       position: "absolute",
                     }}
                   >
@@ -141,7 +159,7 @@ const styles = StyleSheet.create({
   popup: {
     backgroundColor: "white",
     borderRadius: 30,
-    width: 320,
+    width: 350,
     height: 500,
     alignSelf: "center",
   },
@@ -149,6 +167,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 120,
     padding: 20,
+    zIndex: 3
   },
   textInput: {
     height: 40,

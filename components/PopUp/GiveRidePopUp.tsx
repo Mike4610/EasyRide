@@ -41,8 +41,6 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
         ...routeDetails,
         date: selectedDate,
       });
-
-      console.log(selectedDate);
     }
   };
 
@@ -58,6 +56,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     birthDate: "",
     createdAt: "",
     vehicles: [],
+    locations: [],
   });
   const [getValue] = useAsyncStorage();
 
@@ -96,7 +95,6 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
       label: userData.vehicles[0]?.brand + " " + userData.vehicles[0]?.model,
       seats: getSeatNumber(userData.vehicles[0]?.seats),
     });
-    console.log("give ride route mudou");
   }, [route]);
 
   useEffect(() => {
@@ -415,6 +413,10 @@ const styles = StyleSheet.create({
     fontSize: 22,
     alignSelf: "center",
     marginTop: 60,
+<<<<<<< Updated upstream
+=======
+    marginBottom: 10,
+>>>>>>> Stashed changes
   },
   datePickerContainer: {
     display: "flex",
