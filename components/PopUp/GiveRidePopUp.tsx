@@ -295,13 +295,6 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     />
                   )}
 
-                  {Platform.OS === "android" && (
-                    <TouchableOpacity
-                      style={styles.textInput}
-                      onPress={() => setShow(!show)}
-                    ></TouchableOpacity>
-                  )}
-
                   {show && (
                     <DatePicker
                       display="default"
@@ -422,7 +415,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     alignSelf: "center",
     marginTop: 60,
-    marginBottom: 10
   },
   datePickerContainer: {
     display: "flex",
