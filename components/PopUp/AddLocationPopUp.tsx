@@ -72,14 +72,14 @@ const AddLocationPopUp: React.FC<Props> = ({
                   <Text style={styles.popup_title}>Location</Text>
                   <View
                     style={{
-                      width: 400,
+                      width: 380,
                       alignSelf: "center",
-                      zIndex: 1,
+                      // zIndex: 0,
                       position: "absolute",
                     }}
                   >
-                    <SearchBar // O componente já vem com o styling fdd
-                      from={location.place}
+                    <SearchBar
+                      location={location.place}
                       placeholder="Location"
                       visible={true}
                     ></SearchBar>
