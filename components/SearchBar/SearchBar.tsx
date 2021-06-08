@@ -10,20 +10,10 @@ import { GOOGLE_API_KEY } from "../../googleConfig";
 
 interface Props {
   visible: boolean;
-  setAddressLocation?: (address: string) => void;
   placeholder: string;
-  from?: Place;
-  to?: Place;
   location?: Place;
 }
-const SearchBar: React.FC<Props> = ({
-  visible,
-  setAddressLocation,
-  placeholder,
-  from,
-  to,
-  location
-}) => {
+const SearchBar: React.FC<Props> = ({ visible, placeholder, location }) => {
   const setLocation = (
     data: GooglePlaceData,
     details: GooglePlaceDetail | null
@@ -35,11 +25,7 @@ const SearchBar: React.FC<Props> = ({
         location.latitude = details?.geometry.location.lat || 0;
         location.longitude = details?.geometry.location.lng || 0;
         location.description = details?.formatted_address;
-      } //else if (to) {
-      //   to.latitude = details?.geometry.location.lat || 0;
-      //   to.longitude = details?.geometry.location.lng || 0;
-      //   to.description = details?.formatted_address;
-      // }
+      }
     }
   };
   return (
@@ -74,7 +60,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 20,
     right: 20,
-    top: 10,
   },
   textInputContainer: {
     flexDirection: "row",
