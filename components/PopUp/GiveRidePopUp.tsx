@@ -24,6 +24,7 @@ import { Place, User, Vehicle } from "../../types";
 import { Route } from "../../types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { RouteContext } from "../../context/RouteContext";
+import { or } from "react-native-reanimated";
 interface Props {
   giveVisible: boolean;
   onDismiss: () => void;
@@ -149,7 +150,12 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   };
 
   useEffect(() => {
-    setTitleDate("DATE : " + titleD + " TIME : " + titleTime);
+    if(titleD == "" || titleTime == ""){
+    setTitleDate("Select Time and Date");
+    }
+    else {
+    setTitleDate("Date : " + titleD + " Time : " + titleTime.slice(0,5));
+    }
   }, [titleTime]);
 
   return (
@@ -200,7 +206,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     style={{
                       width: 400,
                       alignSelf: "center",
-                      zIndex: 1,
+                      // zIndex: 1,
                       position: "absolute",
                     }}
                   >
@@ -258,7 +264,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                       style={styles.textInput}
                       onPress={() => setShow(!show)}
                     >
-                      <Text style={{ textAlign: "center" }}>{titleDate}</Text>
+                      <Text style={{ alignSelf: "center" }}>{titleDate}</Text>
                     </TouchableOpacity>
                   )}
                   {show && (
@@ -435,12 +441,13 @@ const styles = StyleSheet.create({
     marginBottom: -35,
   },
   textInput: {
-    flex: 1,
+    //flex: 1,
     height: 40,
     borderBottomWidth: 1,
     borderColor: "#fd4d4d",
     color: "black",
     padding: 12,
+    marginBottom: 30
   },
   datePickerStyle: {
     flex: 1,
@@ -449,5 +456,6 @@ const styles = StyleSheet.create({
     borderColor: "#fd4d4d",
     color: "black",
     padding: 12,
+    alignItems: "center",
   },
 });
