@@ -55,12 +55,9 @@ interface Route {
   duration: number;
   vehicle?: Vehicle;
 }
-
 interface Location {
   name: string;
-  description: string;
   place: Place;
-  details?: RouteDetails;
 }
 
 interface ScreenNavigationProps {

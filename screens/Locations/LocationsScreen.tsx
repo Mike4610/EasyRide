@@ -90,7 +90,7 @@ const LocationsScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
           {locations.map((location, index) => {
             return (
               <LocationCard
-                key={location.name + location.description}
+                key={location.name + location.place}
                 location={location}
                 handleDeleteLocation={handleDeleteLocation}
               />
