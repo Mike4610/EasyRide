@@ -48,12 +48,15 @@ interface RouteDetails {
   duration: number;
 }
 interface Route {
-  from?: Place;
-  to?: Place;
+  from: Place;
+  to: Place;
   date: Date;
   distance: number;
   duration: number;
   vehicle?: Vehicle;
+  availableSeats?: string;
+  driverId?: string;
+  passengersId?: string[];
 }
 interface Location {
   name: string;

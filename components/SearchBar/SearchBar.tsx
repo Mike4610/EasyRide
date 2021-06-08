@@ -14,6 +14,7 @@ interface Props {
   placeholder: string;
   from?: Place;
   to?: Place;
+  location?: Place;
 }
 const SearchBar: React.FC<Props> = ({
   visible,
@@ -21,6 +22,7 @@ const SearchBar: React.FC<Props> = ({
   placeholder,
   from,
   to,
+  location
 }) => {
   const setLocation = (
     data: GooglePlaceData,
@@ -29,15 +31,15 @@ const SearchBar: React.FC<Props> = ({
     console.log(details?.formatted_address);
     if (details?.description === "Home" || details?.description === "Work") {
     } else {
-      if (from) {
-        from.latitude = details?.geometry.location.lat || 0;
-        from.longitude = details?.geometry.location.lng || 0;
-        from.description = details?.formatted_address;
-      } else if (to) {
-        to.latitude = details?.geometry.location.lat || 0;
-        to.longitude = details?.geometry.location.lng || 0;
-        to.description = details?.formatted_address;
-      }
+      if (location) {
+        location.latitude = details?.geometry.location.lat || 0;
+        location.longitude = details?.geometry.location.lng || 0;
+        location.description = details?.formatted_address;
+      } //else if (to) {
+      //   to.latitude = details?.geometry.location.lat || 0;
+      //   to.longitude = details?.geometry.location.lng || 0;
+      //   to.description = details?.formatted_address;
+      // }
     }
   };
   return (
