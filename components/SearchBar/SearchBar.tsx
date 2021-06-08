@@ -75,16 +75,21 @@ const styles = StyleSheet.create({
     height: 45,
     borderWidth: 1,
     borderColor: "#a3a3a3",
+    zIndex: -1,
   },
   predefinedPlacesDescription: {
     color: "#fd4d4d",
     fontWeight: "bold",
   },
   row: {
+    zIndex: 10,
+    borderWidth: 1,
+    borderRadius: 10,
     backgroundColor: "white",
-    borderColor: "#151a21",
+    borderColor: "#fd4d4d",
     padding: 13,
     height: 44,
     flexDirection: "row",
+    
   },
 });
