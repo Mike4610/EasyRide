@@ -20,7 +20,7 @@ import LoadingPopUp from "../PopUp/LoadingPopUp";
 import { sleep } from "../../utils";
 import firebase from "firebase/app";
 import "firebase/firestore";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 
 interface Props {
   locationVisible: boolean;
@@ -43,6 +43,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   const map: LegacyRef<MapView> = useRef(null);
   const [routeDetails, setRouteDetails] = useState<Route | null>(null);
   const [currentRides, setCurrentRides] = useState<Route[] | null>(null);
+  const [getUser] = useAsyncStorage();
 
   useEffect(() => {
     (async () => {

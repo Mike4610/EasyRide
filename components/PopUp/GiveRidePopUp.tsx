@@ -422,6 +422,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     alignSelf: "center",
     marginTop: 60,
+    marginBottom: 10
   },
   datePickerContainer: {
     display: "flex",
