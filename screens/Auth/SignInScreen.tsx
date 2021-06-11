@@ -12,7 +12,6 @@ import { UserContext } from "../../context/UserContext";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import AsyncStorage from "@react-native-community/async-storage";
 import { Snackbar } from "react-native-paper";
 import firebase from "firebase/app";
 import "firebase/auth";

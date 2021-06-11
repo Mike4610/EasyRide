@@ -1,20 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Animated,
-  ScrollView,
-<<<<<<< Updated upstream
-  Dimensions,
-=======
->>>>>>> Stashed changes
-} from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { View, Text, TextInput, StyleSheet, ScrollView } from "react-native";
 import { Dialog, Portal, Provider, Snackbar } from "react-native-paper";
 import Button from "../../components/Buttons/Button";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Location, Place } from "../../types";
 import SearchBar from "../SearchBar/SearchBar";
 interface Props {
@@ -29,10 +16,8 @@ const AddLocationPopUp: React.FC<Props> = ({
   handleRegisterLocation,
 }) => {
   //PICKER
-  const [location, setLocation] = useState({
-    name: "",
-    place: {} as Place,
-  });
+  const initialState = { name: "", place: {} as Place };
+  const [location, setLocation] = useState(initialState);
   const [snackBarVisible, setSnackBarVisible] = useState(false);
 
   const dismissSnackBar = () => {
@@ -42,6 +27,7 @@ const AddLocationPopUp: React.FC<Props> = ({
   const registerLocation = () => {
     if (location.name != "" && Object.keys(location.place).length != 0) {
       handleRegisterLocation(location);
+      setLocation(initialState);
     } else {
       console.log(location.place.latitude);
       setSnackBarVisible(true);
@@ -63,19 +49,15 @@ const AddLocationPopUp: React.FC<Props> = ({
           }}
         >
           <Dialog.Content>
-<<<<<<< Updated upstream
             <ScrollView
               keyboardShouldPersistTaps="handled"
               style={{ height: 370 }}
             >
-=======
-            <ScrollView style={{ height: 370 }}>
->>>>>>> Stashed changes
               <View style={styles.pickerContainer}>
                 <Text style={styles.popup_title}>Name</Text>
 
                 <TextInput
-                  placeholder="Home"
+                  placeholder="Location Name"
                   placeholderTextColor="#151a21"
                   onChangeText={(text) => {
                     setLocation({ ...location, name: text });
@@ -86,24 +68,15 @@ const AddLocationPopUp: React.FC<Props> = ({
                 />
               </View>
 
-<<<<<<< Updated upstream
               <View style={{ height: 400 }}>
-=======
-              <View style={{ height: 500 }}>
->>>>>>> Stashed changes
                 <View style={styles.pickerContainer}>
                   <Text style={styles.popup_title}>Location</Text>
                   <View
                     style={{
-<<<<<<< Updated upstream
                       width: 380,
                       alignSelf: "center",
                       // zIndex: 1,
-=======
-                      width: 390,
-                      alignSelf: "center",
-                      zIndex: 0,
->>>>>>> Stashed changes
+
                       position: "absolute",
                     }}
                   >
@@ -167,7 +140,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 120,
     padding: 20,
-    zIndex: 3
+    zIndex: 3,
   },
   textInput: {
     height: 40,

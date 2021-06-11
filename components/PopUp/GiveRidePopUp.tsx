@@ -24,7 +24,6 @@ import { Place, User, Vehicle } from "../../types";
 import { Route } from "../../types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { RouteContext } from "../../context/RouteContext";
-import { or } from "react-native-reanimated";
 interface Props {
   giveVisible: boolean;
   onDismiss: () => void;
@@ -413,10 +412,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     alignSelf: "center",
     marginTop: 60,
-<<<<<<< Updated upstream
-=======
     marginBottom: 10,
->>>>>>> Stashed changes
   },
   datePickerContainer: {
     display: "flex",

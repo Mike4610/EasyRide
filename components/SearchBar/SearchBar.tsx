@@ -13,11 +13,11 @@ import { Location } from "../../types";
 interface Props {
   visible: boolean;
   placeholder: string;
-  location?: Place;
+  location: Place;
 }
 const SearchBar: React.FC<Props> = ({ visible, placeholder, location }) => {
   const [userData, setUserData] = useState<User | null>(null);
-  const [userLocations, setUserLocations] = useState<Location[]>([]);
+  const [userLocations, setUserLocations] = useState<Place[]>([]);
   const [getUser] = useAsyncStorage();
 
   useEffect(() => {
@@ -28,45 +28,47 @@ const SearchBar: React.FC<Props> = ({ visible, placeholder, location }) => {
   }, []);
 
   useEffect(() => {
-    console.log("USER DATA", userData);
-    let obj = {};
-    let predifinedPlaces = [] as Location[];
-    if (userData?.locations.length)
-      userData.locations.forEach((userLocation: Location) => {
-        obj = {
-          description: userLocation.name,
-          geometry: {
-            location: {
-              lat: userLocation.place.latitude,
-              lng: userLocation.place.longitude,
-            },
-          },
-        };
-        predifinedPlaces.push(obj);
-        obj = {};
-      });
-    setUserLocations(predifinedPlaces);
+    setLocations();
   }, [userData]);
+
+  const setLocations = () => {
+    let predifinedPlaces = [] as Place[];
+    if (userData?.locations.length)
+      userData.locations.forEach(
+        ({ name, place: { latitude, longitude } }: Location) => {
+          predifinedPlaces.push({
+            description: name,
+            latitude: latitude,
+            longitude: longitude,
+          });
+        }
+      );
+    setUserLocations(predifinedPlaces);
+  };
 
   const setLocation = (
     data: GooglePlaceData,
     details: GooglePlaceDetail | null
   ) => {
-    console.log("PRESSS");
-    if (details?.description === "Home" || details?.description === "Work") {
+    const results = userData?.locations.filter(
+      (location) => location.name === details?.description
+    );
+    console.log("RESULTS", results)
+    if (results?.length) {
+      location.latitude = results[0].place.latitude;
+      location.longitude = results[0].place.longitude;
+      location.description = results[0].place.description;
     } else {
-      if (location) {
-        location.latitude = details?.geometry.location.lat || 0;
-        location.longitude = details?.geometry.location.lng || 0;
-        location.description = details?.formatted_address;
-      }
+      location.latitude = details?.geometry.location.lat || 0;
+      location.longitude = details?.geometry.location.lng || 0;
+      location.description = details?.formatted_address;
     }
   };
 
   return (
     <View style={styles.container}>
       <GooglePlacesAutocomplete
-        predefinedPlaces={userData ? userLocations : []}
+        predefinedPlaces={userLocations}
         currentLocation={true}
         placeholder={placeholder}
         minLength={2}
@@ -107,11 +109,8 @@ const styles = StyleSheet.create({
     height: 45,
     borderWidth: 1,
     borderColor: "#a3a3a3",
-<<<<<<< Updated upstream
+
     zIndex: -1,
-=======
-    zIndex: 0,
->>>>>>> Stashed changes
   },
   predefinedPlacesDescription: {
     color: "#fd4d4d",
@@ -119,17 +118,11 @@ const styles = StyleSheet.create({
   },
   row: {
     zIndex: 10,
-    borderWidth: 1,
     borderRadius: 10,
+
     backgroundColor: "white",
-    borderColor: "#fd4d4d",
     padding: 13,
     height: 44,
     flexDirection: "row",
-<<<<<<< Updated upstream
-    
-=======
-    zIndex: 0,
->>>>>>> Stashed changes
   },
 });

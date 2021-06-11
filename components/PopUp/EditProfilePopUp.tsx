@@ -36,6 +36,7 @@ const EditProfilePopUp: React.FC<Props> = ({
     birthDate: "",
     createdAt: "",
     vehicles: [],
+    locations: []
   });
   const [buttonState, setButtonState] = useState({
     loading: false,

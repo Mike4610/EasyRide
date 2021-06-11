@@ -60,6 +60,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
     birthDate: "",
     createdAt: "",
     vehicles: [],
+    locations: []
   });
   const [getValue] = useAsyncStorage();
 

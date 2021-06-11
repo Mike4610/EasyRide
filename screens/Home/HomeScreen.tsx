@@ -6,9 +6,6 @@ import GiveRidePopUp from "../../components/PopUp/GiveRidePopUp";
 import Map from "../../components/Map/Map";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FabButton from "../../components/Buttons/FabButton";
-import SearchBar from "../../components/SearchBar/SearchBar";
-import LocationButtons from "../../components/Buttons/LocationButtons";
-import firebase from "firebase/app";
 
 import "firebase/auth";
 import { Route, ScreenNavigationProps } from "../../types";

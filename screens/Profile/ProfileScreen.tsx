@@ -32,6 +32,7 @@ const ProfileScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     profileImgURL: "",
     createdAt: "",
     vehicles: [],
+    locations: []
   });
   const [label, setLabel] = useState<string>("");
   const [visible, setVisible] = useState(false);
