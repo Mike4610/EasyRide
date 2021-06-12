@@ -41,7 +41,7 @@ const Marker: React.FC<Props> = ({ location, visible, type, details }) => {
           coordinate={location}
           anchor={{ x: 0.35, y: 0.32 }}
         >
-          <Entypo name="location-pin" size={30} color="151a21" />
+          <Entypo name="location-pin" size={30} color="#151a21" />
         </MarkerAnimated>
       ) : (
         <></>
