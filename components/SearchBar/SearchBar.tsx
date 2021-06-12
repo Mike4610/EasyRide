@@ -110,14 +110,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#a3a3a3",
 
-    zIndex: -1,
+    zIndex: 0,
   },
   predefinedPlacesDescription: {
     color: "#fd4d4d",
     fontWeight: "bold",
   },
   row: {
-    zIndex: 10,
+    zIndex: 1,
     borderRadius: 10,
 
     backgroundColor: "white",

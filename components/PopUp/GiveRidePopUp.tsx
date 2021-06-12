@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, createRef } from "react";
 import {
   View,
   TouchableOpacity,
-  StatusBar,
   Text,
   ScrollView,
   StyleSheet,
@@ -14,9 +13,7 @@ import { Dimensions } from "react-native";
 import SearchBar from "../SearchBar/SearchBar";
 import { Divider } from "react-native-paper";
 import { Ionicons, Entypo, AntDesign } from "@expo/vector-icons";
-import DatePicker, {
-  AndroidEvent,
-} from "@react-native-community/datetimepicker";
+import DatePicker from "@react-native-community/datetimepicker";
 import Button from "../Buttons/Button";
 import { Picker } from "@react-native-picker/picker";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
@@ -24,6 +21,8 @@ import { Place, User, Vehicle } from "../../types";
 import { Route } from "../../types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { RouteContext } from "../../context/RouteContext";
+import ActionSheet from "react-native-actions-sheet";
+
 interface Props {
   giveVisible: boolean;
   onDismiss: () => void;
@@ -32,6 +31,12 @@ interface Props {
 const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
+  const [buttonText, setButtonText] = useState({
+    car: "Choose vehicle",
+    seats: "Choose seat number",
+  });
+  const chooseCarRef = createRef();
+  const chooseSeatNumberRef = createRef();
 
   const onChange = (event: Event, selectedDate?: Date) => {
     setShow(Platform.OS === "ios");
@@ -113,7 +118,6 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   useEffect(() => {
     (async () => {
       const user = await getValue();
-
       setUserData(user);
     })();
   }, []);
@@ -142,16 +146,19 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
           vehicle: vehicle,
           availableSeats: String(parseInt(vehicle.seats) - 1),
         });
+        setButtonText({
+          ...buttonText,
+          car: vehicle.brand + " " + vehicle.model,
+        });
       }
     });
   };
 
   useEffect(() => {
-    if(titleD == "" || titleTime == ""){
-    setTitleDate("Select Time and Date");
-    }
-    else {
-    setTitleDate("Date : " + titleD + " Time : " + titleTime.slice(0,5));
+    if (titleD == "" || titleTime == "") {
+      setTitleDate("Select Time and Date");
+    } else {
+      setTitleDate("Date : " + titleD + " Time : " + titleTime.slice(0, 5));
     }
   }, [titleTime]);
 
@@ -203,7 +210,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     style={{
                       width: 400,
                       alignSelf: "center",
-                      // zIndex: 1,
+                      zIndex: 1,
                       position: "absolute",
                     }}
                   >
@@ -323,27 +330,65 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                   <AntDesign name="car" size={24} color="#fd4d4d" />
                   Vehicle
                 </Text>
-                <Picker
-                  style={{
-                    width: 250,
-                    height: 44,
-                    alignSelf: "center",
-                    marginBottom: 30,
-                  }}
-                  itemStyle={{ height: 50 }}
-                  selectedValue={vehicle.label}
-                  onValueChange={(itemValue) => chooseVehicle(itemValue)}
-                >
-                  {userData.vehicles.map((vehicle: Vehicle) => {
-                    return (
-                      <Picker.Item
-                        key={vehicle.licensePlate}
-                        label={vehicle.brand + " " + vehicle.model}
-                        value={vehicle.brand + " " + vehicle.model}
-                      />
-                    );
-                  })}
-                </Picker>
+                {Platform.OS === "ios" ? (
+                  <>
+                    <Button
+                      text={buttonText.car}
+                      full={false}
+                      press={() => {
+                        chooseCarRef.current?.setModalVisible();
+                      }}
+                    />
+                    <ActionSheet ref={chooseCarRef}>
+                      <View>
+                        <Picker
+                          style={{
+                            justifyContent: "center",
+                            width: "100%",
+                            height: 250,
+                          }}
+                          itemStyle={{ height: "100%" }}
+                          selectedValue={vehicle.label}
+                          onValueChange={(itemValue) =>
+                            chooseVehicle(itemValue)
+                          }
+                        >
+                          {userData.vehicles.map((vehicle: Vehicle) => {
+                            return (
+                              <Picker.Item
+                                key={vehicle.licensePlate}
+                                label={vehicle.brand + " " + vehicle.model}
+                                value={vehicle.brand + " " + vehicle.model}
+                              />
+                            );
+                          })}
+                        </Picker>
+                      </View>
+                    </ActionSheet>
+                  </>
+                ) : (
+                  <Picker
+                    style={{
+                      width: 250,
+                      height: 44,
+                      alignSelf: "center",
+                      marginBottom: 30,
+                    }}
+                    itemStyle={{ height: 50 }}
+                    selectedValue={vehicle.label}
+                    onValueChange={(itemValue) => chooseVehicle(itemValue)}
+                  >
+                    {userData.vehicles.map((vehicle: Vehicle) => {
+                      return (
+                        <Picker.Item
+                          key={vehicle.licensePlate}
+                          label={vehicle.brand + " " + vehicle.model}
+                          value={vehicle.brand + " " + vehicle.model}
+                        />
+                      );
+                    })}
+                  </Picker>
+                )}
               </View>
               <Divider style={{ backgroundColor: "#151a21", zIndex: -1 }} />
               <View style={{ zIndex: -1 }}>
@@ -359,32 +404,74 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                   <AntDesign name="car" size={24} color="#fd4d4d" />
                   Avaiable Seats
                 </Text>
-                <Picker
-                  style={{
-                    width: 250,
-                    height: 44,
-                    alignSelf: "center",
-                    marginBottom: 30,
-                  }}
-                  itemStyle={{ height: 50 }}
-                  selectedValue={routeDetails.availableSeats}
-                  onValueChange={(itemValue) =>
-                    setRouteDetails({
-                      ...routeDetails,
-                      availableSeats: itemValue,
-                    })
-                  }
-                >
-                  {vehicle.seats?.map((seatNumber) => {
-                    return (
-                      <Picker.Item
-                        key={seatNumber}
-                        label={String(seatNumber)}
-                        value={String(seatNumber)}
-                      />
-                    );
-                  })}
-                </Picker>
+                {Platform.OS === "ios" ? (
+                  <>
+                    <Button
+                      text={buttonText.seats}
+                      full={false}
+                      press={() => {
+                        chooseSeatNumberRef.current?.setModalVisible();
+                      }}
+                    />
+                    <ActionSheet ref={chooseSeatNumberRef}>
+                      <View>
+                        <Picker
+                          style={{
+                            justifyContent: "center",
+                            width: "100%",
+                            height: 250,
+                          }}
+                          itemStyle={{ height: "100%" }}
+                          selectedValue={routeDetails.availableSeats}
+                          onValueChange={(itemValue) => {
+                            setRouteDetails({
+                              ...routeDetails,
+                              availableSeats: itemValue,
+                            });
+                            setButtonText({ ...buttonText, seats: itemValue });
+                          }}
+                        >
+                          {vehicle.seats?.map((seatNumber) => {
+                            return (
+                              <Picker.Item
+                                key={seatNumber}
+                                label={String(seatNumber)}
+                                value={String(seatNumber)}
+                              />
+                            );
+                          })}
+                        </Picker>
+                      </View>
+                    </ActionSheet>
+                  </>
+                ) : (
+                  <Picker
+                    style={{
+                      width: 250,
+                      height: 44,
+                      alignSelf: "center",
+                      marginBottom: 30,
+                    }}
+                    itemStyle={{ height: 50 }}
+                    selectedValue={routeDetails.availableSeats}
+                    onValueChange={(itemValue) =>
+                      setRouteDetails({
+                        ...routeDetails,
+                        availableSeats: itemValue,
+                      })
+                    }
+                  >
+                    {vehicle.seats?.map((seatNumber) => {
+                      return (
+                        <Picker.Item
+                          key={seatNumber}
+                          label={String(seatNumber)}
+                          value={String(seatNumber)}
+                        />
+                      );
+                    })}
+                  </Picker>
+                )}
               </View>
             </ScrollView>
             <View>
@@ -438,7 +525,7 @@ const styles = StyleSheet.create({
     borderColor: "#fd4d4d",
     color: "black",
     padding: 12,
-    marginBottom: 30
+    marginBottom: 30,
   },
   datePickerStyle: {
     flex: 1,

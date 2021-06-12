@@ -31,7 +31,6 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     longitude: 0,
   });
   const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const { route, setRoute } = useContext(RouteContext);
   const [loadingState, setLoadingState] = useState({
@@ -39,7 +38,6 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     correct: false,
     error: false,
   });
-
   const map: LegacyRef<MapView> = useRef(null);
   const [routeDetails, setRouteDetails] = useState<Route | null>(null);
   const [currentRides, setCurrentRides] = useState<Route[] | null>(null);
@@ -195,22 +193,15 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
         >
           {currentRides?.map((ride, index) => {
             return (
-              <TouchableOpacity
-                onPress={() => {
-                  console.log("aabbbbbbb");
-                }}
+              <Marker
                 key={index}
-              >
-                <Marker
-                  details={ride}
-                  type={1}
-                  visible={true}
-                  location={{
-                    latitude: ride.from?.latitude,
-                    longitude: ride.from?.longitude,
-                  }}
-                />
-              </TouchableOpacity>
+                ride={ride}
+                type={1}
+                location={{
+                  latitude: ride.from?.latitude,
+                  longitude: ride.from?.longitude,
+                }}
+              />
             );
           })}
           {routeDetails && (
@@ -240,7 +231,6 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
                     <Marker
                       key={index}
                       type={index + 1}
-                      visible={true}
                       location={routeDetails[key]}
                     />
                   );
@@ -252,7 +242,6 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
         {routeDetails && (
           <RouteDetailsPopUp confirmRide={confirmRide} details={routeDetails} />
         )}
-
         <LoadingPopUp
           {...loadingState}
           visible={visible}

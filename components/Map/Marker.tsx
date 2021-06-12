@@ -3,16 +3,15 @@ import { StyleSheet, View, Appearance } from "react-native";
 import { LatLng, MarkerAnimated } from "react-native-maps";
 import { FontAwesome, Entypo, Ionicons } from "@expo/vector-icons";
 import { Route } from "../../types";
+import JoinRidePopUp from "../PopUp/JoinRidePopUp";
 
 interface Props {
   location: LatLng;
-  visible: boolean;
   type: number;
-  details?: Route;
+  ride?: Route;
 }
 
-const Marker: React.FC<Props> = ({ location, visible, type, details }) => {
-  const [isVisible, setIsVisible] = useState(true);
+const Marker: React.FC<Props> = ({ location, type, ride }) => {
   // const [mode, setMode] = useState<string>("#151a21");
 
   // useEffect(() => {
@@ -24,15 +23,17 @@ const Marker: React.FC<Props> = ({ location, visible, type, details }) => {
   return (
     <View>
       {type === 1 ? (
-        <MarkerAnimated
-          onPress={() => {
-            console.log(details);
-          }}
-          coordinate={location}
-          anchor={{ x: 0.35, y: 0.32 }}
-        >
-          <Ionicons name="car" size={30} color="#151a21" />
-        </MarkerAnimated>
+        <>
+          <MarkerAnimated
+            onPress={() => {
+              setSelectedRide();
+            }}
+            coordinate={location}
+            anchor={{ x: 0.35, y: 0.32 }}
+          >
+            <Ionicons name="car" size={30} color="#151a21" />
+          </MarkerAnimated>
+        </>
       ) : type === 2 ? (
         <MarkerAnimated
           onPress={() => {
