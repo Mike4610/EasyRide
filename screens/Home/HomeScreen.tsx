@@ -91,6 +91,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    zIndex: -1,
   },
   bottomButtons: {
     flex: 1,
