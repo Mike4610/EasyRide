@@ -49,6 +49,7 @@ interface RouteDetails {
   duration: number;
 }
 interface Route {
+  id?: string;
   from: Place;
   to: Place;
   date: Date;
@@ -56,7 +57,7 @@ interface Route {
   duration: number;
   vehicle?: Vehicle;
   availableSeats?: string;
-  driverId?: string;
+  driverId: string;
   passengersId?: string[];
 }
 interface Location {

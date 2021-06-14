@@ -19,13 +19,11 @@ import DatePicker, {
   AndroidEvent,
 } from "@react-native-community/datetimepicker";
 import Button from "../Buttons/Button";
-import { Picker } from "@react-native-picker/picker";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import { Place, User, Vehicle } from "../../types";
 import { Route } from "../../types";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { RouteContext } from "../../context/RouteContext";
-import { or } from "react-native-reanimated";
+import Slider from "@react-native-community/slider";
 interface Props {
   requestVisible: boolean;
   onDismiss: () => void;
@@ -50,7 +48,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
   const [titleDate, setTitleDate] = useState("Select Time and Date");
   const [titleD, setTitleD] = useState("");
   const rangeNumbers = ["5 km", "10 km", "25 km", "50 km", "100 km", "500 km"];
-  const [range, setRange] = useState("");
+  const [range, setRange] = useState("5");
 
   const [userData, setUserData] = useState<User>({
     id: "",
@@ -60,7 +58,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
     birthDate: "",
     createdAt: "",
     vehicles: [],
-    locations: []
+    locations: [],
   });
   const [getValue] = useAsyncStorage();
 
@@ -148,68 +146,69 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
         >
           <Dialog.Content>
             <View>
-            <ScrollView keyboardShouldPersistTaps="handled"
-              style={{ height: Dimensions.get("window").height - 100 }}>
-
-<TouchableOpacity
-                style={{
-                  display: "flex",
-                  //@ts-ignore
-                  marginBottom: -25,
-                  position: "absolute",
-                }}
-                onPress={() => {
-                  onDismiss();
-                }}
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                style={{ height: Dimensions.get("window").height - 100 }}
               >
-                <Ionicons name="arrow-back" size={45} color="#fd4d4d" />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    display: "flex",
+                    //@ts-ignore
+                    marginBottom: -25,
+                    position: "absolute",
+                  }}
+                  onPress={() => {
+                    onDismiss();
+                  }}
+                >
+                  <Ionicons name="arrow-back" size={45} color="#fd4d4d" />
+                </TouchableOpacity>
 
-              <Image
-                style={styles.profilePic}
-                source={require("../../assets/images/ride.png")}
-              />
-             
-              <View style={{ height: 250 }}>
-                <View>
-                  <Text style={styles.title}>
-                    <Entypo name="location-pin" size={25} color="#fd4d4d" />
-                    Where to?
-                  </Text>
-                  <View
-                    style={{
-                      width: 400,
-                      alignSelf: "center",
-                      // zIndex: 1,
-                      position: "absolute",
-                    }}
-                  >
-                    <SearchBar
-                      location={routeDetails.from}
-                      placeholder="From"
-                      visible={true}
-                    ></SearchBar>
-                  </View>
-                  <View
-                    style={{
-                      width: 400,
-                      alignSelf: "center",
-                      position: "absolute",
-                      marginTop: 70,
-                    }}
-                  >
-                    <SearchBar
-                      location={routeDetails.to}
-                      placeholder="To"
-                      visible={true}
-                    ></SearchBar>
+                <Image
+                  style={styles.profilePic}
+                  source={require("../../assets/images/ride.png")}
+                />
+
+                <View style={{ height: 250 }}>
+                  <View>
+                    <Text style={styles.title}>
+                      <Entypo name="location-pin" size={25} color="#fd4d4d" />
+                      Route
+                    </Text>
+                    <View
+                      style={{
+                        width: 400,
+                        alignSelf: "center",
+                        // zIndex: 1,
+                        position: "absolute",
+                      }}
+                    >
+                      <SearchBar
+                        location={routeDetails.from}
+                        placeholder="From"
+                        visible={true}
+                      ></SearchBar>
+                    </View>
+                    <View
+                      style={{
+                        width: 400,
+                        alignSelf: "center",
+                        position: "absolute",
+                        marginTop: 70,
+                      }}
+                    >
+                      <SearchBar
+                        location={routeDetails.to}
+                        placeholder="To"
+                        visible={true}
+                      ></SearchBar>
+                    </View>
                   </View>
                 </View>
-              </View>
-              <Divider
-                style={{ backgroundColor: "#151a21", zIndex: -1 }}
-              ></Divider>
-              <Text
+                <Divider
+                  style={{ backgroundColor: "#151a21", zIndex: -1 }}
+                ></Divider>
+                <Text
                   style={{
                     zIndex: -1,
                     fontWeight: "bold",
@@ -218,93 +217,115 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                     marginTop: 25,
                   }}
                 >
-              <AntDesign name="calendar" size={24} color="#fd4d4d" />
+                  <AntDesign name="calendar" size={24} color="#fd4d4d" />
                   Date
                 </Text>
 
-              <View style={styles.datePickerContainer}>
-                {Platform.OS === "ios" && (
-                  <DatePicker
-                    display="default"
-                    value={routeDetails.date}
-                    mode="date"
-                    style={styles.datePicker}
-                    onChange={onChange}
-                  />
-                )}
+                <View style={styles.datePickerContainer}>
+                  {Platform.OS === "ios" && (
+                    <DatePicker
+                      display="default"
+                      value={routeDetails.date}
+                      mode="date"
+                      style={styles.datePicker}
+                      onChange={onChange}
+                    />
+                  )}
 
-                {Platform.OS === "android" && (
-                  <TouchableOpacity
-                    style={styles.textInput}
-                    onPress={() => setShow(!show)}
-                  >
-                    <Text style={{ alignSelf: "center" }}>{titleDate}</Text>
-                  </TouchableOpacity>
-                )}
+                  {Platform.OS === "android" && (
+                    <TouchableOpacity
+                      style={styles.textInput}
+                      onPress={() => setShow(!show)}
+                    >
+                      <Text style={{ alignSelf: "center" }}>{titleDate}</Text>
+                    </TouchableOpacity>
+                  )}
 
-                {show && (
-                  <DatePicker
-                    display="default"
-                    style={styles.datePickerStyle}
-                    value={new Date()}
-                    mode="date"
-                    onChange={(e, d) => {
-                      setShow(false);
-                      if (d !== undefined) {
-                        setRouteDetails({ ...routeDetails, date: d });
-                        setTitleD(d.toLocaleDateString());
-                      }
-                    }}
-                  />
-                )}
-          
-          
-                
-              </View>
-            
-              <Divider
-                style={{ backgroundColor: "#151a21", zIndex: -1 }}
-              ></Divider>
+                  {show && (
+                    <DatePicker
+                      display="default"
+                      style={styles.datePickerStyle}
+                      value={new Date()}
+                      mode="date"
+                      onChange={(e, d) => {
+                        setShow(false);
+                        if (d !== undefined) {
+                          setRouteDetails({ ...routeDetails, date: d });
+                          setTitleD(d.toLocaleDateString());
+                        }
+                      }}
+                    />
+                  )}
+                </View>
 
-              <Text
+                <Divider
+                  style={{ backgroundColor: "#151a21", zIndex: -1 }}
+                ></Divider>
+
+                <Text
                   style={{
-                    zIndex:-1,
+                    zIndex: -1,
                     fontWeight: "bold",
                     fontSize: 22,
                     alignSelf: "center",
                     marginTop: 25,
                   }}
                 >
-                  
-              <Entypo name="compass" size={24} color="#fd4d4d"  />
+                  <Entypo name="compass" size={24} color="#fd4d4d" />
                   Range
                 </Text>
 
-                <Picker
-                  style={{ width: 250, height: 44 , alignSelf:"center"}}
+                <Text
+                  style={{
+                    zIndex: -1,
+                    fontSize: 18,
+                    alignSelf: "center",
+                    marginTop: 20,
+                  }}
+                >
+                  {range} Km
+                </Text>
+
+                <Slider
+                  style={{
+                    width: 250,
+                    height: 40,
+                    alignSelf: "center",
+                    marginTop: 20,
+                  }}
+                  value={5}
+                  minimumValue={1}
+                  maximumValue={20}
+                  minimumTrackTintColor="#fd4d4d"
+                  maximumTrackTintColor="#000000"
+                  step={1}
+                  onValueChange={(itemValue) => setRange(itemValue)}
+                />
+
+                {/* <Picker
+                  style={{ width: 250, height: 44, alignSelf: "center" }}
                   itemStyle={{ height: 44 }}
                   selectedValue={range}
                   onValueChange={(itemValue) => setRange(itemValue)}
                 >
-                  {rangeNumbers.map(( number ) => {
+                  {rangeNumbers.map((number) => {
                     return (
-                      <Picker.Item key={number} label={number} value={number}/>
+                      <Picker.Item key={number} label={number} value={number} />
                     );
                   })}
-                </Picker>
+                </Picker> */}
               </ScrollView>
               <View>
-              <Button
-                press={() => {
-                  console.log(routeDetails);
-                  setRoute(routeDetails);
-                  onDismiss();
-                }}
-                full={true}
-                text={"Request Ride"}
-              />
-            </View>
- 
+                <Button
+                  press={() => {
+                    console.log(routeDetails);
+                    setRoute(routeDetails);
+                    onDismiss();
+                  }}
+                  full={true}
+                  text={"Request Ride"}
+                />
+              </View>
             </View>
           </Dialog.Content>
         </Dialog>
@@ -381,6 +402,5 @@ const styles = StyleSheet.create({
     color: "black",
     padding: 12,
     alignItems: "center",
-  }, 
-
+  },
 });

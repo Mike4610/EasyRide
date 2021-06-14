@@ -1,32 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet, View, Appearance } from "react-native";
 import { LatLng, MarkerAnimated } from "react-native-maps";
 import { FontAwesome, Entypo, Ionicons } from "@expo/vector-icons";
 import { Route } from "../../types";
 import JoinRidePopUp from "../PopUp/JoinRidePopUp";
+import { DetailsContext } from "../../context/DetailsContext";
 
 interface Props {
   location: LatLng;
-  type: number;
+  type: string;
   ride?: Route;
+  onPress?: () => void;
 }
 
-const Marker: React.FC<Props> = ({ location, type, ride }) => {
-  // const [mode, setMode] = useState<string>("#151a21");
+const Marker: React.FC<Props> = ({ location, type, ride, onPress }) => {
+  const [details, setDetails] = useState(ride);
 
-  // useEffect(() => {
-  //   Appearance.getColorScheme() === "dark"
-  //     ? setMode("#a3a3a3")
-  //     : setMode("#151a21");
-  // }, []);
+  const setSelectedRide = () => {
+    if (ride) setDetails(ride);
+  };
 
   return (
     <View>
-      {type === 1 ? (
+      {type === "from" ? (
         <>
           <MarkerAnimated
             onPress={() => {
-              setSelectedRide();
+              if (onPress) onPress();
             }}
             coordinate={location}
             anchor={{ x: 0.35, y: 0.32 }}
@@ -34,15 +34,13 @@ const Marker: React.FC<Props> = ({ location, type, ride }) => {
             <Ionicons name="car" size={30} color="#151a21" />
           </MarkerAnimated>
         </>
-      ) : type === 2 ? (
+      ) : type === "to" ? (
         <MarkerAnimated
-          onPress={() => {
-            console.log("PRESSSSS");
-          }}
+          onPress={() => {}}
           coordinate={location}
           anchor={{ x: 0.35, y: 0.32 }}
         >
-          <Entypo name="location-pin" size={30} color="151a21" />
+          <Entypo name="location-pin" size={30} color="#151a21" />
         </MarkerAnimated>
       ) : (
         <></>
