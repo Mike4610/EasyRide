@@ -11,9 +11,11 @@ import MapView, { LatLng } from "react-native-maps";
 import Loading from "../Loading/Loading";
 import Marker from "./Marker";
 import { RouteContext } from "../../context/RouteContext";
+import { RequestRouteContext } from "../../context/RequestRouteContext";
 import { Place, Route, User, Vehicle } from "../../types";
 import MapViewDirections from "react-native-maps-directions";
 import RouteDetailsPopUp from "../PopUp/RouteDetailsPopUp";
+import ListRidesPopUp from "../PopUp/ListRidesPopUp";
 import * as Location from "expo-location";
 import { GOOGLE_API_KEY } from "../../googleConfig";
 import LoadingPopUp from "../PopUp/LoadingPopUp";
@@ -34,6 +36,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const { route, setRoute } = useContext(RouteContext);
+  const { requestRoute, setRequestRoute } = useContext(RequestRouteContext);
   const [loadingState, setLoadingState] = useState({
     loading: false,
     correct: false,
@@ -42,6 +45,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
 
   const map: LegacyRef<MapView> = useRef(null);
   const [routeDetails, setRouteDetails] = useState<Route | null>(null);
+  const [toListRoute, setToListRoute] = useState<Route | null>(null);
   const [currentRides, setCurrentRides] = useState<Route[] | null>(null);
   const [userData, setUserData] = useState<User>({} as User);
   const [getUser] = useAsyncStorage();
@@ -57,6 +61,15 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   useEffect(() => {
     setRouteDetails(route);
   }, [route]);
+
+  useEffect(() => {
+    console.log("work called");
+  }, [toListRoute]);
+
+  useEffect(() => {
+    setToListRoute(requestRoute);
+    console.log("requestRoute useEffect");
+  }, [requestRoute]);
 
   useEffect(() => {
     (async () => {
@@ -119,6 +132,10 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     await fetchUserRides(userData.id);
     setVisible(false);
   };
+
+  const endListing = async () => {
+    setToListRoute(null)
+  }
 
   const fitToCoordinates = (coordinateArray: LatLng[]) => {
     console.log("ARRAY DE COORDENADAS", coordinateArray);
@@ -191,7 +208,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
           // showsTraffic={true}
           showsUserLocation={true}
           showsMyLocationButton={true}
-          style={routeDetails ? styles.halfScreenMap : styles.fullScreenMap}
+          style={(routeDetails || toListRoute) ? styles.halfScreenMap : styles.fullScreenMap}
         >
           {currentRides?.map((ride, index) => {
             return (
@@ -252,6 +269,8 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
         {routeDetails && (
           <RouteDetailsPopUp confirmRide={confirmRide} details={routeDetails} />
         )}
+
+        {toListRoute && <ListRidesPopUp requestRide={toListRoute} />}
 
         <LoadingPopUp
           {...loadingState}

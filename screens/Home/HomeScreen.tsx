@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, SafeAreaView, View } from "react-native";
 import { RouteContext } from "../../context/RouteContext";
+import { RequestRouteContext } from "../../context/RequestRouteContext";
 import RequestRidePopUp from "../../components/PopUp/RequestRidePopUp";
 import GiveRidePopUp from "../../components/PopUp/GiveRidePopUp";
 import Map from "../../components/Map/Map";
@@ -22,6 +23,7 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   });
 
   const [route, setRoute] = useState<Route | null>(null);
+  const [requestRoute, setRequestRoute] = useState<Route | null>(null);
   const [visible, setVisible] = useState(true);
 
   const requestRideHandler = () => {
@@ -50,38 +52,40 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
 
   return (
     <RouteContext.Provider value={{ route, setRoute }}>
-      <SafeAreaView style={styles.container}>
-        <Map locationVisible={transform.locationButtons} />
+      <RequestRouteContext.Provider value={{ requestRoute, setRequestRoute }}>
+        <SafeAreaView style={styles.container}>
+          <Map locationVisible={transform.locationButtons} />
 
-        <MenuButton
-          onDismiss={onDismiss}
-          returnButton={transform.returnButton}
-          navigation={navigation}
-        />
+          <MenuButton
+            onDismiss={onDismiss}
+            returnButton={transform.returnButton}
+            navigation={navigation}
+          />
 
-        <FabButton
-          visible={visible}
-          onGive={() => {
-            setGiveVisible(true);
-          }}
-          onRequest={() => {
-            setRequestVisible(true);
-            // requestRideHandler();
-          }}
-        />
-        <GiveRidePopUp
-          giveVisible={giveVisible}
-          onDismiss={() => {
-            setGiveVisible(false);
-          }}
-        />
-        <RequestRidePopUp
-          requestVisible={requestVisible}
-          onDismiss={() => {
-            setRequestVisible(false);
-          }}
-        />
-      </SafeAreaView>
+          <FabButton
+            visible={visible}
+            onGive={() => {
+              setGiveVisible(true);
+            }}
+            onRequest={() => {
+              setRequestVisible(true);
+              // requestRideHandler();
+            }}
+          />
+          <GiveRidePopUp
+            giveVisible={giveVisible}
+            onDismiss={() => {
+              setGiveVisible(false);
+            }}
+          />
+          <RequestRidePopUp
+            requestVisible={requestVisible}
+            onDismiss={() => {
+              setRequestVisible(false);
+            }}
+          />
+        </SafeAreaView>
+      </RequestRouteContext.Provider>
     </RouteContext.Provider>
   );
 };

@@ -37,6 +37,7 @@
     "expo-status-bar": "~1.0.3",
     "expo-web-browser": "~8.6.0",
     "firebase": "^8.3.1",
+    "geofire-common": "^5.2.0",
     "geolib": "^3.3.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",

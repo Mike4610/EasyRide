@@ -24,7 +24,7 @@ import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import { Place, User, Vehicle } from "../../types";
 import { Route } from "../../types";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { RouteContext } from "../../context/RouteContext";
+import { RequestRouteContext } from "../../context/RequestRouteContext";
 import { or } from "react-native-reanimated";
 import Slider from "@react-native-community/slider";
 interface Props {
@@ -39,8 +39,8 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
   const onChange = (event: Event, selectedDate?: Date) => {
     setShow(Platform.OS === "ios");
     if (selectedDate) {
-      setRouteDetails({
-        ...routeDetails,
+      setRide({
+        ...ride,
         date: selectedDate,
       });
 
@@ -50,8 +50,6 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
 
   const [titleDate, setTitleDate] = useState("Select Time and Date");
   const [titleD, setTitleD] = useState("");
-  const rangeNumbers = ["5 km", "10 km", "25 km", "50 km", "100 km", "500 km"];
-  const [range, setRange] = useState("5");
 
   const [userData, setUserData] = useState<User>({
     id: "",
@@ -63,67 +61,32 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
     vehicles: [],
     locations: [],
   });
-  const [getValue] = useAsyncStorage();
 
-  const initialState: Route = {
+  const initialRide: Route = {
     from: {} as Place,
     to: {} as Place,
     date: new Date(),
     duration: 0,
     distance: 0,
-    vehicle: {} as Vehicle,
-    availableSeats: "",
+    range: 5,
   };
 
-  const [routeDetails, setRouteDetails] = useState<Route>(initialState);
+  const [getValue] = useAsyncStorage();
 
-  const { route, setRoute } = useContext(RouteContext);
+  const [ride, setRide] = useState(initialRide);
 
-  useEffect(() => {
-    setRouteDetails({
-      from: {} as Place,
-      to: {} as Place,
-      date: new Date(),
-      duration: 0,
-      distance: 0,
-      driverId: userData.id,
-      passengersId: [] as string[],
-      vehicle: userData?.vehicles[0],
-      availableSeats: String(parseInt(userData.vehicles[0]?.seats) - 1),
-    });
+  const { requestRoute, setRequestRoute } = useContext(RequestRouteContext);
 
-    console.log("give ride route mudou");
-  }, [route]);
-
-  useEffect(() => {
-    setRouteDetails({
-      ...routeDetails,
-      driverId: userData.id,
-      passengersId: [] as string[],
-      vehicle: userData.vehicles[0],
-      availableSeats: String(parseInt(userData.vehicles[0]?.seats) - 1),
-    });
-  }, [userData]);
+  // useEffect(() => {
+  //   console.log(ride);
+  // }, [ride]);
 
   useEffect(() => {
     (async () => {
       const user = await getValue();
-
       setUserData(user);
     })();
   }, []);
-
-  const getSeatNumber = (s: string) => {
-    if (s !== undefined) {
-      let availableSeats: number = parseInt(s);
-      let seatsArray = [...Array(availableSeats)].map((item, index) =>
-        String(index + 1)
-      );
-      seatsArray.pop();
-      seatsArray.reverse();
-      return seatsArray;
-    }
-  };
 
   useEffect(() => {
     if (titleD == "") {
@@ -132,6 +95,21 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
       setTitleDate("Date : " + titleD);
     }
   }, [titleD]);
+
+  function confirmRideRequest(){
+    if(ride.from && ride.to && ride.range && (ride.range)>0 && (ride.range)<21){
+      var now = new Date();
+      if(now.getFullYear() <= ride.date.getFullYear()){
+        if(now.getMonth() <= ride.date.getMonth()){
+          if(now.getDay() <= ride.date.getDay()){
+            // console.log("é hoje ou depois")
+            setRequestRoute(ride);
+          }
+        }
+      }
+    }
+  }
+
   return (
     <Provider>
       <Portal>
@@ -187,7 +165,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                       }}
                     >
                       <SearchBar
-                        location={routeDetails.from}
+                        location={ride.from}
                         placeholder="From"
                         visible={true}
                       ></SearchBar>
@@ -201,7 +179,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                       }}
                     >
                       <SearchBar
-                        location={routeDetails.to}
+                        location={ride.to}
                         placeholder="To"
                         visible={true}
                       ></SearchBar>
@@ -228,7 +206,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                   {Platform.OS === "ios" && (
                     <DatePicker
                       display="default"
-                      value={routeDetails.date}
+                      value={ride.date}
                       mode="date"
                       style={styles.datePicker}
                       onChange={onChange}
@@ -253,7 +231,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                       onChange={(e, d) => {
                         setShow(false);
                         if (d !== undefined) {
-                          setRouteDetails({ ...routeDetails, date: d });
+                          setRide({ ...ride, date: d });
                           setTitleD(d.toLocaleDateString());
                         }
                       }}
@@ -286,7 +264,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                     marginTop: 20,
                   }}
                 >
-                  {range} Km
+                  {ride.range} Km
                 </Text>
 
                 <Slider
@@ -302,27 +280,15 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                   minimumTrackTintColor="#fd4d4d"
                   maximumTrackTintColor="#000000"
                   step={1}
-                  onValueChange={(itemValue) => setRange(itemValue)}
+                  onValueChange={(itemValue) => setRide({ ...ride, range: itemValue })}
                 />
 
-                {/* <Picker
-                  style={{ width: 250, height: 44, alignSelf: "center" }}
-                  itemStyle={{ height: 44 }}
-                  selectedValue={range}
-                  onValueChange={(itemValue) => setRange(itemValue)}
-                >
-                  {rangeNumbers.map((number) => {
-                    return (
-                      <Picker.Item key={number} label={number} value={number} />
-                    );
-                  })}
-                </Picker> */}
               </ScrollView>
               <View>
                 <Button
                   press={() => {
-                    console.log(routeDetails);
-                    setRoute(routeDetails);
+                    console.log(ride);
+                    confirmRideRequest()
                     onDismiss();
                   }}
                   full={true}

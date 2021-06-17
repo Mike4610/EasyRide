@@ -252,6 +252,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                       value={routeDetails.date}
                       mode="date"
                       style={styles.datePicker}
+                      // @ts-ignore
                       onChange={onChange}
                     />
                   )}
@@ -270,6 +271,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                       style={styles.datePickerStyle}
                       value={new Date()}
                       mode="time"
+                      // @ts-ignore
                       onChange={(e, d) => {
                         setShow(false);
                         if (d !== undefined) {
@@ -287,6 +289,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                       mode={"time"}
                       is24Hour={true}
                       display="default"
+                      // @ts-ignore
                       onChange={onChange}
                       style={styles.datePicker}
                     />
@@ -298,6 +301,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                       style={styles.datePickerStyle}
                       value={new Date()}
                       mode="date"
+                      // @ts-ignore
                       onChange={(e, d) => {
                         setShow(false);
                         if (d !== undefined) {
