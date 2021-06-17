@@ -20,6 +20,7 @@ import VehicleCard from "../../components/Cards/VehicleCard";
 
 const VehiclesScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  
   //POPUP
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);

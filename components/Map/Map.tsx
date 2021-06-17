@@ -5,7 +5,6 @@ import React, {
   useRef,
   LegacyRef,
 } from "react";
-
 import { StyleSheet, Dimensions, View, TouchableOpacity } from "react-native";
 import MapView, { LatLng } from "react-native-maps";
 import Loading from "../Loading/Loading";
@@ -19,10 +18,12 @@ import ListRidesPopUp from "../PopUp/ListRidesPopUp";
 import * as Location from "expo-location";
 import { GOOGLE_API_KEY } from "../../googleConfig";
 import LoadingPopUp from "../PopUp/LoadingPopUp";
+import JoinRidePopUp from "../PopUp/JoinRidePopUp";
 import { sleep } from "../../utils";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
+import { DetailsContext } from "../../context/DetailsContext";
 
 interface Props {
   locationVisible: boolean;
@@ -33,7 +34,6 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     longitude: 0,
   });
   const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const { route, setRoute } = useContext(RouteContext);
   const { requestRoute, setRequestRoute } = useContext(RequestRouteContext);
@@ -42,13 +42,13 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     correct: false,
     error: false,
   });
-
   const map: LegacyRef<MapView> = useRef(null);
   const [routeDetails, setRouteDetails] = useState<Route | null>(null);
   const [toListRoute, setToListRoute] = useState<Route | null>(null);
   const [currentRides, setCurrentRides] = useState<Route[] | null>(null);
   const [userData, setUserData] = useState<User>({} as User);
   const [getUser] = useAsyncStorage();
+  const [detailsType, setDetailsType] = useState<string>("");
 
   useEffect(() => {
     (async () => {
@@ -59,7 +59,9 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   }, []);
 
   useEffect(() => {
+    console.log("RPPPPPPUTE", route)
     setRouteDetails(route);
+    setDetailsType("create");
   }, [route]);
 
   useEffect(() => {
@@ -78,6 +80,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   }, [userData]);
 
   useEffect(() => {
+    console.log("ROUTE DETAIIIILS", routeDetails)
     if (
       routeDetails?.from.latitude !== undefined &&
       routeDetails?.to.latitude !== undefined
@@ -121,7 +124,36 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     setVisible(true);
     setLoadingState({ ...loadingState, loading: true });
     try {
-      await firebase.firestore().collection("rides").add(routeAux);
+      firebase
+        .firestore()
+        .collection("rides")
+        .add(routeAux)
+        .then(async ({ id }) => {
+          console.log(id);
+          await firebase
+            .firestore()
+            .collection("rides")
+            .doc(id)
+            .update({ ...routeAux, ...{ id } });
+        });
+    } catch (error) {
+      console.error(error);
+    }
+
+    setLoadingState({ ...loadingState, loading: false, correct: true });
+    await sleep(2000);
+
+    await fetchUserRides(userData.id);
+    setVisible(false);
+  };
+
+  const cancelRide = async (ride: Route) => {
+    console.log("CANCEL RIDE")
+    setRouteDetails(null);
+    setVisible(true);
+    setLoadingState({ ...loadingState, loading: true });
+    try {
+      await firebase.firestore().collection("rides").doc(ride.id).delete()
     } catch (error) {
       console.error(error);
     }
@@ -138,7 +170,6 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   }
 
   const fitToCoordinates = (coordinateArray: LatLng[]) => {
-    console.log("ARRAY DE COORDENADAS", coordinateArray);
     map.current?.fitToCoordinates(coordinateArray, {
       edgePadding: {
         top: 60,
@@ -151,7 +182,6 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   };
 
   const showUserRides = () => {
-    console.log("show user rides");
     let ridesArray = [
       {
         latitude: location.latitude,
@@ -212,24 +242,22 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
         >
           {currentRides?.map((ride, index) => {
             return (
-              <TouchableOpacity
-                onPress={() => {
-                  console.log("aabbbbbbb");
-                }}
+              <Marker
                 key={index}
-              >
-                <Marker
-                  details={ride}
-                  type={1}
-                  visible={true}
-                  location={{
-                    latitude: ride.from?.latitude,
-                    longitude: ride.from?.longitude,
-                  }}
-                />
-              </TouchableOpacity>
+                ride={ride}
+                onPress={() => {
+                  setRouteDetails(ride);
+                  setDetailsType("view");
+                }}
+                type={"from"}
+                location={{
+                  latitude: ride.from?.latitude,
+                  longitude: ride.from?.longitude,
+                }}
+              />
             );
           })}
+
           {routeDetails && (
             <>
               <MapViewDirections
@@ -239,8 +267,6 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
                 strokeWidth={4}
                 strokeColor="#fd4d4d"
                 onReady={(result) => {
-                  console.log("AAAA", routeDetails);
-
                   setRouteDetails({
                     ...routeDetails,
                     duration: result.duration.toFixed(2),
@@ -252,12 +278,11 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
                 }}
               />
               {Object.keys(routeDetails).map((key, index) => {
-                if (routeDetails) {
+                if (routeDetails && (key === "from" || key === "to")) {
                   return (
                     <Marker
                       key={index}
-                      type={index + 1}
-                      visible={true}
+                      type={key}
                       location={routeDetails[key]}
                     />
                   );
@@ -267,15 +292,21 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
           )}
         </MapView>
         {routeDetails && (
-          <RouteDetailsPopUp confirmRide={confirmRide} details={routeDetails} />
+          <RouteDetailsPopUp
+            type={detailsType}
+            confirmRide={confirmRide}
+            cancelRide = {cancelRide}
+            details={routeDetails}
+          />
         )}
 
         {toListRoute && <ListRidesPopUp requestRide={toListRoute} />}
 
+        {/* {routeDetails && <JoinRidePopUp route={setRouteDetails} visible={true} />} */}
         <LoadingPopUp
           {...loadingState}
           visible={visible}
-          message={"Publishing your ride..."}
+          message={detailsType === "view" ? "Deleting your ride..." : "Publishing your ride..."}
         />
       </View>
     );

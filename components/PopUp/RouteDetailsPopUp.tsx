@@ -16,12 +16,15 @@ import "firebase/firestore";
 interface Props {
   details: Route;
   confirmRide: () => void;
+  cancelRide: (ride: Route) => void;
+  type: string;
 }
 
-const RouteDetailsPopUp: React.FC<Props> = ({ details, confirmRide }) => {
-  useEffect(() => {
-    console.log(details);
-  }, []);
+const RouteDetailsPopUp: React.FC<Props> = ({ details, confirmRide, cancelRide, type }) => {
+  const [formattedDate, setFormattedDate] = useState<Date>(
+    new Date(details.date.seconds)
+  );
+
   return (
     <View
       style={{
@@ -58,12 +61,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({ details, confirmRide }) => {
         <Text style={{ fontSize: 17, textAlign: "left" }}>
           <AntDesign name="calendar" size={20} color="#fd4d4d" />{" "}
           <Text style={{ fontWeight: "bold" }}>Date:</Text>{" "}
-          {details.date.toLocaleDateString() +
-            " " +
-            details.date.getHours() +
-            ":" +
-            details.date.getMinutes() +
-            "h"}
+          {formattedDate.toLocaleDateString() + " " + formattedDate.getHours() + ":" + formattedDate.getMinutes() + "h"}
         </Text>
         <Text style={{ fontSize: 17, textAlign: "left" }}>
           <MaterialCommunityIcons
@@ -91,7 +89,13 @@ const RouteDetailsPopUp: React.FC<Props> = ({ details, confirmRide }) => {
         </Text>
       </View>
       <View>
-        <Button text={"Confirm"} full={true} press={confirmRide}></Button>
+        {type === "create" ? (
+          <Button text={"Confirm"} full={true} press={confirmRide}></Button>
+        ) : type === "view" ? (
+          <Button text={"Cancel ride"} full={true} press={()=>{cancelRide(details)}}></Button>
+        ) : (
+          <></>
+        )}
       </View>
     </View>
   );

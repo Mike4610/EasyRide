@@ -1,43 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet, View, Appearance } from "react-native";
 import { LatLng, MarkerAnimated } from "react-native-maps";
 import { FontAwesome, Entypo, Ionicons } from "@expo/vector-icons";
 import { Route } from "../../types";
+import JoinRidePopUp from "../PopUp/JoinRidePopUp";
+import { DetailsContext } from "../../context/DetailsContext";
 
 interface Props {
   location: LatLng;
-  visible: boolean;
-  type: number;
-  details?: Route;
+  type: string;
+  ride?: Route;
+  onPress?: () => void;
 }
 
-const Marker: React.FC<Props> = ({ location, visible, type, details }) => {
-  const [isVisible, setIsVisible] = useState(true);
-  // const [mode, setMode] = useState<string>("#151a21");
+const Marker: React.FC<Props> = ({ location, type, ride, onPress }) => {
+  const [details, setDetails] = useState(ride);
 
-  // useEffect(() => {
-  //   Appearance.getColorScheme() === "dark"
-  //     ? setMode("#a3a3a3")
-  //     : setMode("#151a21");
-  // }, []);
+  const setSelectedRide = () => {
+    if (ride) setDetails(ride);
+  };
 
   return (
     <View>
-      {type === 1 ? (
+      {type === "from" ? (
+        <>
+          <MarkerAnimated
+            onPress={() => {
+              if (onPress) onPress();
+            }}
+            coordinate={location}
+            anchor={{ x: 0.35, y: 0.32 }}
+          >
+            <Ionicons name="car" size={30} color="#151a21" />
+          </MarkerAnimated>
+        </>
+      ) : type === "to" ? (
         <MarkerAnimated
-          onPress={() => {
-            console.log(details);
-          }}
-          coordinate={location}
-          anchor={{ x: 0.35, y: 0.32 }}
-        >
-          <Ionicons name="car" size={30} color="#151a21" />
-        </MarkerAnimated>
-      ) : type === 2 ? (
-        <MarkerAnimated
-          onPress={() => {
-            console.log("PRESSSSS");
-          }}
+          onPress={() => {}}
           coordinate={location}
           anchor={{ x: 0.35, y: 0.32 }}
         >

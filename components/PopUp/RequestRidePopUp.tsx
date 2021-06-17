@@ -19,13 +19,13 @@ import DatePicker, {
   AndroidEvent,
 } from "@react-native-community/datetimepicker";
 import Button from "../Buttons/Button";
-import { Picker } from "@react-native-picker/picker";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import { Place, User, Vehicle } from "../../types";
 import { Route } from "../../types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { RequestRouteContext } from "../../context/RequestRouteContext";
 import { or } from "react-native-reanimated";
+import { RouteContext } from "../../context/RouteContext";
 import Slider from "@react-native-community/slider";
 interface Props {
   requestVisible: boolean;
@@ -154,7 +154,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                   <View>
                     <Text style={styles.title}>
                       <Entypo name="location-pin" size={25} color="#fd4d4d" />
-                      Where to?
+                      Route
                     </Text>
                     <View
                       style={{
@@ -272,7 +272,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                     width: 250,
                     height: 40,
                     alignSelf: "center",
-                    marginTop: 20
+                    marginTop: 20,
                   }}
                   value={5}
                   minimumValue={1}

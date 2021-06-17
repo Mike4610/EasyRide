@@ -1,12 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, Animated } from "react-native";
+import React, { useState, useEffect, createRef } from "react";
+import { View, Text, TextInput, StyleSheet, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { Dialog, Portal, Provider, Snackbar } from "react-native-paper";
+import {
+  Dialog,
+  Divider,
+  Portal,
+  Provider,
+  Snackbar,
+} from "react-native-paper";
 import Button from "../../components/Buttons/Button";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import carList from "../../car-list.json";
 import { Vehicle } from "../../types";
 import { licensePlateValidator } from "../../utils";
+import ActionSheet from "react-native-actions-sheet";
 interface Props {
   visible: boolean;
   onDismiss: () => void;
@@ -27,7 +34,15 @@ const AddVehiclePopUp: React.FC<Props> = ({
     seats: "2",
     licensePlate: "",
   });
+  const [buttonText, setButtonText] = useState({
+    brand: "Choose brand",
+    model: "Choose model",
+    seats: "Choose seat number",
+  });
   const [snackBarVisible, setSnackBarVisible] = useState(false);
+  const chooseBrandRef: React.RefObject<any> = createRef();
+  const chooseModelRef: React.RefObject<any> = createRef();
+  const chooseSeatNumber: React.RefObject<any> = createRef();
 
   const dismissSnackBar = () => {
     setSnackBarVisible(false);
@@ -41,8 +56,8 @@ const AddVehiclePopUp: React.FC<Props> = ({
           brand: brand,
           model: models[0],
         });
-
         setModelList(models);
+        setButtonText({ ...buttonText, brand: brand });
       }
     });
   };
@@ -50,8 +65,8 @@ const AddVehiclePopUp: React.FC<Props> = ({
   const registerVehicle = () => {
     if (licensePlateValidator(vehicle.licensePlate) === "") {
       handleRegisterVehicle(vehicle);
-    }else{
-      setSnackBarVisible(true)
+    } else {
+      setSnackBarVisible(true);
     }
   };
 
@@ -69,50 +84,173 @@ const AddVehiclePopUp: React.FC<Props> = ({
             <KeyboardAwareScrollView style={{ height: 370 }}>
               <View style={styles.pickerContainer}>
                 <Text style={styles.popup_title}>Brand</Text>
-                <Picker
-                  style={{ width: 250, height: 44 }}
-                  itemStyle={{ height: 44 }}
-                  selectedValue={vehicle.brand}
-                  onValueChange={(itemValue) => handleBrandChange(itemValue)}
-                >
-                  {carList.map(({ brand }) => {
-                    return (
-                      <Picker.Item key={brand} label={brand} value={brand} />
-                    );
-                  })}
-                </Picker>
+
+                {Platform.OS === "ios" ? (
+                  <>
+                    <Button
+                      text={buttonText.brand}
+                      full={false}
+                      press={() => {
+                        chooseBrandRef.current?.setModalVisible();
+                      }}
+                    />
+                    <ActionSheet ref={chooseBrandRef}>
+                      <View>
+                        <Picker
+                          style={{
+                            justifyContent: "center",
+                            width: "100%",
+                            height: 250,
+                          }}
+                          itemStyle={{ height: "100%" }}
+                          selectedValue={vehicle.brand}
+                          onValueChange={(itemValue) =>
+                            handleBrandChange(itemValue)
+                          }
+                        >
+                          {carList.map(({ brand }) => {
+                            return (
+                              <Picker.Item
+                                key={brand}
+                                label={brand}
+                                value={brand}
+                              />
+                            );
+                          })}
+                        </Picker>
+                      </View>
+                    </ActionSheet>
+                  </>
+                ) : (
+                  <View>
+                    <Picker
+                      style={{ width: 250, height: 44 }}
+                      itemStyle={{ height: 44 }}
+                      selectedValue={vehicle.brand}
+                      onValueChange={(itemValue) =>
+                        handleBrandChange(itemValue)
+                      }
+                    >
+                      {carList.map(({ brand }) => {
+                        return (
+                          <Picker.Item
+                            key={brand}
+                            label={brand}
+                            value={brand}
+                          />
+                        );
+                      })}
+                    </Picker>
+                  </View>
+                )}
               </View>
               <View style={styles.pickerContainer}>
                 <Text style={styles.popup_title}>Model</Text>
-                <Picker
-                  style={{ width: 250, height: 44 }}
-                  itemStyle={{ height: 44 }}
-                  selectedValue={vehicle.model}
-                  onValueChange={(itemValue) => {
-                    setVehicle({ ...vehicle, model: itemValue });
-                  }}
-                >
-                  {modelList.map((item) => {
-                    return <Picker.Item key={item} label={item} value={item} />;
-                  })}
-                </Picker>
+                {Platform.OS === "ios" ? (
+                  <>
+                    <Button
+                      text={buttonText.model}
+                      full={false}
+                      press={() => {
+                        chooseModelRef.current?.setModalVisible();
+                      }}
+                    />
+                    <ActionSheet ref={chooseModelRef}>
+                      <Picker
+                        style={{
+                          justifyContent: "center",
+                          width: "100%",
+                          height: 250,
+                        }}
+                        itemStyle={{ height: "100%" }}
+                        selectedValue={vehicle.model}
+                        onValueChange={(itemValue) => {
+                          setVehicle({ ...vehicle, model: itemValue });
+                          setButtonText({ ...buttonText, model: itemValue });
+                        }}
+                      >
+                        {modelList.map((item) => {
+                          return (
+                            <Picker.Item key={item} label={item} value={item} />
+                          );
+                        })}
+                      </Picker>
+                    </ActionSheet>
+                  </>
+                ) : (
+                  <Picker
+                    style={{ width: 250, height: 44 }}
+                    itemStyle={{ height: 44 }}
+                    selectedValue={vehicle.model}
+                    onValueChange={(itemValue) => {
+                      setVehicle({ ...vehicle, model: itemValue });
+                    }}
+                  >
+                    {modelList.map((item) => {
+                      return (
+                        <Picker.Item key={item} label={item} value={item} />
+                      );
+                    })}
+                  </Picker>
+                )}
               </View>
               <View style={styles.pickerContainer}>
                 <Text style={styles.popup_title}>Seat number</Text>
-                <Picker
-                  style={{ width: 250, height: 44 }}
-                  itemStyle={{ height: 44 }}
-                  selectedValue={vehicle.seats}
-                  onValueChange={(itemValue) => {
-                    setVehicle({ ...vehicle, seats: itemValue });
-                  }}
-                >
-                  {seatNumbers.map((number) => {
-                    return (
-                      <Picker.Item key={number} label={number} value={number} />
-                    );
-                  })}
-                </Picker>
+                {Platform.OS === "ios" ? (
+                  <>
+                    <Button
+                      text={buttonText.seats}
+                      full={false}
+                      press={() => {
+                        chooseSeatNumber.current?.setModalVisible();
+                      }}
+                    />
+                    <ActionSheet ref={chooseSeatNumber}>
+                      <Picker
+                        style={{
+                          justifyContent: "center",
+                          width: "100%",
+                          height: 250,
+                        }}
+                        itemStyle={{ height: "100%" }}
+                        selectedValue={vehicle.seats}
+                        onValueChange={(itemValue) => {
+                          setVehicle({ ...vehicle, seats: itemValue });
+                          setButtonText({ ...buttonText, seats: itemValue });
+                        }}
+                      >
+                        {seatNumbers.map((number) => {
+                          return (
+                            <Picker.Item
+                              key={number}
+                              label={number}
+                              value={number}
+                            />
+                          );
+                        })}
+                      </Picker>
+                    </ActionSheet>
+                  </>
+                ) : (
+                  <Picker
+                    style={{ width: 250, height: 44 }}
+                    itemStyle={{ height: 44 }}
+                    selectedValue={vehicle.seats}
+                    onValueChange={(itemValue) => {
+                      setVehicle({ ...vehicle, seats: itemValue });
+                    }}
+                  >
+                    {seatNumbers.map((number) => {
+                      return (
+                        <Picker.Item
+                          key={number}
+                          label={number}
+                          value={number}
+                        />
+                      );
+                    })}
+                  </Picker>
+                )}
               </View>
               <View style={styles.pickerContainer}>
                 <Text style={styles.popup_title}>License Plate</Text>
