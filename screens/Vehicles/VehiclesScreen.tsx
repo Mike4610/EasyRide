@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   },
   profilePic: {
     height: 150,
-    width: 290,
+    width: 250,
     marginTop: 20,
   },
   memberSince: {

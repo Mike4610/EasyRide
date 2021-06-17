@@ -1,3 +1,5 @@
+import { Place } from "./types";
+
 export const emailValidator = (email: string) => {
   const re = /\S+@\S+\.\S+/;
 
@@ -35,4 +37,18 @@ export const licensePlateValidator = (licensePlate: string) => {
 
 export const sleep = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+export const dateValidator = (date: Date) => {
+  const d_now = new Date();
+  return d_now.getTime() <= date.getTime();
+};
+
+export const validateLocation = ({
+  latitude,
+  longitude,
+  description,
+}: Place) => {
+  if (latitude !== undefined && longitude !== undefined && description !== undefined) return true;
+  return false;
 };

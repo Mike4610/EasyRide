@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, StatusBar } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 
 interface Props {
   onDismiss?: () => void;
   returnButton?: boolean;
+  closeButton?: boolean;
   navigation?: any;
 }
 
 const MenuButton: React.FC<Props> = ({
   onDismiss,
   returnButton,
+  closeButton,
   navigation,
 }) => {
   return (
@@ -25,7 +27,25 @@ const MenuButton: React.FC<Props> = ({
         left: 20,
       }}
     >
-      {!returnButton ? (
+      {closeButton ? (
+        <AntDesign
+          name="close"
+          size={40}
+          color="#fd4d4d"
+          onPress={() => {
+            if (onDismiss) onDismiss();
+          }}
+        />
+      ) : returnButton ? (
+        <Ionicons
+          name="arrow-back"
+          size={45}
+          color="#fd4d4d"
+          onPress={() => {
+            if (onDismiss) onDismiss();
+          }}
+        />
+      ) : !returnButton ? (
         <Ionicons
           name="menu"
           size={45}
@@ -35,14 +55,7 @@ const MenuButton: React.FC<Props> = ({
           }}
         />
       ) : (
-        <Ionicons
-          name="arrow-back"
-          size={45}
-          color="#fd4d4d"
-          onPress={() => {
-            if (onDismiss) onDismiss();
-          }}
-        />
+        <></>
       )}
     </TouchableOpacity>
   );

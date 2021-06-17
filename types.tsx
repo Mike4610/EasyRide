@@ -39,7 +39,7 @@ interface User {
 interface Place {
   latitude: number;
   longitude: number;
-  geoHash: string;
+  geoHash?: string;
   description?: string;
 }
 interface RouteDetails {
@@ -58,7 +58,7 @@ interface Route {
   duration: number;
   vehicle?: Vehicle;
   availableSeats?: string;
-  driverId: string;
+  driverId?: string;
   passengersId?: string[];
   range?: number;
 }

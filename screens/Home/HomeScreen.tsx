@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, SafeAreaView, View } from "react-native";
 import { RouteContext } from "../../context/RouteContext";
 import { RequestRouteContext } from "../../context/RequestRouteContext";
+import { CurrentRidesContext } from "../../context/CurrentRidesContext";
 import RequestRidePopUp from "../../components/PopUp/RequestRidePopUp";
 import GiveRidePopUp from "../../components/PopUp/GiveRidePopUp";
 import Map from "../../components/Map/Map";
@@ -16,75 +17,80 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   const [requestVisible, setRequestVisible] = useState(false);
   const [giveVisible, setGiveVisible] = useState(false);
   const [transform, setTransform] = useState({
-    fabVisible: true,
     returnButton: false,
-    searchBar: false,
-    locationButtons: false,
+    closeButton: false,
   });
 
   const [route, setRoute] = useState<Route | null>(null);
   const [requestRoute, setRequestRoute] = useState<Route | null>(null);
+  const [viewRides, setViewRides] = useState<boolean>(false);
+
   const [visible, setVisible] = useState(true);
+  const [flag, setFlag] = useState<number>(0);
 
   const requestRideHandler = () => {
     setTransform({
-      fabVisible: false,
       returnButton: true,
-      searchBar: true,
-      locationButtons: true,
+      closeButton: false,
     });
   };
 
   const onDismiss = () => {
-    setTransform({
-      fabVisible: true,
-      returnButton: false,
-      searchBar: false,
-      locationButtons: false,
-    });
+    setRoute(null);
   };
 
   useEffect(() => {
-    if (route?.from?.latitude !== 0 && route?.to?.longitude! == 0) {
-      setVisible(false);
+    setFlag(0);
+  }, []);
+
+  useEffect(() => {
+    if (flag !== 0) {
+      setTransform({
+        ...transform,
+        closeButton: !transform.closeButton,
+      });
+      setVisible(!visible);
     }
+    setFlag(1);
   }, [route]);
 
   return (
     <RouteContext.Provider value={{ route, setRoute }}>
       <RequestRouteContext.Provider value={{ requestRoute, setRequestRoute }}>
-        <SafeAreaView style={styles.container}>
-          <Map locationVisible={transform.locationButtons} />
+        <CurrentRidesContext.Provider value={{ viewRides, setViewRides }}>
+          <SafeAreaView style={styles.container}>
+            <Map />
+            <MenuButton
+              onDismiss={onDismiss}
+              returnButton={transform.returnButton}
+              closeButton={transform.closeButton}
+              navigation={navigation}
+            />
 
-          <MenuButton
-            onDismiss={onDismiss}
-            returnButton={transform.returnButton}
-            navigation={navigation}
-          />
-
-          <FabButton
-            visible={visible}
-            onGive={() => {
-              setGiveVisible(true);
-            }}
-            onRequest={() => {
-              setRequestVisible(true);
-              // requestRideHandler();
-            }}
-          />
-          <GiveRidePopUp
-            giveVisible={giveVisible}
-            onDismiss={() => {
-              setGiveVisible(false);
-            }}
-          />
-          <RequestRidePopUp
-            requestVisible={requestVisible}
-            onDismiss={() => {
-              setRequestVisible(false);
-            }}
-          />
-        </SafeAreaView>
+            <FabButton
+              visible={visible}
+              onGive={() => {
+                setGiveVisible(true);
+              }}
+              onRequest={() => {
+                setRequestVisible(true);
+                // requestRideHandler();
+              }}
+            />
+            <GiveRidePopUp
+              giveVisible={giveVisible}
+              onDismiss={() => {
+                setGiveVisible(false);
+              }}
+            />
+            <RequestRidePopUp
+              requestVisible={requestVisible}
+              onDismiss={() => {
+                setRequestVisible(false);
+              }}
+            />
+          </SafeAreaView>
+        </CurrentRidesContext.Provider>
       </RequestRouteContext.Provider>
     </RouteContext.Provider>
   );
