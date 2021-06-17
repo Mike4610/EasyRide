@@ -8,7 +8,7 @@ import {
   Image,
   Platform,
 } from "react-native";
-import { Dialog, Portal, Provider } from "react-native-paper";
+import { Dialog, Portal, Provider, Snackbar } from "react-native-paper";
 import { Dimensions } from "react-native";
 import SearchBar from "../SearchBar/SearchBar";
 import { Divider } from "react-native-paper";
@@ -22,6 +22,8 @@ import { Route } from "../../types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { RouteContext } from "../../context/RouteContext";
 import ActionSheet from "react-native-actions-sheet";
+import { dateValidator, validateLocation } from "../../utils";
+import SnackBar from "../SnackBar/SnackBar";
 
 interface Props {
   giveVisible: boolean;
@@ -39,7 +41,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   const chooseSeatNumberRef = createRef();
 
   const onChange = (event: Event, selectedDate?: Date) => {
-    setShow(Platform.OS === "ios");
+    setShow(Platform.OS === "android");
     if (selectedDate) {
       setRouteDetails({
         ...routeDetails,
@@ -72,12 +74,20 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     distance: 0,
     vehicle: {} as Vehicle,
     availableSeats: "",
+    driverId: "",
   };
 
   const [vehicle, setVehicle] = useState({
     label: "",
     seats: [] as string[] | undefined,
   });
+
+  const [snackBarVisible, setSnackBarVisible] = useState(false);
+  const [snackBarMessage, setSnackBarMessage] = useState<string>("");
+
+  const dismissSnackBar = () => {
+    setSnackBarVisible(false);
+  };
 
   const [routeDetails, setRouteDetails] = useState<Route>(initialState);
 
@@ -154,6 +164,32 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     });
   };
 
+  const publishRide = () => {
+    console.log(validateLocation(routeDetails.from));
+    console.log(validateLocation(routeDetails.to));
+
+    if (dateValidator(routeDetails.date)) {
+      if (
+        validateLocation(routeDetails.from) &&
+        validateLocation(routeDetails.to)
+      ) {
+        setRoute(routeDetails);
+        setButtonText({
+          car: "Choose vehicle",
+          seats: "Choose seat number",
+        });
+        onDismiss();
+      } else {
+        setSnackBarMessage("From and To fields cannot be empty!");
+        setSnackBarVisible(true);
+      }
+    } else {
+      console.log("DATE HAS TO BE SET TO FUTURE");
+      setSnackBarMessage("Data has to be set to the future!");
+      setSnackBarVisible(true);
+    }
+  };
+
   useEffect(() => {
     if (titleD == "" || titleTime == "") {
       setTitleDate("Select Time and Date");
@@ -183,23 +219,25 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
               keyboardShouldPersistTaps="handled"
               style={{ height: Dimensions.get("window").height - 100 }}
             >
-              <TouchableOpacity
-                style={{
-                  display: "flex",
-                  //@ts-ignore
-                  marginBottom: -25,
-                  position: "absolute",
-                }}
-                onPress={() => {
-                  onDismiss();
-                }}
-              >
-                <Ionicons name="arrow-back" size={45} color="#fd4d4d" />
-              </TouchableOpacity>
-              <Image
-                style={styles.profilePic}
-                source={require("../../assets/images/ride.png")}
-              />
+              <View>
+                <TouchableOpacity
+                  style={{
+                    display: "flex",
+                    //@ts-ignore
+                    marginBottom: -25,
+                    position: "absolute",
+                  }}
+                  onPress={() => {
+                    onDismiss();
+                  }}
+                >
+                  <Ionicons name="arrow-back" size={45} color="#fd4d4d" />
+                </TouchableOpacity>
+                <Image
+                  style={styles.profilePic}
+                  source={require("../../assets/images/ride.png")}
+                />
+              </View>
               <View style={{ height: 250 }}>
                 <View>
                   <Text style={styles.title}>
@@ -405,7 +443,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     marginBottom: 20,
                   }}
                 >
-                  <AntDesign name="car" size={24} color="#fd4d4d" />
+                  <Ionicons name="person-outline" size={20} color="#fd4d4d" />
                   Avaiable Seats
                 </Text>
                 {Platform.OS === "ios" ? (
@@ -479,18 +517,26 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
               </View>
             </ScrollView>
             <View>
-              <Button
-                press={() => {
-                  console.log(routeDetails);
-                  setRoute(routeDetails);
-                  onDismiss();
-                }}
-                full={true}
-                text={"Continue"}
-              />
+              <Button press={publishRide} full={true} text={"Continue"} />
             </View>
           </Dialog.Content>
         </Dialog>
+        <Snackbar
+          duration={2500}
+          visible={snackBarVisible}
+          onDismiss={dismissSnackBar}
+          style={{ backgroundColor: "#151a21" }}
+          action={{
+            label: "",
+            onPress: () => {
+              dismissSnackBar();
+            },
+          }}
+        >
+          <Text style={{ fontSize: 15, fontWeight: "bold", color: "white" }}>
+            {snackBarMessage}
+          </Text>
+        </Snackbar>
       </Portal>
     </Provider>
   );

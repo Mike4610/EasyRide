@@ -18,17 +18,14 @@ import ListRidesPopUp from "../PopUp/ListRidesPopUp";
 import * as Location from "expo-location";
 import { GOOGLE_API_KEY } from "../../googleConfig";
 import LoadingPopUp from "../PopUp/LoadingPopUp";
-import JoinRidePopUp from "../PopUp/JoinRidePopUp";
 import { sleep } from "../../utils";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
-import { DetailsContext } from "../../context/DetailsContext";
+import * as TaskManager from "expo-task-manager";
+import { CurrentRidesContext } from "../../context/CurrentRidesContext";
 
-interface Props {
-  locationVisible: boolean;
-}
-const Map: React.FC<Props> = ({ locationVisible }) => {
+const Map: React.FC<{}> = () => {
   const [location, setLocation] = useState<Place>({
     latitude: 0,
     longitude: 0,
@@ -36,6 +33,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [visible, setVisible] = useState(false);
   const { route, setRoute } = useContext(RouteContext);
+  const { viewRides, setViewRides } = useContext(CurrentRidesContext);
   const { requestRoute, setRequestRoute } = useContext(RequestRouteContext);
   const [loadingState, setLoadingState] = useState({
     loading: false,
@@ -48,29 +46,28 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   const [currentRides, setCurrentRides] = useState<Route[] | null>(null);
   const [userData, setUserData] = useState<User>({} as User);
   const [getUser] = useAsyncStorage();
-  const [detailsType, setDetailsType] = useState<string>("");
+  const [detailsType, setDetailsType] = useState<string>("create");
+  const [loadingMessage, setLoadingMessage] = useState(
+    "Publishing your ride..."
+  );
 
   useEffect(() => {
     (async () => {
       await getInitialLocation();
       const user = await getUser();
       setUserData(user);
+      updateUserLocation();
     })();
   }, []);
 
   useEffect(() => {
-    console.log("RPPPPPPUTE", route)
     setRouteDetails(route);
-    setDetailsType("create");
   }, [route]);
 
-  useEffect(() => {
-    console.log("work called");
-  }, [toListRoute]);
+  useEffect(() => {}, [toListRoute]);
 
   useEffect(() => {
     setToListRoute(requestRoute);
-    console.log("requestRoute useEffect");
   }, [requestRoute]);
 
   useEffect(() => {
@@ -80,11 +77,16 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   }, [userData]);
 
   useEffect(() => {
-    console.log("ROUTE DETAIIIILS", routeDetails)
+    if (!routeDetails) {
+      setDetailsType("create");
+      setLoadingMessage("Publishing your ride...");
+      setViewRides(false);
+    }
+
     if (
       routeDetails?.from.latitude !== undefined &&
       routeDetails?.to.latitude !== undefined
-    )
+    ) {
       fitToCoordinates([
         {
           latitude: routeDetails?.from?.latitude,
@@ -95,11 +97,32 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
           longitude: routeDetails?.to?.longitude,
         },
       ]);
+    }
   }, [routeDetails]);
 
+  // useEffect(() => {
+  //   if (currentRides?.length) showUserRides();
+  // }, [currentRides]);
+
   useEffect(() => {
-    if (currentRides?.length) showUserRides();
-  }, [currentRides]);
+    (async () => {
+      if (viewRides) {
+        showUserRides();
+      } else {
+        let { coords } = await Location.getCurrentPositionAsync({});
+        setLocation(coords);
+      }
+    })();
+  }, [viewRides]);
+
+  const updateUserLocation = () => {
+    setInterval(async () => {
+      console.log("updated");
+      const { coords } = await Location.getCurrentPositionAsync();
+      setLocation(coords);
+      console.log(coords);
+    }, 30000);
+  };
 
   const fetchUserRides = async (id?: string) => {
     if (id !== undefined) {
@@ -116,6 +139,15 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
       setCurrentRides(ridesAux);
     }
   };
+  const toggleType = () => {
+    if (detailsType === "view") {
+      setDetailsType("create");
+      setLoadingMessage("Publishing your ride...");
+    } else {
+      setDetailsType("view");
+      setLoadingMessage("Deleting your ride...");
+    }
+  };
 
   const confirmRide = async () => {
     let routeAux = {} as Route | null;
@@ -129,7 +161,6 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
         .collection("rides")
         .add(routeAux)
         .then(async ({ id }) => {
-          console.log(id);
           await firebase
             .firestore()
             .collection("rides")
@@ -148,12 +179,11 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   };
 
   const cancelRide = async (ride: Route) => {
-    console.log("CANCEL RIDE")
-    setRouteDetails(null);
+    setRoute(null);
     setVisible(true);
     setLoadingState({ ...loadingState, loading: true });
     try {
-      await firebase.firestore().collection("rides").doc(ride.id).delete()
+      await firebase.firestore().collection("rides").doc(ride.id).delete();
     } catch (error) {
       console.error(error);
     }
@@ -166,10 +196,11 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   };
 
   const endListing = async () => {
-    setToListRoute(null)
-  }
+    setToListRoute(null);
+  };
 
   const fitToCoordinates = (coordinateArray: LatLng[]) => {
+    console.log("fitToCoordinates");
     map.current?.fitToCoordinates(coordinateArray, {
       edgePadding: {
         top: 60,
@@ -182,6 +213,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
   };
 
   const showUserRides = () => {
+    console.log("SHOW USER RIDES");
     let ridesArray = [
       {
         latitude: location.latitude,
@@ -190,23 +222,16 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     ];
 
     if (currentRides) {
-      currentRides.forEach((ride: Route) =>
+      console.log("entrou");
+      currentRides.forEach(({ from: { latitude, longitude } }: Route) =>
         ridesArray.push({
-          latitude: ride.from?.latitude,
-          longitude: ride.from?.longitude,
+          latitude: latitude,
+          longitude: longitude,
         })
       );
       fitToCoordinates(ridesArray);
     }
   };
-
-  // const setCurrentLocation = async () => {
-  //   setLoading(true);
-  //   let { coords } = await Location.getCurrentPositionAsync({});
-  //   setVisible(false);
-  //   setLocation(coords);
-  //   setLoading(false);
-  // };
 
   const getInitialLocation = async () => {
     let { status } = await Location.requestPermissionsAsync();
@@ -224,6 +249,9 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
     return (
       <View>
         <MapView
+          onPress={() => {
+            console.log("PRESS");
+          }}
           ref={map}
           region={{
             //@ts-ignore
@@ -235,10 +263,13 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
           }}
           showsCompass={true}
           rotateEnabled={false}
-          // showsTraffic={true}
           showsUserLocation={true}
           showsMyLocationButton={true}
-          style={(routeDetails || toListRoute) ? styles.halfScreenMap : styles.fullScreenMap}
+          style={
+            routeDetails || toListRoute
+              ? styles.halfScreenMap
+              : styles.fullScreenMap
+          }
         >
           {currentRides?.map((ride, index) => {
             return (
@@ -246,8 +277,8 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
                 key={index}
                 ride={ride}
                 onPress={() => {
-                  setRouteDetails(ride);
-                  setDetailsType("view");
+                  toggleType();
+                  setRoute(ride);
                 }}
                 type={"from"}
                 location={{
@@ -295,7 +326,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
           <RouteDetailsPopUp
             type={detailsType}
             confirmRide={confirmRide}
-            cancelRide = {cancelRide}
+            cancelRide={cancelRide}
             details={routeDetails}
           />
         )}
@@ -306,7 +337,7 @@ const Map: React.FC<Props> = ({ locationVisible }) => {
         <LoadingPopUp
           {...loadingState}
           visible={visible}
-          message={detailsType === "view" ? "Deleting your ride..." : "Publishing your ride..."}
+          message={loadingMessage}
         />
       </View>
     );

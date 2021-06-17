@@ -27,6 +27,7 @@ import { RequestRouteContext } from "../../context/RequestRouteContext";
 import { or } from "react-native-reanimated";
 import { RouteContext } from "../../context/RouteContext";
 import Slider from "@react-native-community/slider";
+import { dateValidator } from "../../utils";
 interface Props {
   requestVisible: boolean;
   onDismiss: () => void;
@@ -97,20 +98,17 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
     }
   }, [titleD]);
 
-  function confirmRideRequest(){
-    if(ride.from && ride.to && ride.range && (ride.range)>0 && (ride.range)<21){
-      var now = new Date();
-      console.log(now.getFullYear(), ride.date.getFullYear());
-      console.log(now.getMonth(), ride.date.getMonth());
-      console.log(now.getDate(), ride.date.getDate());
-      if(now.getFullYear() <= ride.date.getFullYear()){
-        if(now.getMonth() <= ride.date.getMonth()){
-          if(now.getDate() <= ride.date.getDate()){
-            console.log("SIGA SIGA");
-            setRequestRoute(ride);
-          }
-        }
-      }
+  function confirmRideRequest() {
+    if (
+      ride.from &&
+      ride.to &&
+      ride.range &&
+      ride.range > 0 &&
+      ride.range < 21
+    ) {
+      if (dateValidator(ride.date))
+        // console.log("é hoje ou depois")
+        setRequestRoute(ride);
     }
   }
 
@@ -151,7 +149,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
 
                 <Image
                   style={styles.profilePic}
-                  source={require("../../assets/images/ride.png")}
+                  source={require("../../assets/images/requestride.png")}
                 />
 
                 <View style={{ height: 250 }}>
@@ -286,15 +284,16 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                   minimumTrackTintColor="#fd4d4d"
                   maximumTrackTintColor="#000000"
                   step={1}
-                  onValueChange={(itemValue) => setRide({ ...ride, range: itemValue })}
+                  onValueChange={(itemValue) =>
+                    setRide({ ...ride, range: itemValue })
+                  }
                 />
-
               </ScrollView>
               <View>
                 <Button
                   press={() => {
                     console.log(ride);
-                    confirmRideRequest()
+                    confirmRideRequest();
                     onDismiss();
                   }}
                   full={true}

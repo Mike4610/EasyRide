@@ -31,7 +31,7 @@ const Marker: React.FC<Props> = ({ location, type, ride, onPress }) => {
             coordinate={location}
             anchor={{ x: 0.35, y: 0.32 }}
           >
-            <Ionicons name="car" size={30} color="#151a21" />
+            <Ionicons name="car" size={30} color="#fd4d4d" />
           </MarkerAnimated>
         </>
       ) : type === "to" ? (

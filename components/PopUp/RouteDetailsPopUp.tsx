@@ -20,7 +20,12 @@ interface Props {
   type: string;
 }
 
-const RouteDetailsPopUp: React.FC<Props> = ({ details, confirmRide, cancelRide, type }) => {
+const RouteDetailsPopUp: React.FC<Props> = ({
+  details,
+  confirmRide,
+  cancelRide,
+  type,
+}) => {
   const [formattedDate, setFormattedDate] = useState<Date>(
     new Date(details.date.seconds)
   );
@@ -61,7 +66,18 @@ const RouteDetailsPopUp: React.FC<Props> = ({ details, confirmRide, cancelRide, 
         <Text style={{ fontSize: 17, textAlign: "left" }}>
           <AntDesign name="calendar" size={20} color="#fd4d4d" />{" "}
           <Text style={{ fontWeight: "bold" }}>Date:</Text>{" "}
-          {formattedDate.toLocaleDateString() + " " + formattedDate.getHours() + ":" + formattedDate.getMinutes() + "h"}
+          {type === "view" ? (
+            formattedDate.toLocaleDateString() +
+            " " +
+            formattedDate.getHours() +
+            ":" +
+            formattedDate.getMinutes() +
+            "h"
+          ) : type === "create" ? (
+            details.date.toLocaleDateString() + " " + details.date.getHours() + ":" + details.date.getMinutes()
+          ) : (
+            <></>
+          )}
         </Text>
         <Text style={{ fontSize: 17, textAlign: "left" }}>
           <MaterialCommunityIcons
@@ -92,7 +108,13 @@ const RouteDetailsPopUp: React.FC<Props> = ({ details, confirmRide, cancelRide, 
         {type === "create" ? (
           <Button text={"Confirm"} full={true} press={confirmRide}></Button>
         ) : type === "view" ? (
-          <Button text={"Cancel ride"} full={true} press={()=>{cancelRide(details)}}></Button>
+          <Button
+            text={"Cancel ride"}
+            full={true}
+            press={() => {
+              cancelRide(details);
+            }}
+          ></Button>
         ) : (
           <></>
         )}
