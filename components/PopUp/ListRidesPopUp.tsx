@@ -63,7 +63,6 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide }) => {
         .firestore()
         .collection("rides")
         .orderBy("to.geoHash")
-        // WHERE DATE == requestRide DATE (NAO PRECISA DE SER A DATA TODA IGUAL, TEM DE SER NO MESMO DIA)
         .startAt(b[0])
         .endAt(b[1]);
 
@@ -114,7 +113,6 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide }) => {
         .firestore()
         .collection("rides")
         .orderBy("from.geoHash")
-        // WHERE DATE == requestRide DATE (NAO PRECISA DE SER A DATA TODA IGUAL, TEM DE SER NO MESMO DIA)
         .startAt(b[0])
         .endAt(b[1]);
 
@@ -144,12 +142,14 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide }) => {
       })
       .then((matchingDocs) => {
         let ridesAux = [] as Route[];
+        let now = new Date();
 
         matchingDocs.forEach((doc) => {
-          // @ts-ignore
-          ridesAux.push(doc.data()); // Para já listar todas
-          // Mas é necessário verificar novamente com os hashes
-          // se o destino é próximo também
+          let date = new Date((doc.data().date.seconds * 1000));
+          if(date.getTime() - now.getTime() > 0){
+            // @ts-ignore
+            ridesAux.push(doc.data());
+          }
         });
 
         setAvailableRoutesFrom(ridesAux);

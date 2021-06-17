@@ -68,6 +68,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
     date: new Date(),
     duration: 0,
     distance: 0,
+    driverId: "",
     range: 5,
   };
 
@@ -99,10 +100,13 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
   function confirmRideRequest(){
     if(ride.from && ride.to && ride.range && (ride.range)>0 && (ride.range)<21){
       var now = new Date();
+      console.log(now.getFullYear(), ride.date.getFullYear());
+      console.log(now.getMonth(), ride.date.getMonth());
+      console.log(now.getDate(), ride.date.getDate());
       if(now.getFullYear() <= ride.date.getFullYear()){
         if(now.getMonth() <= ride.date.getMonth()){
-          if(now.getDay() <= ride.date.getDay()){
-            // console.log("é hoje ou depois")
+          if(now.getDate() <= ride.date.getDate()){
+            console.log("SIGA SIGA");
             setRequestRoute(ride);
           }
         }
@@ -209,6 +213,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                       value={ride.date}
                       mode="date"
                       style={styles.datePicker}
+                      // @ts-ignore
                       onChange={onChange}
                     />
                   )}
@@ -228,6 +233,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                       style={styles.datePickerStyle}
                       value={new Date()}
                       mode="date"
+                      // @ts-ignore
                       onChange={(e, d) => {
                         setShow(false);
                         if (d !== undefined) {
