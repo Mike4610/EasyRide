@@ -119,7 +119,8 @@ export default DrawerContent;
 
 const styles = StyleSheet.create({
   container: {
-    height: 680,
+   flex:1,
+    backgroundColor:'#dedede'
   },
   profile: {
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
@@ -148,6 +149,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
+    backgroundColor: '#dedede'
   },
   logo: {
     width: 150,
