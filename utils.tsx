@@ -25,12 +25,18 @@ export const nameValidator = (name: string) => {
 export const ageValidator = (date: Date) => {};
 
 export const licensePlateValidator = (licensePlate: string) => {
-  console.log("heeeeeeasdgady");
+  console.log("mike gay");
 
   const re = new RegExp("([A-Z]){2}-([0-9]){2}-([0-9]){2}");
+  const re2 = new RegExp("([0-9]){2}-([A-Z]){2}-([0-9]){2}");
+  const re3 = new RegExp("([0-9]){2}-([0-9]){2}-([A-Z]){2}");
+  const re4 = new RegExp("([A-Z]){2}-([0-9]){2}-([A-Z]){2}");
+  const re5 = new RegExp("([A-Z]){2}-([A-Z]){2}-([0-9]){2}");
+  const re6 = new RegExp("([0-9]){2}-([A-Z]){2}-([A-Z]){2}");
+
   console.log(re.test(licensePlate));
   console.log(licensePlate);
-  if (!re.test(licensePlate)) return "Invalid license plate!";
+  if (!re.test(licensePlate) && !re2.test(licensePlate) &&!re3.test(licensePlate) &&!re4.test(licensePlate) && !re5.test(licensePlate) &&!re6.test(licensePlate)) return "Invalid license plate!";
 
   return "";
 };
