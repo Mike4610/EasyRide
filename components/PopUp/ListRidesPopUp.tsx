@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Dimensions, ScrollView, LogBox } from "react-native";
+import { View, Text, Dimensions, ScrollView, Image } from "react-native";
 
-import { Route, RouteDetails, Place } from "../../types";
-import Button from "../Buttons/Button";
-import firebase from "firebase/app";
+import { Route, RouteDetails, Place, User } from "../../types";
+import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import "firebase/firestore";
 import AvailableRideCard from "../../components/Cards/AvailableRideCard";
 
@@ -14,10 +13,19 @@ interface Props {
   setRoute: (route: Route) => void;
 }
 
-const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute}) => {
+const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute }) => {
   const [availableRoutesFrom, setAvailableRoutesFrom] = useState<Route[]>([]);
   const [availableRoutesTo, setAvailableRoutesTo] = useState<Route[]>([]);
   const [availableRoutes, setAvailableRoutes] = useState<Route[]>([]);
+  const [userData, setUserData] = useState<User>({} as User);
+  const [getUser] = useAsyncStorage();
+
+  useEffect(() => {
+    (async () => {
+      const user = await getUser();
+      setUserData(user);
+    })();
+  }, []);
 
   useEffect(() => {
     fetchDestinationRides();
@@ -90,7 +98,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute}) => {
 
         matchingDocs.forEach((doc) => {
           // @ts-ignore
-          ridesAux.push(doc.data());
+          if (doc.data().driverId !== userData.id) ridesAux.push(doc.data());
         });
 
         setAvailableRoutesTo(ridesAux);
@@ -140,8 +148,11 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute}) => {
         let now = new Date();
 
         matchingDocs.forEach((doc) => {
-          let date = new Date((doc.data().date.seconds * 1000));
-          if(date.getTime() - now.getTime() > 0){
+          let date = new Date(doc.data().date.seconds * 1000);
+          if (
+            date.getTime() - now.getTime() > 0 &&
+            doc.data().driverId !== userData.id
+          ) {
             // @ts-ignore
             ridesAux.push(doc.data());
           }
@@ -178,6 +189,25 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute}) => {
       </View>
 
       <ScrollView style={{ height: 280 }}>
+        {!availableRoutes.length && (
+          <View
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 20
+            }}
+          >
+            <Image
+              style={{ width: 200, height: 150 }}
+              source={require("../../assets/images/noresults.png")}
+            />
+            <Text style={{ fontSize: 18, padding: 20 }}>
+              {" "}
+              No results found...{" "}
+            </Text>
+          </View>
+        )}
         {availableRoutes.map((route, index) => {
           return (
             <AvailableRideCard

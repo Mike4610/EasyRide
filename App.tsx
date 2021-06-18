@@ -49,10 +49,6 @@ const App: React.FC<{}> = () => {
     isAuthenticated();
   }, []);
 
-  useEffect(() => {
-    console.log("vehicle mudou");
-  }, [vehicle]);
-
   if (loggedIn === null) {
     return <Loading />;
   } else if (!loggedIn) {
