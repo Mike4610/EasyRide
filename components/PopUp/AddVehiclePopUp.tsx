@@ -65,6 +65,12 @@ const AddVehiclePopUp: React.FC<Props> = ({
   const registerVehicle = () => {
     if (licensePlateValidator(vehicle.licensePlate) === "") {
       handleRegisterVehicle(vehicle);
+      setVehicle({
+        brand: carList[0].brand,
+        model: carList[0].models[0],
+        seats: "2",
+        licensePlate: "",
+      });
     } else {
       setSnackBarVisible(true);
     }

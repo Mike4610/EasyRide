@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { StyleSheet, SafeAreaView, View } from "react-native";
 import { RouteContext } from "../../context/RouteContext";
 import { RequestRouteContext } from "../../context/RequestRouteContext";
@@ -11,11 +11,14 @@ import FabButton from "../../components/Buttons/FabButton";
 
 import "firebase/auth";
 import { Route, ScreenNavigationProps } from "../../types";
+import { VehicleContext } from "../../context/VehicleContext";
 
 const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   //POPUP
   const [requestVisible, setRequestVisible] = useState(false);
   const [giveVisible, setGiveVisible] = useState(false);
+  const [ridesVisible, setRidesVisible] = useState(false);
+
   const [transform, setTransform] = useState({
     returnButton: false,
     closeButton: false,
@@ -27,6 +30,7 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
 
   const [visible, setVisible] = useState(true);
   const [flag, setFlag] = useState<number>(0);
+  const { vehicle, setVehicle } = useContext(VehicleContext);
 
   const requestRideHandler = () => {
     setTransform({
@@ -37,11 +41,25 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
 
   const onDismiss = () => {
     setRoute(null);
+    setRequestRoute(null);
   };
 
   useEffect(() => {
     setFlag(0);
   }, []);
+
+  useEffect(() => {
+    if (!route) {
+      if (flag !== 0) {
+        setTransform({
+          ...transform,
+          closeButton: !transform.closeButton,
+        });
+        setVisible(!visible);
+      }
+      setFlag(1);
+    }
+  }, [route]);
 
   useEffect(() => {
     if (flag !== 0) {
@@ -52,7 +70,11 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
       setVisible(!visible);
     }
     setFlag(1);
-  }, [route]);
+  }, [requestRoute]);
+
+  useEffect(() => {
+    console.log("HOME VEHICLE", vehicle);
+  }, [vehicle]);
 
   return (
     <RouteContext.Provider value={{ route, setRoute }}>
@@ -89,6 +111,7 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
                 setRequestVisible(false);
               }}
             />
+            {/* <AvailableRidesPopUp onDismiss={() => {}} visible={ridesVisible} /> */}
           </SafeAreaView>
         </CurrentRidesContext.Provider>
       </RequestRouteContext.Provider>

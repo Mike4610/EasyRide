@@ -7,16 +7,20 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { Ionicons, AntDesign } from "@expo/vector-icons";
+import { Ionicons, AntDesign, Entypo, FontAwesome } from "@expo/vector-icons";
 import "firebase/firestore";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { Route } from "../../types";
+import Button from "../Buttons/Button";
 
 interface Props {
   route: Route;
   chooseRoute: (route: Route) => void;
 }
 const AvailableRideCard: React.FC<Props> = ({ route, chooseRoute }) => {
+  const [formattedDate, setFormattedDate] = useState<Date>(
+    new Date(route.date.seconds)
+  );
   useEffect(() => {
     console.log(JSON.stringify(route));
   }, []);
@@ -25,33 +29,54 @@ const AvailableRideCard: React.FC<Props> = ({ route, chooseRoute }) => {
       key={route.from.geoHash + route.driverId + route.date}
       style={styles.infoContainer}
     >
+      <View style={styles.info}>
+        <Text style={styles.textDescription}>
+          <FontAwesome name="car" size={20} color="#fd4d4d" />{" "}
+          <Text style={{ fontWeight: "bold" }}>From:</Text>{" "}
+          {route.from.description}
+        </Text>
+      </View>
+      <View style={styles.info}>
+        <Entypo name="location-pin" size={22} color="#fd4d4d" />
+        <Text style={styles.textDescription}>
+          {" "}
+          <Text style={{ fontWeight: "bold" }}>To:</Text> {route.to.description}
+        </Text>
+      </View>
+      <View style={styles.info}>
+        <AntDesign name="calendar" size={20} color="#fd4d4d" />
+        <Text style={styles.textDescription}>
+          <Text style={{ fontWeight: "bold" }}>Date:</Text>{" "}
+          {formattedDate.toLocaleDateString() +
+            " " +
+            formattedDate.getHours() +
+            ":" +
+            formattedDate.getMinutes() +
+            "h"}
+        </Text>
+      </View>
+      <View style={styles.info}>
+        <Text style={styles.textDescription}>
+          <Ionicons name="person-outline" size={20} color="#fd4d4d" />
+          <Text style={{ fontWeight: "bold" }}>Available seats:</Text>{" "}
+          {route.availableSeats}
+        </Text>
+      </View>
       <View
         style={{
           marginTop: 20,
+          paddingLeft: 10,
+          paddingRight: 10,
+          width: "100%",
         }}
-      ></View>
-
-      <View style={styles.info}>
-        <AntDesign name="idcard" size={28} color="#fd4d4d" />
-        <Text style={styles.textDescription}>
-          From: {route.from.description}
-        </Text>
-      </View>
-      <View style={styles.info}>
-        <AntDesign name="idcard" size={28} color="#fd4d4d" />
-        <Text style={styles.textDescription}>To: {route.to.description}</Text>
-      </View>
-      <View style={styles.info}>
-        <AntDesign name="idcard" size={28} color="#fd4d4d" />
-        <Text style={styles.textDescription}>
-          Date:{" "}
-            {route.date.toLocaleDateString +
-            " " +
-            route.date.getHours +
-            ":" +
-            route.date.getMinutes +
-            "h"}
-        </Text>
+      >
+        <Button
+          text={"View more"}
+          press={() => {
+            chooseRoute(route);
+          }}
+          full={true}
+        />
       </View>
     </View>
   );
@@ -80,12 +105,6 @@ const styles = StyleSheet.create({
     color: "#151a21",
     marginLeft: 5,
   },
-  footer_title: {
-    fontSize: 20,
-    color: "#151a21",
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
   profileDetails: {
     justifyContent: "center",
     alignItems: "center",
@@ -110,10 +129,13 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
     borderBottomColor: "#151a21",
     borderBottomWidth: 0.5,
+    padding: 30,
+    borderRadius: 30,
+    backgroundColor: "#f9f9f9",
   },
   info: {
     flexDirection: "row",

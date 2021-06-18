@@ -56,7 +56,6 @@ const Map: React.FC<{}> = () => {
       await getInitialLocation();
       const user = await getUser();
       setUserData(user);
-      updateUserLocation();
     })();
   }, []);
 
@@ -105,6 +104,7 @@ const Map: React.FC<{}> = () => {
   // }, [currentRides]);
 
   useEffect(() => {
+    console.log("view", viewRides);
     (async () => {
       if (viewRides) {
         showUserRides();
@@ -114,15 +114,6 @@ const Map: React.FC<{}> = () => {
       }
     })();
   }, [viewRides]);
-
-  const updateUserLocation = () => {
-    setInterval(async () => {
-      console.log("updated");
-      const { coords } = await Location.getCurrentPositionAsync();
-      setLocation(coords);
-      console.log(coords);
-    }, 30000);
-  };
 
   const fetchUserRides = async (id?: string) => {
     if (id !== undefined) {
@@ -264,7 +255,8 @@ const Map: React.FC<{}> = () => {
           showsCompass={true}
           rotateEnabled={false}
           showsUserLocation={true}
-          showsMyLocationButton={true}
+          showsMyLocationButton={false}
+          // followsUserLocation={true}
           style={
             routeDetails || toListRoute
               ? styles.halfScreenMap
@@ -296,7 +288,7 @@ const Map: React.FC<{}> = () => {
                 destination={routeDetails.to}
                 apikey={GOOGLE_API_KEY}
                 strokeWidth={4}
-                strokeColor="#fd4d4d"
+                strokeColor="#8d99ae"
                 onReady={(result) => {
                   setRouteDetails({
                     ...routeDetails,
@@ -331,7 +323,15 @@ const Map: React.FC<{}> = () => {
           />
         )}
 
-        {toListRoute && <ListRidesPopUp requestRide={toListRoute} />}
+        {toListRoute && (
+          <ListRidesPopUp
+            setRoute={(route: Route) => {
+              setRoute(route);
+              setDetailsType("join");
+            }}
+            requestRide={toListRoute}
+          />
+        )}
 
         {/* {routeDetails && <JoinRidePopUp route={setRouteDetails} visible={true} />} */}
         <LoadingPopUp

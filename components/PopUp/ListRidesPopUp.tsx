@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Dimensions, ScrollView, LogBox } from "react-native";
-import {
-  AntDesign,
-  Entypo,
-  FontAwesome,
-  Ionicons,
-  MaterialCommunityIcons,
-  Zocial,
-} from "@expo/vector-icons";
+
 import { Route, RouteDetails, Place } from "../../types";
 import Button from "../Buttons/Button";
 import firebase from "firebase/app";
@@ -18,9 +11,10 @@ const geofire = require("geofire-common");
 
 interface Props {
   requestRide: Route;
+  setRoute: (route: Route) => void;
 }
 
-const RouteDetailsPopUp: React.FC<Props> = ({ requestRide }) => {
+const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute}) => {
   const [availableRoutesFrom, setAvailableRoutesFrom] = useState<Route[]>([]);
   const [availableRoutesTo, setAvailableRoutesTo] = useState<Route[]>([]);
   const [availableRoutes, setAvailableRoutes] = useState<Route[]>([]);
@@ -49,7 +43,8 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide }) => {
   }, [availableRoutesTo]);
 
   const chooseRoute = async (route: Route) => {
-    console.log("route escolhida");
+    console.log("route escolhida", route);
+    setRoute(route);
   };
 
   const fetchDestinationRides = async () => {
@@ -170,7 +165,14 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide }) => {
       }}
     >
       <View>
-        <Text style={{ fontSize: 25, fontWeight: "bold", alignSelf: "center" }}>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            alignSelf: "center",
+            paddingBottom: 15,
+          }}
+        >
           Available Rides
         </Text>
       </View>

@@ -161,7 +161,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                       style={{
                         width: 400,
                         alignSelf: "center",
-                        // zIndex: 1,
+                        zIndex: 1,
                         position: "absolute",
                       }}
                     >

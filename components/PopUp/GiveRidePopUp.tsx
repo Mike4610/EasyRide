@@ -24,6 +24,7 @@ import { RouteContext } from "../../context/RouteContext";
 import ActionSheet from "react-native-actions-sheet";
 import { dateValidator, validateLocation } from "../../utils";
 import SnackBar from "../SnackBar/SnackBar";
+import { VehicleContext } from "../../context/VehicleContext";
 
 interface Props {
   giveVisible: boolean;
@@ -32,6 +33,7 @@ interface Props {
 
 const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   const [mode, setMode] = useState("date");
+
   const [show, setShow] = useState(false);
   const [buttonText, setButtonText] = useState({
     car: "Choose vehicle",
@@ -39,16 +41,6 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   });
   const chooseCarRef = createRef();
   const chooseSeatNumberRef = createRef();
-
-  const onChange = (event: Event, selectedDate?: Date) => {
-    setShow(Platform.OS === "android");
-    if (selectedDate) {
-      setRouteDetails({
-        ...routeDetails,
-        date: selectedDate,
-      });
-    }
-  };
 
   const [titleDate, setTitleDate] = useState("Select Time and Date");
   const [titleD, setTitleD] = useState("");
@@ -77,7 +69,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     driverId: "",
   };
 
-  const [vehicle, setVehicle] = useState({
+  const [vehicleC, setVehicleC] = useState({
     label: "",
     seats: [] as string[] | undefined,
   });
@@ -92,6 +84,21 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   const [routeDetails, setRouteDetails] = useState<Route>(initialState);
 
   const { route, setRoute } = useContext(RouteContext);
+  const { vehicle, setVehicle } = useContext(VehicleContext);
+
+  useEffect(() => {
+    console.log("RE RENDER");
+    (async () => {
+      const user = await getValue();
+      setUserData(user);
+    })();
+  }, []);
+
+  // useEffect(() => {
+  //   forceUpdate();
+  // }, [vehicle]);
+
+  const forceUpdate: () => void = React.useState()[1].bind(null, {});
 
   useEffect(() => {
     setRouteDetails({
@@ -126,11 +133,23 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   }, [userData]);
 
   useEffect(() => {
-    (async () => {
-      const user = await getValue();
-      setUserData(user);
-    })();
-  }, []);
+    if (titleD == "" || titleTime == "") {
+      setTitleDate("Select Time and Date");
+    } else {
+      setTitleDate("Date : " + titleD + " Time : " + titleTime.slice(0, 5));
+    }
+  }, [titleTime]);
+
+  const onChange = (event: Event, selectedDate?: Date) => {
+    setShow(Platform.OS === "android");
+    console.log(selectedDate)
+    if (selectedDate) {
+      setRouteDetails({
+        ...routeDetails,
+        date: selectedDate,
+      });
+    }
+  };
 
   const getSeatNumber = (s: string) => {
     if (s !== undefined) {
@@ -189,14 +208,6 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
       setSnackBarVisible(true);
     }
   };
-
-  useEffect(() => {
-    if (titleD == "" || titleTime == "") {
-      setTitleDate("Select Time and Date");
-    } else {
-      setTitleDate("Date : " + titleD + " Time : " + titleTime.slice(0, 5));
-    }
-  }, [titleTime]);
 
   return (
     <Provider>

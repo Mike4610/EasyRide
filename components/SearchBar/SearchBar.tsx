@@ -9,8 +9,9 @@ import { Place, User } from "../../types";
 import { GOOGLE_API_KEY } from "../../googleConfig";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import { Location } from "../../types";
+import { VehicleContext } from "../../context/VehicleContext";
 
-const geofire = require('geofire-common');
+const geofire = require("geofire-common");
 interface Props {
   visible: boolean;
   placeholder: string;
@@ -59,12 +60,18 @@ const SearchBar: React.FC<Props> = ({ visible, placeholder, location }) => {
       location.latitude = results[0].place.latitude;
       location.longitude = results[0].place.longitude;
       location.description = results[0].place.description;
-      location.geoHash = geofire.geohashForLocation([results[0].place.latitude, results[0].place.longitude]);
+      location.geoHash = geofire.geohashForLocation([
+        results[0].place.latitude,
+        results[0].place.longitude,
+      ]);
     } else {
       location.latitude = details?.geometry.location.lat || 0;
       location.longitude = details?.geometry.location.lng || 0;
       location.description = details?.formatted_address;
-      location.geoHash = geofire.geohashForLocation([details?.geometry.location.lat, details?.geometry.location.lng]);
+      location.geoHash = geofire.geohashForLocation([
+        details?.geometry.location.lat,
+        details?.geometry.location.lng,
+      ]);
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,11 +16,12 @@ import { useFetch } from "../../hooks/useFetch";
 import AddVehiclePopUp from "../../components/PopUp/AddVehiclePopUp";
 import { Vehicle, ScreenNavigationProps } from "../../types";
 import VehicleCard from "../../components/Cards/VehicleCard";
-
+import { VehicleContext } from "../../context/VehicleContext";
 
 const VehiclesScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  
+
+  const { vehicle, setVehicle } = useContext(VehicleContext);
   //POPUP
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -41,9 +42,11 @@ const VehiclesScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     const vehicles = await getUser("vehicles");
     setVehicles(vehicles);
     setLoading(false);
+    setVehicle(!vehicle);
   };
 
   const setUserVehicles = async (vehicle: Vehicle) => {
+    console.log("SET USER VEHICLES");
     const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
     const uid = await getUser("id");
     await updateData(uid, { vehicles: arrayUnion(vehicle) });
@@ -56,20 +59,20 @@ const VehiclesScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   };
 
   const handleRegisterVehicle = (vehicle: Vehicle) => {
-    console.log(vehicle);    
+    console.log(vehicle);
     setLoading(true);
     setVisible(false);
     setUserVehicles(vehicle);
   };
 
   const handleDeleteVehicle = async (vehicle: Vehicle) => {
-    console.log("delete")
-    console.log(vehicle)
+    console.log("delete");
+    console.log(vehicle);
     const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
     const uid = await getUser("id");
     await updateData(uid, { vehicles: arrayRemove(vehicle) });
-    const updatedVehicles = await fetchData(uid)
-    setVehicles(updatedVehicles.vehicles)
+    const updatedVehicles = await fetchData(uid);
+    setVehicles(updatedVehicles.vehicles);
   };
 
   return (
@@ -119,7 +122,7 @@ const VehiclesScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
       />
     </SafeAreaView>
   );
-}
+};
 
 export default VehiclesScreen;
 
