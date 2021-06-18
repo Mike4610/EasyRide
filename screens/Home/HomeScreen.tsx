@@ -29,59 +29,68 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   const [viewRides, setViewRides] = useState<boolean>(false);
 
   const [visible, setVisible] = useState(true);
-  const [flag, setFlag] = useState<number>(0);
+  const [routeFlag, setRouteFlag] = useState<number>(0);
+  const [requestFlag, setRequestFlag] = useState<number>(0);
   const { vehicle, setVehicle } = useContext(VehicleContext);
-
-  const requestRideHandler = () => {
-    setTransform({
-      returnButton: true,
-      closeButton: false,
-    });
-  };
+  const [returnFlag, setReturnFlag] = useState(false);
 
   const onDismiss = () => {
     setRoute(null);
     setRequestRoute(null);
   };
 
+  const onReturn = () => {
+    setRequestVisible(true);
+  };
+
   useEffect(() => {
-    setFlag(0);
+    setRouteFlag(0);
+    setRequestFlag(0);
   }, []);
 
   useEffect(() => {
-    if (!route) {
-      if (flag !== 0) {
-        setTransform({
-          ...transform,
-          closeButton: !transform.closeButton,
-        });
-        setVisible(!visible);
-      }
-      setFlag(1);
-    }
-  }, [route]);
-
-  useEffect(() => {
-    if (flag !== 0) {
+    if (routeFlag !== 0) {
       setTransform({
         ...transform,
         closeButton: !transform.closeButton,
       });
       setVisible(!visible);
     }
-    setFlag(1);
+    setRouteFlag(1);
+  }, [route]);
+
+  useEffect(() => {
+    if (requestFlag !== 0) {
+      setTransform({
+        ...transform,
+        closeButton: !transform.closeButton,
+      });
+      setVisible(!visible);
+    }
+    setRequestFlag(1);
   }, [requestRoute]);
 
   useEffect(() => {
-    console.log("HOME VEHICLE", vehicle);
-  }, [vehicle]);
+    if (requestFlag !== 0) {
+      setTransform({
+        ...transform,
+        returnButton: !transform.returnButton,
+      });
+      setVisible(!visible);
+    }
+    setRequestFlag(1);
+  }, [returnFlag]);
 
   return (
     <RouteContext.Provider value={{ route, setRoute }}>
       <RequestRouteContext.Provider value={{ requestRoute, setRequestRoute }}>
         <CurrentRidesContext.Provider value={{ viewRides, setViewRides }}>
           <SafeAreaView style={styles.container}>
-            <Map />
+            <Map
+              setReturn={() => {
+                setReturnFlag(true);
+              }}
+            />
             <MenuButton
               onDismiss={onDismiss}
               returnButton={transform.returnButton}

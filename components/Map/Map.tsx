@@ -25,7 +25,11 @@ import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import * as TaskManager from "expo-task-manager";
 import { CurrentRidesContext } from "../../context/CurrentRidesContext";
 
-const Map: React.FC<{}> = () => {
+interface Props {
+  setReturn: () => void;
+}
+
+const Map: React.FC<Props> = ({ setReturn }) => {
   const [location, setLocation] = useState<Place>({
     latitude: 0,
     longitude: 0,
@@ -191,7 +195,6 @@ const Map: React.FC<{}> = () => {
   };
 
   const fitToCoordinates = (coordinateArray: LatLng[]) => {
-    console.log("fitToCoordinates");
     map.current?.fitToCoordinates(coordinateArray, {
       edgePadding: {
         top: 60,
@@ -204,7 +207,6 @@ const Map: React.FC<{}> = () => {
   };
 
   const showUserRides = () => {
-    console.log("SHOW USER RIDES");
     let ridesArray = [
       {
         latitude: location.latitude,
@@ -213,7 +215,6 @@ const Map: React.FC<{}> = () => {
     ];
 
     if (currentRides) {
-      console.log("entrou");
       currentRides.forEach(({ from: { latitude, longitude } }: Route) =>
         ridesArray.push({
           latitude: latitude,
@@ -264,21 +265,23 @@ const Map: React.FC<{}> = () => {
           }
         >
           {currentRides?.map((ride, index) => {
-            return (
-              <Marker
-                key={index}
-                ride={ride}
-                onPress={() => {
-                  toggleType();
-                  setRoute(ride);
-                }}
-                type={"from"}
-                location={{
-                  latitude: ride.from?.latitude,
-                  longitude: ride.from?.longitude,
-                }}
-              />
-            );
+            if (viewRides)
+              return (
+                <Marker
+                  key={index}
+                  ride={ride}
+                  onPress={() => {
+                    toggleType();
+                    setRoute(ride);
+                    setReturn();
+                  }}
+                  type={"from"}
+                  location={{
+                    latitude: ride.from?.latitude,
+                    longitude: ride.from?.longitude,
+                  }}
+                />
+              );
           })}
 
           {routeDetails && (
@@ -332,8 +335,6 @@ const Map: React.FC<{}> = () => {
             requestRide={toListRoute}
           />
         )}
-
-        {/* {routeDetails && <JoinRidePopUp route={setRouteDetails} visible={true} />} */}
         <LoadingPopUp
           {...loadingState}
           visible={visible}

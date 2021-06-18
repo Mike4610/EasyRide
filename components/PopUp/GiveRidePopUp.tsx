@@ -87,7 +87,6 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   const { vehicle, setVehicle } = useContext(VehicleContext);
 
   useEffect(() => {
-    console.log("RE RENDER");
     (async () => {
       const user = await getValue();
       setUserData(user);
@@ -259,7 +258,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     style={{
                       width: 400,
                       alignSelf: "center",
-                      // zIndex: 1,
+                      zIndex: 1,
                       position: "absolute",
                     }}
                   >
