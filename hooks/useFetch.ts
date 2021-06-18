@@ -1,6 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
-import { User } from "../types";
+import { Ride, User } from "../types";
 
 export const useFetch = () => {
   const fetchData = async (uid: string) => {
@@ -35,5 +35,33 @@ export const useFetch = () => {
     }
   };
 
-  return [fetchData, updateData, setData] as const;
+  const getUserRidesAsPassenger = async (uid:string) => {
+    const rides:Ride|any = [];
+    try{
+     var response =  await firebase.firestore().collection("rides").where("passengersId","array-contains",uid).get();
+     response.docs.forEach(doc =>{
+      rides.push(doc.data());
+     });
+     return rides;
+    }catch(error){
+        console.log(error);
+        return null;
+    }
+  };
+
+  const getUserRidesAsDriver = async (uid:string) => {
+    const rides:Ride|any = [];
+    try{
+     var response =  await firebase.firestore().collection("rides").where("driverId","==",uid).get();
+     response.docs.forEach(doc =>{
+      rides.push(doc.data());
+     });
+     return rides;
+    }catch(error){
+        console.log(error);
+        return null;
+    }
+  };
+
+  return [fetchData, updateData, setData, getUserRidesAsPassenger,getUserRidesAsDriver] as const;
 };

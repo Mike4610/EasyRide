@@ -23,6 +23,8 @@ import { useAsyncStorage } from "./hooks/useAsyncStorage";
 import { firebaseConfig } from "./firebaseConfig";
 import LocationsScreen from "./screens/Locations/LocationsScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import RidesScreen from "./screens/Rides/RidesScreen";
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const App: React.FC<{}> = () => {
   const Drawer = createDrawerNavigator();
@@ -180,6 +182,20 @@ const App: React.FC<{}> = () => {
                             size={24}
                             color="#fd4d4d"
                           />
+                        ),
+                      }}
+                    />
+                    <Drawer.Screen
+                      name="RidesScreen"
+                      component={RidesScreen}
+                      options={{
+                        drawerLabel: ({ focused, color }) => (
+                          <Text style={{ fontSize: 16, color: "#151a21" }}>
+                            My rides
+                          </Text>
+                        ),
+                        drawerIcon: ({ focused, color, size }) => (
+                          <FontAwesome5 name="route" size={24} color="#fd4d4d" />
                         ),
                       }}
                     />

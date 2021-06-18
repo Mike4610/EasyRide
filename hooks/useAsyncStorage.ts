@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-community/async-storage";
+import { Vehicle } from "../types";
 
 export const useAsyncStorage = () => {
   const getValue = async (key?: string) => {
@@ -31,5 +32,60 @@ export const useAsyncStorage = () => {
     }
   };
 
-  return [getValue, setValue, removeValue] as const;
+  const setVehicle = async(vehicle:Vehicle)=>{
+    try {
+      
+    } catch (error) {
+      
+    }
+  };
+  //@ts-ignore
+  const setRidesAsDriver = async (value: object[] | DocumentData[] | undefined[]) => {
+    try {
+      await AsyncStorage.setItem("ridesAsDriver", JSON.stringify(value));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //@ts-ignore
+  const setRidesAsPassenger = async (value: object[] | DocumentData[] | undefined[]) => {
+    try {
+      await AsyncStorage.setItem("ridesAsPassenger", JSON.stringify(value));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //@ts-ignore
+  const getRidesAsDriver = async () => {
+    try {
+      var rides: object[] | undefined = [];
+      const aux = await AsyncStorage.getItem("ridesAsDriver");
+      if (aux !== null) {
+        rides = JSON.parse(aux);
+        return rides;
+      }else{
+        return null;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getRidesAsPassenger = async () => {
+    try {
+      var rides: object[] | undefined = [];
+      const aux = await AsyncStorage.getItem("ridesAsPassenger");
+      if (aux !== null) {
+        rides = JSON.parse(aux);
+        return rides;
+      }else{
+        return null;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return [getValue, setValue, removeValue, setRidesAsDriver, setRidesAsPassenger,getRidesAsDriver,getRidesAsPassenger] as const;
 };

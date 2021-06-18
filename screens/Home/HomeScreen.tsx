@@ -8,7 +8,8 @@ import GiveRidePopUp from "../../components/PopUp/GiveRidePopUp";
 import Map from "../../components/Map/Map";
 import MenuButton from "../../components/Buttons/MenuButton";
 import FabButton from "../../components/Buttons/FabButton";
-
+import { useFetch } from "../../hooks/useFetch";
+import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import "firebase/auth";
 import { Route, ScreenNavigationProps } from "../../types";
 import { VehicleContext } from "../../context/VehicleContext";
@@ -23,16 +24,25 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     returnButton: false,
     closeButton: false,
   });
-
+  const [myRidesAsPassenger,setMyRidesAsPassenger] = useState<object[]|undefined>([]);
+  const [myRidesAsDriver,setMyRidesAsDriver] = useState<object[]|undefined>([]);
+  const [fetchData, updateData, setData, getUserRidesAsPassenger,getUserRidesAsDriver] = useFetch();
   const [route, setRoute] = useState<Route | null>(null);
   const [requestRoute, setRequestRoute] = useState<Route | null>(null);
   const [viewRides, setViewRides] = useState<boolean>(false);
-
+  const [rides,setRides] = useState<Route[]|any[]>([]);
   const [visible, setVisible] = useState(true);
   const [routeFlag, setRouteFlag] = useState<number>(0);
   const [requestFlag, setRequestFlag] = useState<number>(0);
   const { vehicle, setVehicle } = useContext(VehicleContext);
   const [returnFlag, setReturnFlag] = useState(false);
+ const [getValue, setValue, removeValue, setRidesAsDriver, setRidesAsPassenger,getRidesAsDriver,getRidesAsPassenger]=useAsyncStorage();
+  const requestRideHandler = () => {
+    setTransform({
+      returnButton: true,
+      closeButton: false,
+    });
+  };
 
   const onDismiss = () => {
     setRoute(null);
@@ -80,6 +90,24 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     }
     setRequestFlag(1);
   }, [returnFlag]);
+
+  useEffect(()=>{
+    getUserRides();
+  },[]);
+
+  const getUserRides = async() =>{
+    const user = await getValue();
+    console.log("user id "+user.id+"\n");
+    const rad = await getUserRidesAsDriver(user.id);
+    const rap = await getUserRidesAsDriver(user.id);
+    if(rad !== undefined && rap !== undefined){
+      console.log(JSON.stringify(rad));
+      console.log(JSON.stringify(rap));
+      setRidesAsPassenger(rap);
+      setRidesAsDriver(rad);
+    }
+    
+  };
 
   return (
     <RouteContext.Provider value={{ route, setRoute }}>

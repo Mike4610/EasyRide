@@ -28,6 +28,7 @@ import { or } from "react-native-reanimated";
 import { RouteContext } from "../../context/RouteContext";
 import Slider from "@react-native-community/slider";
 import { dateValidator } from "../../utils";
+import ListRidesPopUp from "./ListRidesPopUp";
 interface Props {
   requestVisible: boolean;
   onDismiss: () => void;
@@ -109,6 +110,10 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
       if (dateValidator(ride.date))
         // console.log("é hoje ou depois")
         setRequestRoute(ride);
+        return (<ListRidesPopUp
+        requestRide={ride} setRoute={setRequestRoute}>
+        
+        </ListRidesPopUp>);
     }
   }
 
