@@ -69,6 +69,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
     date: new Date(),
     duration: 0,
     distance: 0,
+    driverId: "",
     range: 5,
   };
 
@@ -210,6 +211,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                       value={ride.date}
                       mode="date"
                       style={styles.datePicker}
+                      // @ts-ignore
                       onChange={onChange}
                     />
                   )}
@@ -229,6 +231,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                       style={styles.datePickerStyle}
                       value={new Date()}
                       mode="date"
+                      // @ts-ignore
                       onChange={(e, d) => {
                         setShow(false);
                         if (d !== undefined) {
