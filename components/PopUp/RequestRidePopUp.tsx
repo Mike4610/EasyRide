@@ -38,7 +38,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
   const [show, setShow] = useState(false);
 
   const onChange = (event: Event, selectedDate?: Date) => {
-    setShow(Platform.OS === "ios");
+    setShow(Platform.OS === "android");
     if (selectedDate) {
       setRide({
         ...ride,
@@ -292,9 +292,9 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
               <View>
                 <Button
                   press={() => {
-                    console.log(ride);
                     confirmRideRequest();
                     onDismiss();
+                    setRide(initialRide)
                   }}
                   full={true}
                   text={"Request Ride"}

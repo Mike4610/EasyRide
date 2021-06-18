@@ -65,16 +65,16 @@ const RouteDetailsPopUp: React.FC<Props> = ({
             <Text style={styles.boldText}>To:</Text> {details.to?.description}{" "}
           </Text>
           <Text style={styles.text}>
-            <AntDesign name="calendar" size={20} color="#fd4d4d" />{" "}
+            <AntDesign name="calendar" size={20} color="#fd4d4d" />
             <Text style={styles.boldText}>Date:</Text>{" "}
-            {type === "view" ? (
+            {type === "view" || type === "join" ? (
               formattedDate.toLocaleDateString() +
               " " +
               formattedDate.getHours() +
               ":" +
               formattedDate.getMinutes() +
               "h"
-            ) : type === "create" || type === "join" ? (
+            ) : type === "create" ? (
               details.date.toLocaleDateString() +
               " " +
               details.date.getHours() +

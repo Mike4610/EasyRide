@@ -273,7 +273,6 @@ const Map: React.FC<Props> = ({ setReturn }) => {
                   onPress={() => {
                     toggleType();
                     setRoute(ride);
-                    setReturn();
                   }}
                   type={"from"}
                   location={{
@@ -331,6 +330,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
             setRoute={(route: Route) => {
               setRoute(route);
               setDetailsType("join");
+              
             }}
             requestRide={toListRoute}
           />

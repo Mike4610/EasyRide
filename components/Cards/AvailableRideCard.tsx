@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     backgroundColor: "#f9f9f9",
     width: 300,
+    alignSelf: "center"
   },
   info: {
     flexDirection: "row",
