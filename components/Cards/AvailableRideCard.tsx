@@ -20,6 +20,7 @@ const AvailableRideCard: React.FC<Props> = ({
   moreInfo,
 }) => {
   const [formattedDate, setFormattedDate] = useState<Date>(
+    // @ts-ignore
     new Date(route.date.seconds * 1000)
   );
   useEffect(() => {

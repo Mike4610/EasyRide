@@ -30,6 +30,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({
   type,
 }) => {
   const [formattedDate, setFormattedDate] = useState<Date>(
+    // @ts-ignore
     new Date(details.date.seconds*1000)
   );
 
@@ -44,6 +45,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({
           .where("id", "==", details.driverId)
           .get();
         usersSnapshot.docs.forEach((doc) => {
+          // @ts-ignore
           setDriver(doc.data());
         });
       }

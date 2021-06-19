@@ -73,6 +73,8 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
   });
 
   const initialRide: Route = {
+    id: "",
+    availableSeats: "",
     from: {} as Place,
     to: {} as Place,
     date: new Date(),
