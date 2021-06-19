@@ -20,9 +20,10 @@ const geofire = require("geofire-common");
 interface Props {
   requestRide: Route;
   setRoute: (route: Route) => void;
+  setView : (value:any) => void;
 }
 
-const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute }) => {
+const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) => {
   const [availableRoutesFrom, setAvailableRoutesFrom] = useState<Route[]>([]);
   const [availableRoutesTo, setAvailableRoutesTo] = useState<Route[]>([]);
   const [availableRoutes, setAvailableRoutes] = useState<Route[]>([]);
@@ -249,7 +250,8 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute }) => {
             <AvailableRideCard
               key={route.from.geoHash + route.driverId + new Date(1000 * route.date.seconds)}
               route={route}
-              chooseRoute={setRequestRoute}
+              chooseRoute={setRoute}
+              setView ={setView}
             />
           );
         })}

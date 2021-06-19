@@ -110,10 +110,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
       if (dateValidator(ride.date))
         // console.log("é hoje ou depois")
         setRequestRoute(ride);
-        return (<ListRidesPopUp
-        requestRide={ride} setRoute={setRequestRoute}>
-        
-        </ListRidesPopUp>);
+
     }
   }
 

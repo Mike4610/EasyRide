@@ -30,7 +30,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({
   type,
 }) => {
   const [formattedDate, setFormattedDate] = useState<Date>(
-    new Date(details.date.seconds)
+    new Date(details.date.seconds*1000)
   );
 
   const [driver, setDriver] = useState<User>({} as User);
@@ -70,19 +70,10 @@ const RouteDetailsPopUp: React.FC<Props> = ({
             <AntDesign name="calendar" size={20} color="#fd4d4d" />
             <Text style={styles.boldText}>Date:</Text>{" "}
             {type === "view" || type === "join" ? (
-              formattedDate.toLocaleDateString() +
-              " " +
-              formattedDate.getHours() +
-              ":" +
-              formattedDate.getMinutes() +
-              "h"
+              formattedDate.toLocaleString()
+             
             ) : type === "create" ? (
-              details.date.toLocaleDateString() +
-              " " +
-              details.date.getHours() +
-              ":" +
-              details.date.getMinutes() +
-              "h"
+              formattedDate.toLocaleString()
             ) : (
               <></>
             )}
