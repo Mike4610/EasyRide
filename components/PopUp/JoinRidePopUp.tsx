@@ -141,7 +141,7 @@ const LoadingPopUp: React.FC<Props> = ({ visible, route }) => {
                 <Text style={styles.title}>Driver's Info</Text>
               </View>
               <View style={{ width: "100%", padding: 20, bottom: -70 }}>
-                <Button text={"Join"} full={true} press={() => {}} />
+                <Button text={"Join"} full={true} press={() => { console.log("Pressed") }} />
                 {/* <Button text={"Cancel ride"} full={false} press={() => {}} /> */}
               </View>
             </>

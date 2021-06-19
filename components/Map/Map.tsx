@@ -136,6 +136,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
   };
 
   const joinRide = async (ride: Route) => {
+    console.log("HEREEEE")
     ride.passengersId?.push(userData.id);
     let newSeatNumber = parseInt(ride.availableSeats) - 1;
     ride.availableSeats = String(newSeatNumber);
@@ -340,10 +341,8 @@ const Map: React.FC<Props> = ({ setReturn }) => {
 
         {toListRoute && (
           <ListRidesPopUp
-            setRoute={(route: Route) => {
-              setRoute(route);
-              setDetailsType("join");
-            }}
+            setRoute={setRouteDetails}
+            setView ={setDetailsType}
             requestRide={toListRoute}
           />
         )}
