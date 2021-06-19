@@ -14,7 +14,7 @@ import "firebase/auth";
 import { Route, ScreenNavigationProps } from "../../types";
 import { VehicleContext } from "../../context/VehicleContext";
 
-const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
+const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation, routeProp }) => {
   //POPUP
   const [requestVisible, setRequestVisible] = useState(false);
   const [giveVisible, setGiveVisible] = useState(false);
@@ -34,9 +34,9 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   const [visible, setVisible] = useState(true);
   const [routeFlag, setRouteFlag] = useState<number>(0);
   const [requestFlag, setRequestFlag] = useState<number>(0);
-  const { vehicle, setVehicle } = useContext(VehicleContext);
   const [returnFlag, setReturnFlag] = useState(false);
- const [getValue, setValue, removeValue, setRidesAsDriver, setRidesAsPassenger,getRidesAsDriver,getRidesAsPassenger]=useAsyncStorage();
+  const [params, setParams] = useState(routeProp?.params?.route)
+  const [getValue, setValue, removeValue, setRidesAsDriver, setRidesAsPassenger,getRidesAsDriver,getRidesAsPassenger]=useAsyncStorage();
   const requestRideHandler = () => {
     setTransform({
       returnButton: true,
@@ -57,6 +57,11 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
     setRouteFlag(0);
     setRequestFlag(0);
   }, []);
+
+  useEffect(() => {
+    console.log("PARAMS", params);
+  }, [routeProp?.params?.route]);
+
 
   useEffect(() => {
     if (routeFlag !== 0) {

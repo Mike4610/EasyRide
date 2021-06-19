@@ -69,7 +69,7 @@ interface Location {
 
 interface ScreenNavigationProps {
   navigation: DrawerNavigationProp<any, any>;
-  route?: RouteProp<any, any>;
+  routeProp?: RouteProp<any, any>;
 }
 
 export {
