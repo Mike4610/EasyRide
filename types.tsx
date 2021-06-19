@@ -25,7 +25,7 @@ interface Ride {
 }
 
 interface User {
-  id?: string;
+  id: string;
   fullName: string;
   email: string;
   phoneNumber: string;
@@ -50,14 +50,14 @@ interface RouteDetails {
   duration: number;
 }
 interface Route {
-  id?: string;
+  id: string;
   from: Place;
   to: Place;
   date: Date;
   distance: number;
   duration: number;
   vehicle?: Vehicle;
-  availableSeats?: string;
+  availableSeats: string;
   driverId?: string;
   passengersId?: string[];
   range?: number;

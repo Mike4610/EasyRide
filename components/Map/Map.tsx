@@ -134,6 +134,18 @@ const Map: React.FC<Props> = ({ setReturn }) => {
       setCurrentRides(ridesAux);
     }
   };
+
+  const joinRide = async (ride: Route) => {
+    ride.passengersId?.push(userData.id);
+    let newSeatNumber = parseInt(ride.availableSeats) - 1;
+    ride.availableSeats = String(newSeatNumber);
+    try {
+      await firebase.firestore().collection("rides").doc(ride.id).update(ride);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
   const toggleType = () => {
     if (detailsType === "view") {
       setDetailsType("create");
@@ -321,6 +333,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
             type={detailsType}
             confirmRide={confirmRide}
             cancelRide={cancelRide}
+            joinRide={joinRide}
             details={routeDetails}
           />
         )}
@@ -330,7 +343,6 @@ const Map: React.FC<Props> = ({ setReturn }) => {
             setRoute={(route: Route) => {
               setRoute(route);
               setDetailsType("join");
-              
             }}
             requestRide={toListRoute}
           />

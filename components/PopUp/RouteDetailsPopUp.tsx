@@ -18,6 +18,7 @@ interface Props {
   details: Route;
   confirmRide: () => void;
   cancelRide: (ride: Route) => void;
+  joinRide: (ride: Route) => void;
   type: string;
 }
 
@@ -25,6 +26,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({
   details,
   confirmRide,
   cancelRide,
+  joinRide,
   type,
 }) => {
   const [formattedDate, setFormattedDate] = useState<Date>(
@@ -163,7 +165,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({
               text={"Join ride"}
               full={true}
               press={() => {
-                cancelRide(details);
+                joinRide(details);
               }}
             ></Button>
           </>
