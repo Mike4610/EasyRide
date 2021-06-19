@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 import firebase from "firebase";
 import "firebase/firestore";
 import AvailableRideCard from "../../components/Cards/AvailableRideCard";
+import { RequestRouteContext } from "../../context/RequestRouteContext";
 
 const geofire = require("geofire-common");
 
@@ -28,6 +29,8 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute }) => {
   const [userData, setUserData] = useState<User>({} as User);
   const [noResults, setNoResults] = useState<boolean>(false);
   const [getUser] = useAsyncStorage();
+  const { requestRoute, setRequestRoute } = useContext(RequestRouteContext);
+
 
   useEffect(() => {
     (async () => {
@@ -42,6 +45,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute }) => {
 
   useEffect(() => {
     let ridesAux = [] as Route[];
+    var size = 0
     availableRoutesFrom.forEach((rideFrom) => {
       availableRoutesTo.forEach((rideTo) => {
         if (
@@ -49,8 +53,10 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute }) => {
           rideFrom.from.latitude === rideTo.from.latitude &&
           rideFrom.from.longitude === rideTo.from.longitude &&
           rideFrom.to.latitude === rideTo.to.latitude &&
-          rideFrom.to.longitude === rideTo.to.longitude
+          rideFrom.to.longitude === rideTo.to.longitude && rideFrom.date.seconds === rideTo.date.seconds
         ) {
+          size++
+          console.log("SIZEEEEEEE " + size + "\n");
           ridesAux.push(rideFrom);
         }
       });
@@ -114,10 +120,15 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute }) => {
       })
       .then((matchingDocs) => {
         let ridesAux = [] as Route[];
-
+        const now = new Date();
         matchingDocs.forEach((doc) => {
+          let date = new Date(doc.data().date.seconds * 1000);
+          if (date.getTime() - now.getTime() > 0) {
+            // @ts-ignore
+            ridesAux.push(doc.data());
+          }
           // @ts-ignore
-          ridesAux.push(doc.data());
+          //ridesAux.push(doc.data());
         });
 
         setAvailableRoutesTo(ridesAux);
@@ -236,9 +247,9 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute }) => {
         {availableRoutes.map((route, index) => {
           return (
             <AvailableRideCard
-              key={route.from.geoHash + route.driverId + route.date}
+              key={route.from.geoHash + route.driverId + new Date(1000 * route.date.seconds)}
               route={route}
-              chooseRoute={chooseRoute}
+              chooseRoute={setRequestRoute}
             />
           );
         })}

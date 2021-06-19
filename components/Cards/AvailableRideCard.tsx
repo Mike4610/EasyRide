@@ -19,14 +19,14 @@ interface Props {
 }
 const AvailableRideCard: React.FC<Props> = ({ route, chooseRoute }) => {
   const [formattedDate, setFormattedDate] = useState<Date>(
-    new Date(route.date.seconds)
+    new Date(route.date.seconds * 1000)
   );
   useEffect(() => {
     console.log(JSON.stringify(route));
   }, []);
   return (
     <View
-      key={route.from.geoHash + route.driverId + route.date}
+      key={route.from.geoHash + route.driverId + formattedDate}
       style={styles.infoContainer}
     >
       <View style={styles.info}>
@@ -47,12 +47,8 @@ const AvailableRideCard: React.FC<Props> = ({ route, chooseRoute }) => {
         <AntDesign name="calendar" size={20} color="#fd4d4d" />
         <Text style={styles.textDescription}>
           <Text style={{ fontWeight: "bold" }}>Date:</Text>{" "}
-          {formattedDate.toLocaleDateString() +
-            " " +
-            formattedDate.getHours() +
-            ":" +
-            formattedDate.getMinutes() +
-            "h"}
+          {formattedDate.toLocaleString()
+            }
         </Text>
       </View>
       <View style={styles.info}>
