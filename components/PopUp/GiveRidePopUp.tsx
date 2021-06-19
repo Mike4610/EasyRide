@@ -101,6 +101,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
 
   useEffect(() => {
     setRouteDetails({
+      id: "",
       from: {} as Place,
       to: {} as Place,
       date: new Date(),
