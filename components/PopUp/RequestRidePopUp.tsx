@@ -1,4 +1,4 @@
-import { Dialog, Portal, Provider } from "react-native-paper";
+import { Dialog, Portal, Provider, Snackbar } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import React, { useState, useEffect, useContext } from "react";
 import {
@@ -50,6 +50,14 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
     }
   };
 
+  const [snackBarVisible, setSnackBarVisible] = useState(false);
+  const [snackBarMessage, setSnackBarMessage] = useState<string>("");
+
+  const dismissSnackBar = () => {
+    setSnackBarVisible(false);
+  };
+
+
   const [titleDate, setTitleDate] = useState("Select Time and Date");
   const [titleD, setTitleD] = useState("");
 
@@ -99,18 +107,34 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
     }
   }, [titleD]);
 
+  useEffect(() => {
+    console.log(JSON.stringify(ride.date));
+  }, [ride]);
+
   function confirmRideRequest() {
+    let now = new Date();
     if (
-      ride.from &&
-      ride.to &&
+      Object.keys(ride.from).length !== 0 &&
+      Object.keys(ride.to).length !== 0 &&
       ride.range &&
       ride.range > 0 &&
       ride.range < 21
     ) {
-      if (dateValidator(ride.date))
-        // console.log("é hoje ou depois")
+      if (
+        Number(now.getFullYear()) <= Number(ride.date.getFullYear()) &&
+        Number(now.getMonth()) <= Number(ride.date.getMonth()) &&
+        Number(now.getDate()) <= Number(ride.date.getDate())
+      ){
         setRequestRoute(ride);
-
+        setRide(initialRide);
+        onDismiss();
+      }else{
+        setSnackBarMessage("Date is past!");
+        setSnackBarVisible(true);
+      }
+    }else{
+      setSnackBarMessage("From or To fields cannot be empty!");
+      setSnackBarVisible(true);
     }
   }
 
@@ -164,7 +188,7 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                       style={{
                         width: 400,
                         alignSelf: "center",
-                        zIndex: 1,
+                        // zIndex: 1,
                         position: "absolute",
                       }}
                     >
@@ -295,8 +319,8 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
                 <Button
                   press={() => {
                     confirmRideRequest();
-                    onDismiss();
-                    setRide(initialRide)
+                    // onDismiss();
+                    // setRide(initialRide)
                   }}
                   full={true}
                   text={"Request Ride"}
@@ -305,6 +329,22 @@ const RequestRidePopUp: React.FC<Props> = ({ requestVisible, onDismiss }) => {
             </View>
           </Dialog.Content>
         </Dialog>
+        <Snackbar
+          duration={2500}
+          visible={snackBarVisible}
+          onDismiss={dismissSnackBar}
+          style={{ backgroundColor: "#151a21" }}
+          action={{
+            label: "",
+            onPress: () => {
+              dismissSnackBar();
+            },
+          }}
+        >
+          <Text style={{ fontSize: 15, fontWeight: "bold", color: "white" }}>
+            {snackBarMessage}
+          </Text>
+        </Snackbar>
       </Portal>
     </Provider>
   );

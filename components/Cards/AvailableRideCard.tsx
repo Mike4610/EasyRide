@@ -10,7 +10,7 @@ interface Props {
   route: Route;
   chooseRoute: (route: Route) => void;
   setView?: (value: any) => void;
-  moreInfo: (route: Route) => void;
+  moreInfo?: (route: Route) => void;
 }
 
 const AvailableRideCard: React.FC<Props> = ({
@@ -27,7 +27,7 @@ const AvailableRideCard: React.FC<Props> = ({
   }, []);
   return (
     <View
-      key={route.from.geoHash + route.driverId + formattedDate}
+      key={route.id}
       style={styles.infoContainer}
     >
       <View style={styles.info}>

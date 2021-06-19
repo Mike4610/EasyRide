@@ -74,7 +74,6 @@ const RouteDetailsPopUp: React.FC<Props> = ({
              
             ) : type === "create" ? (
               details.date.toLocaleString()
-              // formattedDate.toLocaleString()
             ) : (
               <></>
             )}
