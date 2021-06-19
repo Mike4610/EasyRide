@@ -69,6 +69,8 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     driverId: "",
   };
 
+  let auxDate = new Date();
+
   const [vehicleC, setVehicleC] = useState({
     label: "",
     seats: [] as string[] | undefined,
@@ -140,9 +142,13 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     }
   }, [titleTime]);
 
+  useEffect(() => {
+    console.log(JSON.stringify(routeDetails.date));
+  }, [routeDetails]);
+
   const onChange = (event: Event, selectedDate?: Date) => {
     setShow(Platform.OS === "android");
-    console.log(selectedDate)
+    console.log(selectedDate);
     if (selectedDate) {
       setRouteDetails({
         ...routeDetails,
@@ -181,6 +187,19 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
         });
       }
     });
+  };
+
+  const addHourToDate = (d: Date) => {
+    const dateAux = new Date(
+      auxDate.getFullYear(),
+      auxDate.getMonth(),
+      auxDate.getDate(),
+      d.getHours(),
+      d.getMinutes(),
+      d.getSeconds(),
+      d.getMilliseconds()
+    );
+    setRouteDetails({ ...routeDetails, date: dateAux });
   };
 
   const publishRide = () => {
@@ -331,7 +350,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                       onChange={(e, d) => {
                         setShow(false);
                         if (d !== undefined) {
-                          setRouteDetails({ ...routeDetails, date: d });
+                          addHourToDate(d);
                           setTitleTime(d.toLocaleTimeString());
                         }
                       }}
@@ -361,7 +380,8 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                       onChange={(e, d) => {
                         setShow(false);
                         if (d !== undefined) {
-                          setRouteDetails({ ...routeDetails, date: d });
+                          // setRouteDetails({ ...routeDetails, date: d });
+                          auxDate = d;
                           setTitleD(d.toLocaleDateString());
                         }
                       }}
