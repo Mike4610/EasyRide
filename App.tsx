@@ -24,7 +24,7 @@ import { firebaseConfig } from "./firebaseConfig";
 import LocationsScreen from "./screens/Locations/LocationsScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import RidesScreen from "./screens/Rides/RidesScreen";
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const App: React.FC<{}> = () => {
   const Drawer = createDrawerNavigator();
@@ -114,93 +114,93 @@ const App: React.FC<{}> = () => {
         <UserContext.Provider value={{ loggedIn, setLoggedIn }}>
           <ProfileContext.Provider value={{ profile, setProfile }}>
             <VehicleContext.Provider value={{ vehicle, setVehicle }}>
-                <NavigationContainer>
-                  <Drawer.Navigator
-                    initialRouteName="HomeScreen"
-                    drawerContent={(props) => (
-                      <DrawerContent drawerProps={props} />
-                    )}
-                    drawerContentOptions={{
-                      activeTintColor: "#fd4d4d",
-                      inactiveTintColor: "#151a21",
+              <NavigationContainer>
+                <Drawer.Navigator
+                  initialRouteName="HomeScreen"
+                  drawerContent={(props) => (
+                    <DrawerContent drawerProps={props} />
+                  )}
+                  drawerContentOptions={{
+                    activeTintColor: "#fd4d4d",
+                    inactiveTintColor: "#151a21",
+                  }}
+                >
+                  <Drawer.Screen
+                    name="HomeScreen"
+                    component={HomeScreen}
+                    options={{
+                      drawerLabel: ({ focused, color }) => (
+                        <Text style={{ fontSize: 16, color: "#151a21" }}>
+                          Home
+                        </Text>
+                      ),
+                      drawerIcon: ({ focused, color, size }) => (
+                        <AntDesign name="home" size={24} color="#fd4d4d" />
+                      ),
                     }}
-                  >
-                    <Drawer.Screen
-                      name="HomeScreen"
-                      component={HomeScreen}
-                      options={{
-                        drawerLabel: ({ focused, color }) => (
-                          <Text style={{ fontSize: 16, color: "#151a21" }}>
-                            Home
-                          </Text>
-                        ),
-                        drawerIcon: ({ focused, color, size }) => (
-                          <AntDesign name="home" size={24} color="#fd4d4d" />
-                        ),
-                      }}
-                    />
-                    <Drawer.Screen
-                      name="ProfileScreen"
-                      component={ProfileScreen}
-                      options={{
-                        drawerLabel: ({ focused, color }) => (
-                          <Text style={{ fontSize: 16, color: "#151a21" }}>
-                            Profile
-                          </Text>
-                        ),
-                        drawerIcon: ({ focused, color, size }) => (
-                          <AntDesign name="user" size={24} color="#fd4d4d" />
-                        ),
-                      }}
-                    />
-                    <Drawer.Screen
-                      name="VehiclesScreen"
-                      component={VehiclesScreen}
-                      options={{
-                        drawerLabel: ({ focused, color }) => (
-                          <Text style={{ fontSize: 16, color: "#151a21" }}>
-                            Vehicles
-                          </Text>
-                        ),
-                        drawerIcon: ({ focused, color, size }) => (
-                          <AntDesign name="car" size={24} color="#fd4d4d" />
-                        ),
-                      }}
-                    />
-                    <Drawer.Screen
-                      name="LocationsScreen"
-                      component={LocationsScreen}
-                      options={{
-                        drawerLabel: ({ focused, color }) => (
-                          <Text style={{ fontSize: 16, color: "#151a21" }}>
-                            Locations
-                          </Text>
-                        ),
-                        drawerIcon: ({ focused, color, size }) => (
-                          <MaterialCommunityIcons
-                            name="office-building"
-                            size={24}
-                            color="#fd4d4d"
-                          />
-                        ),
-                      }}
-                    />
-                    <Drawer.Screen
-                      name="RidesScreen"
-                      component={RidesScreen}
-                      options={{
-                        drawerLabel: ({ focused, color }) => (
-                          <Text style={{ fontSize: 16, color: "#151a21" }}>
-                            My rides
-                          </Text>
-                        ),
-                        drawerIcon: ({ focused, color, size }) => (
-                          <FontAwesome5 name="route" size={24} color="#fd4d4d" />
-                        ),
-                      }}
-                    />
-                  </Drawer.Navigator>
-                </NavigationContainer>
+                  />
+                  <Drawer.Screen
+                    name="ProfileScreen"
+                    component={ProfileScreen}
+                    options={{
+                      drawerLabel: ({ focused, color }) => (
+                        <Text style={{ fontSize: 16, color: "#151a21" }}>
+                          Profile
+                        </Text>
+                      ),
+                      drawerIcon: ({ focused, color, size }) => (
+                        <AntDesign name="user" size={24} color="#fd4d4d" />
+                      ),
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="VehiclesScreen"
+                    component={VehiclesScreen}
+                    options={{
+                      drawerLabel: ({ focused, color }) => (
+                        <Text style={{ fontSize: 16, color: "#151a21" }}>
+                          Vehicles
+                        </Text>
+                      ),
+                      drawerIcon: ({ focused, color, size }) => (
+                        <AntDesign name="car" size={24} color="#fd4d4d" />
+                      ),
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="LocationsScreen"
+                    component={LocationsScreen}
+                    options={{
+                      drawerLabel: ({ focused, color }) => (
+                        <Text style={{ fontSize: 16, color: "#151a21" }}>
+                          Locations
+                        </Text>
+                      ),
+                      drawerIcon: ({ focused, color, size }) => (
+                        <MaterialCommunityIcons
+                          name="office-building"
+                          size={24}
+                          color="#fd4d4d"
+                        />
+                      ),
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="RidesScreen"
+                    component={RidesScreen}
+                    options={{
+                      drawerLabel: ({ focused, color }) => (
+                        <Text style={{ fontSize: 16, color: "#151a21" }}>
+                          Rides
+                        </Text>
+                      ),
+                      drawerIcon: ({ focused, color, size }) => (
+                        <FontAwesome5 name="route" size={24} color="#fd4d4d" />
+                      ),
+                    }}
+                  />
+                </Drawer.Navigator>
+              </NavigationContainer>
             </VehicleContext.Provider>
           </ProfileContext.Provider>
         </UserContext.Provider>

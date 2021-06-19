@@ -23,8 +23,8 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { RouteContext } from "../../context/RouteContext";
 import ActionSheet from "react-native-actions-sheet";
 import { dateValidator, validateLocation } from "../../utils";
-import SnackBar from "../SnackBar/SnackBar";
 import { VehicleContext } from "../../context/VehicleContext";
+import { useIsFocused } from "@react-navigation/native";
 
 interface Props {
   giveVisible: boolean;
@@ -33,7 +33,7 @@ interface Props {
 
 const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   const [mode, setMode] = useState("date");
-
+  const isFocused = useIsFocused();
   const [show, setShow] = useState(false);
   const [buttonText, setButtonText] = useState({
     car: "Choose vehicle",
@@ -59,6 +59,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
   const [getValue] = useAsyncStorage();
 
   const initialState: Route = {
+    id: "",
     from: {} as Place,
     to: {} as Place,
     date: new Date(),
@@ -95,9 +96,12 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
     })();
   }, []);
 
-  // useEffect(() => {
-  //   forceUpdate();
-  // }, [vehicle]);
+  useEffect(() => {
+    (async () => {
+      const user = await getValue();
+      setUserData(user);
+    })();
+  }, [isFocused]);
 
   const forceUpdate: () => void = React.useState()[1].bind(null, {});
 
@@ -278,7 +282,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     style={{
                       width: 400,
                       alignSelf: "center",
-                      // zIndex: 1,
+                      zIndex: 1,
                       position: "absolute",
                     }}
                   >

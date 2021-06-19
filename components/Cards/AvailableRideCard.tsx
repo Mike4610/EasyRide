@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  Animated,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 
 import { Ionicons, AntDesign, Entypo, FontAwesome } from "@expo/vector-icons";
 import "firebase/firestore";
-import Swipeable from "react-native-gesture-handler/Swipeable";
 import { Route } from "../../types";
 import Button from "../Buttons/Button";
 
 interface Props {
   route: Route;
   chooseRoute: (route: Route) => void;
-  setView: (value:any) => void;
+  setView?: (value: any) => void;
+  moreInfo: (route: Route) => void;
 }
-const AvailableRideCard: React.FC<Props> = ({ route, chooseRoute,setView}) => {
+
+const AvailableRideCard: React.FC<Props> = ({
+  route,
+  chooseRoute,
+  setView,
+  moreInfo,
+}) => {
   const [formattedDate, setFormattedDate] = useState<Date>(
     new Date(route.date.seconds * 1000)
   );
@@ -48,8 +48,12 @@ const AvailableRideCard: React.FC<Props> = ({ route, chooseRoute,setView}) => {
         <AntDesign name="calendar" size={20} color="#fd4d4d" />
         <Text style={styles.textDescription}>
           <Text style={{ fontWeight: "bold" }}>Date:</Text>{" "}
-          {formattedDate.toLocaleString()
-            }
+          {formattedDate.toLocaleDateString() +
+            " " +
+            formattedDate.getHours() +
+            ":" +
+            formattedDate.getMinutes() +
+            "h"}
         </Text>
       </View>
       <View style={styles.info}>
@@ -70,8 +74,9 @@ const AvailableRideCard: React.FC<Props> = ({ route, chooseRoute,setView}) => {
         <Button
           text={"View more"}
           press={() => {
-            chooseRoute(route);
-            setView("join");
+            if (chooseRoute) chooseRoute(route);
+            if (moreInfo) moreInfo(route);
+            if (setView) setView("join");
           }}
           full={true}
         />
@@ -130,12 +135,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "flex-start",
     borderBottomColor: "#151a21",
-    borderBottomWidth: 0.5,
     padding: 30,
     borderRadius: 30,
     backgroundColor: "#f9f9f9",
     width: 300,
-    alignSelf: "center"
+    alignSelf: "center",
   },
   info: {
     flexDirection: "row",

@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomColor: "#151a21",
     borderBottomWidth: 0.5,
+    padding: 20
   },
   info: {
     flexDirection: "row",
