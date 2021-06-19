@@ -258,7 +258,7 @@ const GiveRidePopUp: React.FC<Props> = ({ giveVisible, onDismiss }) => {
                     style={{
                       width: 400,
                       alignSelf: "center",
-                      zIndex: 1,
+                      // zIndex: 1,
                       position: "absolute",
                     }}
                   >
