@@ -54,7 +54,10 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
           rideFrom.from.latitude === rideTo.from.latitude &&
           rideFrom.from.longitude === rideTo.from.longitude &&
           rideFrom.to.latitude === rideTo.to.latitude &&
-          rideFrom.to.longitude === rideTo.to.longitude && rideFrom.date.seconds === rideTo.date.seconds
+          rideFrom.to.longitude === rideTo.to.longitude && 
+          // @ts-ignore
+          rideFrom.date.seconds === rideTo.date.seconds &&
+          rideFrom.driverId != userData.id
         ) {
           size++
           console.log("SIZEEEEEEE " + size + "\n");
@@ -91,6 +94,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
       const q = firebase
         .firestore()
         .collection("rides")
+        .where("availableSeats", ">", 0)
         .orderBy("to.geoHash")
         .startAt(b[0])
         .endAt(b[1]);
@@ -146,6 +150,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
       const q = firebase
         .firestore()
         .collection("rides")
+        .where("availableSeats", ">", 0)
         .orderBy("from.geoHash")
         .startAt(b[0])
         .endAt(b[1]);
@@ -248,9 +253,11 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
         {availableRoutes.map((route, index) => {
           return (
             <AvailableRideCard
-              key={route.from.geoHash + route.driverId + new Date(1000 * route.date.seconds)}
+              // @ts-ignore
+              key={route.id}
               route={route}
               chooseRoute={setRoute}
+              // @ts-ignore
               setView ={setView}
             />
           );
