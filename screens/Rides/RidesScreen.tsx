@@ -48,7 +48,7 @@ const RidesScreen: React.FC<ScreenNavigationProps> = ({ navigation }) => {
   useEffect(() => {
     getUserRides();
   }, [isFocused]);
-
+  
   const getUserRides = async () => {
     const user = await getUser();
     const rad = await getUserRidesAsDriver(user.id);

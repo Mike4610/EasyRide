@@ -59,11 +59,6 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation, routeProp }) 
   }, []);
 
   useEffect(() => {
-    console.log("PARAMS", params);
-  }, [routeProp?.params?.route]);
-
-
-  useEffect(() => {
     if (routeFlag !== 0) {
       setTransform({
         ...transform,

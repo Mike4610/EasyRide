@@ -19,6 +19,7 @@ interface Props {
   confirmRide: () => void;
   cancelRide: (ride: Route) => void;
   joinRide: (ride: Route) => void;
+  leaveRide: (ride: Route) => void;
   type: string;
 }
 
@@ -27,11 +28,12 @@ const RouteDetailsPopUp: React.FC<Props> = ({
   confirmRide,
   cancelRide,
   joinRide,
+  leaveRide,
   type,
 }) => {
   const [formattedDate, setFormattedDate] = useState<Date>(
     // @ts-ignore
-    new Date(details.date.seconds*1000)
+    new Date(details.date.seconds * 1000)
   );
 
   const [driver, setDriver] = useState<User>({} as User);
@@ -72,10 +74,9 @@ const RouteDetailsPopUp: React.FC<Props> = ({
             <AntDesign name="calendar" size={20} color="#fd4d4d" />
             <Text style={styles.boldText}>Date:</Text>{" "}
             {type === "view" || type === "join" ? (
-              formattedDate.toLocaleString()
-             
+              <Text>{formattedDate.toLocaleString()}</Text>
             ) : type === "create" ? (
-              details.date.toLocaleString()
+              <Text>{details.date.toLocaleString()}</Text>
             ) : (
               <></>
             )}
@@ -152,10 +153,20 @@ const RouteDetailsPopUp: React.FC<Props> = ({
               cancelRide(details);
             }}
           ></Button>
-        ) : (
+        ) : type === "join" ? (
           <>
             <Button
               text={"Join ride"}
+              full={true}
+              press={() => {
+                joinRide(details);
+              }}
+            ></Button>
+          </>
+        ) : (
+          <>
+            <Button
+              text={"Leave ride"}
               full={true}
               press={() => {
                 joinRide(details);

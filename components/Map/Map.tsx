@@ -46,7 +46,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
   const map: LegacyRef<MapView> = useRef(null);
   const [routeDetails, setRouteDetails] = useState<Route | null>(null);
   const [toListRoute, setToListRoute] = useState<Route | null>(null);
-  const [currentRides, setCurrentRides] = useState<Route[] | null>(null);
+  const [currentRidesP, setCurrentRidesP] = useState<Route[] | null>(null);
   const [currentRidesD, setCurrentRidesD] = useState<Route[] | null>(null);
 
   const [userData, setUserData] = useState<User>({} as User);
@@ -76,7 +76,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     setRouteDetails(route);
   }, [route]);
 
-  useEffect(() => { }, [toListRoute]);
+  useEffect(() => {}, [toListRoute]);
 
   useEffect(() => {
     setToListRoute(requestRoute);
@@ -129,20 +129,19 @@ const Map: React.FC<Props> = ({ setReturn }) => {
 
   const fetchUserRides = async (id?: string) => {
     if (id !== undefined) {
-      let ridesAux = [] as Route[];
+      let ridesAuxD = [] as Route[];
       const ridesSnapshot = await firebase
         .firestore()
         .collection("rides")
         .where("driverId", "==", id)
         .get();
       ridesSnapshot.docs.forEach((doc) => {
-        ridesAux.push(doc.data());
+        ridesAuxD.push(doc.data());
       });
 
-
-      setCurrentRides(ridesAux);
-      //setRidesAsDriver(ridesAux);
-      let ridesAux1 = [] as Route[];
+      setCurrentRidesD(ridesAuxD);
+      setRidesAsDriver(ridesAuxD);
+      let ridesAuxP = [] as Route[];
       const ridesSnapshot1 = await firebase
         .firestore()
         .collection("rides")
@@ -150,14 +149,14 @@ const Map: React.FC<Props> = ({ setReturn }) => {
         // .where("date", ">=", new Date())
         .get();
       ridesSnapshot1.docs.forEach((doc) => {
-        ridesAux1.push(doc.data());
+        ridesAuxP.push(doc.data());
       });
-      setCurrentRidesD(ridesAux1)
+      setCurrentRidesP(ridesAuxP);
+      setRidesAsPassenger(ridesAuxD);
     }
   };
 
   const joinRide = async (ride: Route) => {
-    console.log("HEREEEE");
     ride.passengersId?.push(userData.id);
     let newSeatNumber = parseInt(ride.availableSeats) - 1;
     ride.availableSeats = String(newSeatNumber);
@@ -214,7 +213,6 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     setLoadingState({ ...loadingState, loading: true });
     try {
       await firebase.firestore().collection("rides").doc(ride.id).delete();
-      set("")
     } catch (error) {
       console.error(error);
     }
@@ -250,8 +248,14 @@ const Map: React.FC<Props> = ({ setReturn }) => {
       },
     ];
 
-    if (currentRides) {
-      currentRides.forEach(({ from: { latitude, longitude } }: Route) =>
+    if (currentRidesD || currentRidesP) {
+      currentRidesD?.forEach(({ from: { latitude, longitude } }: Route) =>
+        ridesArray.push({
+          latitude: latitude,
+          longitude: longitude,
+        })
+      );
+      currentRidesP?.forEach(({ from: { latitude, longitude } }: Route) =>
         ridesArray.push({
           latitude: latitude,
           longitude: longitude,
@@ -271,7 +275,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     setLocation(coords);
   };
 
-  if (location.latitude === 0 && location.longitude === 0 && !currentRides) {
+  if (location.latitude === 0 && location.longitude === 0) {
     return <Loading />;
   } else {
     return (
@@ -297,7 +301,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
               : styles.fullScreenMap
           }
         >
-          {currentRides?.map((ride, index) => {
+          {currentRidesD?.map((ride, index) => {
             if (viewRides)
               return (
                 <Marker
@@ -315,7 +319,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
                 />
               );
           })}
-          {currentRidesD?.map((ride, index) => {
+          {currentRidesP?.map((ride, index) => {
             if (viewRides)
               return (
                 <Marker
@@ -333,7 +337,6 @@ const Map: React.FC<Props> = ({ setReturn }) => {
                 />
               );
           })}
-
 
           {routeDetails && (
             <>

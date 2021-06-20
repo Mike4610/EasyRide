@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, Portal, Provider } from "react-native-paper";
-import { Text, StyleSheet, View, ScrollView } from "react-native";
+import { Text, StyleSheet, View, ScrollView, Image } from "react-native";
 import { Route, User } from "../../types";
 import {
   AntDesign,
@@ -21,6 +21,7 @@ interface Props {
 
 const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
   const [userData, setUserData] = useState({} as User);
+  const [driverData, setDriverData] = useState({} as User);
   const [passengers] = useState<User[]>([] as User[]);
   const [getUser] = useAsyncStorage();
 
@@ -30,6 +31,23 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
       setUserData(user);
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (route.driverId !== userData.id) {
+        try {
+          const response = await firebase
+            .firestore()
+            .collection("users")
+            .doc(route.driverId)
+            .get();
+          setDriverData(response.data());
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    })();
+  }, [visible]);
 
   useEffect(() => {
     if (userData) {
@@ -108,10 +126,43 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
               {route.driverId === userData.id ? (
                 <View>
                   <Text style={styles.title}>Passengers Info</Text>
+                  {!route.passengersId?.length && (
+                    <View style={{ alignItems: "center", padding: 20 }}>
+                      <Text style={{ fontSize: 15 }}>
+                        You have no passengers
+                      </Text>
+                    </View>
+                  )}
                   {route.passengersId?.map((passenger) => {})}
                 </View>
               ) : (
-                <></>
+                <View>
+                  <Text style={styles.title}>Driver Info</Text>
+                  <View style={styles.card}>
+                    {/* {driverData.profileImgURL && (
+                      <Image
+                        style={styles.profileImg}
+                        source={{ uri: driverData.profileImgURL }}
+                      />
+                    )} */}
+
+                    <Text style={styles.text}>
+                      <AntDesign name="user" size={20} color="#fd4d4d" />{" "}
+                      <Text style={styles.boldText}>Name:</Text>{" "}
+                      {driverData.fullName}{" "}
+                    </Text>
+                    <Text style={styles.text}>
+                      <AntDesign name="calendar" size={20} color="#fd4d4d" />{" "}
+                      <Text style={styles.boldText}>Birth Date:</Text>{" "}
+                      {driverData.birthDate}{" "}
+                    </Text>
+                    <Text style={styles.text}>
+                      <AntDesign name="phone" size={20} color="#fd4d4d" />{" "}
+                      <Text style={styles.boldText}>Phone Number:</Text>
+                      {driverData.phoneNumber}
+                    </Text>
+                  </View>
+                </View>
               )}
             </ScrollView>
           </View>
