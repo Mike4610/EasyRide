@@ -198,7 +198,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({
                 add=false;
               }
             });
-            if(add == true){ 
+            if(add === true){ 
               // @ts-ignore
               ridesAux.push(doc.data());
             }

@@ -72,12 +72,15 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
     <Provider>
       <Portal>
         {/* @ts-ignore */}
-        <Dialog onDismiss={onDismiss} visible={visible}>
+        <Dialog onDismiss={onDismiss} visible={visible} style={{backgroundColor:'transparent'}}>
           <View style={styles.container}>
+            <View>
+              <Text style={styles.title}>Ride Details</Text>
+            </View>
             <ScrollView style={styles.view}>
-              <View>
-                <Text style={styles.title}>Ride Details</Text>
-              </View>
+              
+              
+              
               <View style={styles.card}>
                 <Text style={styles.text}>
                   <FontAwesome name="car" size={20} color="#fd4d4d" />{" "}
@@ -98,8 +101,7 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
                     name="map-marker-distance"
                     size={16}
                     color="#fd4d4d"
-                  />
-                  {"  "}
+                  />{"  "}
                   <Text style={styles.boldText}>Distance:</Text>{" "}
                   {route.distance} Km{" "}
                 </Text>
@@ -134,7 +136,7 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
                       </Text>
                     </View>
                   )}
-                  {route.passengersId?.map((passenger) => {})}
+                  {route.passengersId?.map((passenger) => { })}
                 </View>
               ) : (
                 <View>
@@ -145,7 +147,18 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
                     ) : (
                       <Image
                         style={styles.profileImg}
-                        source={{ uri: driver.profileImgURL }}
+                        source={{ uri: driverData.profileImgURL }}
+                      />
+                    )} 
+                    {driverData.profileImgURL === "" ? (
+                      <Avatar.Text
+                        label={"?"}
+                        style={styles.profileImg}
+                      />
+                    ) : (
+                      <Image
+                        style={styles.profileImg}
+                        source={{ uri: driverData.profileImgURL }}
                       />
                     )}
 
@@ -186,6 +199,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    marginBottom:20
   },
   text: { fontSize: 14, textAlign: "left" },
   boldText: { fontWeight: "bold" },
@@ -209,7 +223,13 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   view: {
-    padding: 10,
+    height:200,
+    marginBottom:50,
     alignSelf: "center",
   },
 });
+
+
+
+
+
