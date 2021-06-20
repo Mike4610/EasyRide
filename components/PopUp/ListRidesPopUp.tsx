@@ -36,9 +36,12 @@ const RouteDetailsPopUp: React.FC<Props> = ({
   const [getUser] = useAsyncStorage();
   const { requestRoute, setRequestRoute } = useContext(RequestRouteContext);
 
+  let userID = ""
+
   useEffect(() => {
     (async () => {
       const user = await getUser();
+      userID = user.id;
       setUserData(user);
     })();
   }, []);
@@ -50,7 +53,6 @@ const RouteDetailsPopUp: React.FC<Props> = ({
   useEffect(() => {
     let ridesAux = [] as Route[];
     let exists = false;
-
 
     availableRoutesFrom.forEach((rideFrom) => {
       availableRoutesTo.forEach((rideTo) => {
@@ -73,7 +75,6 @@ const RouteDetailsPopUp: React.FC<Props> = ({
         }
       });
     });
-
 
     setAvailableRoutes(ridesAux);
   }, [availableRoutesTo]);
@@ -186,12 +187,22 @@ const RouteDetailsPopUp: React.FC<Props> = ({
       .then((matchingDocs) => {
         let ridesAux = [] as Route[];
         let now = new Date();
+        let add = true;
 
         matchingDocs.forEach((doc) => {
           let date = new Date(doc.data().date.seconds * 1000);
           if (date.getTime() - now.getTime() > 0) {
-            // @ts-ignore
-            ridesAux.push(doc.data());
+            add = true;
+            doc.data().passengersId.forEach((passID: string) => {
+              if(passID === userID){
+                add=false;
+              }
+            });
+            if(add == true){ 
+              // @ts-ignore
+              ridesAux.push(doc.data());
+            }
+            
           }
         });
 
