@@ -85,12 +85,12 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
                   {route.from?.description}{" "}
                 </Text>
                 <Text style={styles.text}>
-                  <Entypo name="location-pin" size={20} color="#fd4d4d" />
+                  <Entypo name="location-pin" size={20} color="#fd4d4d" />{" "}
                   <Text style={styles.boldText}>To:</Text>{" "}
                   {route.to?.description}{" "}
                 </Text>
                 <Text style={styles.text}>
-                  <AntDesign name="calendar" size={20} color="#fd4d4d" />
+                  <AntDesign name="calendar" size={20} color="#fd4d4d" />{" "}
                   <Text style={styles.boldText}>Date:</Text>{" "}
                 </Text>
                 <Text style={styles.text}>
@@ -98,7 +98,7 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
                     name="map-marker-distance"
                     size={16}
                     color="#fd4d4d"
-                  />{" "}
+                  />{"  "}
                   <Text style={styles.boldText}>Distance:</Text>{" "}
                   {route.distance} Km{" "}
                 </Text>

@@ -69,8 +69,9 @@ const RouteDetailsPopUp: React.FC<Props> = ({
             {details.from?.description}{" "}
           </Text>
           <Text style={styles.text}>
-            <Entypo name="location-pin" size={20} color="#fd4d4d" />
-            <Text style={styles.boldText}>To:</Text> {details.to?.description}{" "}
+            <Entypo name="location-pin" size={20} color="#fd4d4d" />{" "}
+            <Text style={styles.boldText}>To:</Text>
+            {details.to?.description}{" "}
           </Text>
           <Text style={styles.text}>
             <AntDesign name="calendar" size={20} color="#fd4d4d" />
