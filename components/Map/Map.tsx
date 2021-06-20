@@ -157,6 +157,11 @@ const Map: React.FC<Props> = ({ setReturn }) => {
   };
 
   const joinRide = async (ride: Route) => {
+
+    // setRoute(null);
+    setVisible(true);
+
+    setLoadingState({ ...loadingState, loading: true });
     ride.passengersId?.push(userData.id);
     let newSeatNumber = parseInt(ride.availableSeats) - 1;
     ride.availableSeats = String(newSeatNumber);
@@ -165,7 +170,15 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     } catch (error) {
       console.error(error);
     }
+
+    setLoadingState({ ...loadingState, loading: false, correct: true });
+    await sleep(2000);
+    setRoute(null);
+    setToListRoute(null)
+    setRouteDetails(null)
+    await fetchUserRides(userData.id);
     setVisible(false);
+
   };
 
   const toggleType = () => {
@@ -224,6 +237,27 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     setVisible(false);
   };
 
+  const leaveRide = async (ride: Route) => {
+    ride.passengersId = ride.passengersId?.filter((id) => {
+      return id != userData.id
+    })
+    ride.availableSeats = ""+(Number(ride.availableSeats)+1);
+    setRoute(null);
+    setVisible(true);
+    setLoadingState({ ...loadingState, loading: true });
+    try {
+      await firebase.firestore().collection("rides").doc(ride.id).set(ride);
+    } catch (error) {
+      console.error(error);
+    }
+
+    setLoadingState({ ...loadingState, loading: false, correct: true });
+    await sleep(2000);
+
+    await fetchUserRides(userData.id);
+    setVisible(false);
+  }
+
   const endListing = async () => {
     setToListRoute(null);
   };
@@ -248,19 +282,21 @@ const Map: React.FC<Props> = ({ setReturn }) => {
       },
     ];
 
-    if (currentRidesD || currentRidesP) {
-      currentRidesD?.forEach(({ from: { latitude, longitude } }: Route) =>
+    if (currentRidesP && currentRidesD) {
+      currentRidesP.forEach(({ from: { latitude, longitude } }: Route) =>
+        ridesArray.push({
+          latitude: latitude,
+          longitude: longitude,
+        })
+
+      );
+      currentRidesD.forEach(({ from: { latitude, longitude } }: Route) =>
         ridesArray.push({
           latitude: latitude,
           longitude: longitude,
         })
       );
-      currentRidesP?.forEach(({ from: { latitude, longitude } }: Route) =>
-        ridesArray.push({
-          latitude: latitude,
-          longitude: longitude,
-        })
-      );
+
       fitToCoordinates(ridesArray);
     }
   };
@@ -327,7 +363,11 @@ const Map: React.FC<Props> = ({ setReturn }) => {
                   ride={ride}
                   onPress={() => {
                     toggleType();
+                    setDetailsType("leave");
+                    setLoadingMessage("Leaving ride")
                     setRoute(ride);
+
+
                   }}
                   type={"to"}
                   location={{
@@ -377,6 +417,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
             confirmRide={confirmRide}
             cancelRide={cancelRide}
             joinRide={joinRide}
+            leaveRide={leaveRide}
             details={routeDetails}
           />
         )}

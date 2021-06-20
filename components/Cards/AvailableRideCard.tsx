@@ -77,10 +77,10 @@ const AvailableRideCard: React.FC<Props> = ({
         <Button
           text={"View more"}
           press={() => {
-            if (chooseRoute) chooseRoute(route);
-            if (moreInfo) moreInfo(route);
+            if (chooseRoute) {chooseRoute(route);}
+            if (moreInfo) {moreInfo(route);}
 
-            if (setView) setView("join");
+            if (setView){ setView("join");}
           }}
           full={true}
         />

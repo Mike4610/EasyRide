@@ -36,7 +36,7 @@ const Marker: React.FC<Props> = ({ location, type, ride, onPress }) => {
         </>
       ) : type === "to" ? (
         <MarkerAnimated
-          onPress={() => {}}
+          onPress={() => { if (onPress) onPress(); }}
           coordinate={location}
           anchor={{ x: 0.35, y: 0.32 }}
         >

@@ -73,8 +73,9 @@ const RouteDetailsPopUp: React.FC<Props> = ({
           <Text style={styles.text}>
             <AntDesign name="calendar" size={20} color="#fd4d4d" />
             <Text style={styles.boldText}>Date:</Text>{" "}
-            {type === "view" || type === "join" ? (
-              <Text>{formattedDate.toLocaleString()}</Text>
+            {type === "view" || type === "join" || type === "leave" ? (
+              formattedDate.toLocaleString()
+
             ) : type === "create" ? (
               <Text>{details.date.toLocaleString()}</Text>
             ) : (
@@ -169,7 +170,8 @@ const RouteDetailsPopUp: React.FC<Props> = ({
               text={"Leave ride"}
               full={true}
               press={() => {
-                joinRide(details);
+                
+                leaveRide(details);
               }}
             ></Button>
           </>
@@ -213,3 +215,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
 });
+function leaveRide(details: Route) {
+  throw new Error("Function not implemented.");
+}
+
