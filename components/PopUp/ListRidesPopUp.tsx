@@ -51,7 +51,6 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
 
     availableRoutesFrom.forEach((rideFrom) => {
       availableRoutesTo.forEach((rideTo) => {
-        console.log("From", rideFrom.id, "To", rideTo.id);
         exists = false;
         if (
           rideFrom.id === rideTo.id &&
