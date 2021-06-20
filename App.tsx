@@ -25,6 +25,7 @@ import LocationsScreen from "./screens/Locations/LocationsScreen";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import RidesScreen from "./screens/Rides/RidesScreen";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { LogBox } from "react-native";
 
 const App: React.FC<{}> = () => {
   const Drawer = createDrawerNavigator();
@@ -35,6 +36,8 @@ const App: React.FC<{}> = () => {
   const [getUser] = useAsyncStorage();
 
   const isAuthenticated = async () => {
+    LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
+    LogBox.ignoreAllLogs();
     try {
       const user = await getUser();
       user !== null ? setLoggedIn(true) : setLoggedIn(false);

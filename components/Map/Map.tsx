@@ -60,8 +60,8 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     getRidesAsPassenger,
   ] = useAsyncStorage();
   const [detailsType, setDetailsType] = useState<string>("create");
-  const [loadingMessage, setLoadingMessage] = useState(
-    "Publishing your ride..."
+  const [loadingMessage] = useState(
+    "Loading..."
   );
 
   useEffect(() => {
@@ -76,7 +76,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     setRouteDetails(route);
   }, [route]);
 
-  useEffect(() => { }, [toListRoute]);
+  useEffect(() => {}, [toListRoute]);
 
   useEffect(() => {
     setToListRoute(requestRoute);
@@ -91,7 +91,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
   useEffect(() => {
     if (!routeDetails) {
       setDetailsType("create");
-      setLoadingMessage("Publishing your ride...");
+      // setLoadingMessage("Publishing your ride...");
       setViewRides(false);
     }
 
@@ -158,9 +158,9 @@ const Map: React.FC<Props> = ({ setReturn }) => {
 
   const joinRide = async (ride: Route) => {
 
-    setRoute(null);
+    // setRoute(null);
     setVisible(true);
-    setToListRoute(null);
+
     setLoadingState({ ...loadingState, loading: true });
     ride.passengersId?.push(userData.id);
     let newSeatNumber = parseInt(ride.availableSeats) - 1;
@@ -172,9 +172,10 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     }
 
     setLoadingState({ ...loadingState, loading: false, correct: true });
-    setRouteDetails(null)
-
     await sleep(2000);
+    setRoute(null);
+    setToListRoute(null)
+    setRouteDetails(null)
     await fetchUserRides(userData.id);
     setVisible(false);
 
@@ -183,10 +184,10 @@ const Map: React.FC<Props> = ({ setReturn }) => {
   const toggleType = () => {
     if (detailsType === "view") {
       setDetailsType("create");
-      setLoadingMessage("Publishing your ride...");
+      // setLoadingMessage("Publishing your ride...");
     } else {
       setDetailsType("view");
-      setLoadingMessage("Deleting your ride...");
+      // setLoadingMessage("Deleting your ride...");
     }
   };
 
@@ -240,7 +241,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     ride.passengersId = ride.passengersId?.filter((id) => {
       return id != userData.id
     })
-    ride.availableSeats = "" + (Number(ride.availableSeats) + 1);
+    ride.availableSeats = ""+(Number(ride.availableSeats)+1);
     setRoute(null);
     setVisible(true);
     setLoadingState({ ...loadingState, loading: true });
@@ -363,10 +364,8 @@ const Map: React.FC<Props> = ({ setReturn }) => {
                   onPress={() => {
                     toggleType();
                     setDetailsType("leave");
-                    setLoadingMessage("Leaving ride")
+                    // setLoadingMessage("Leaving ride")
                     setRoute(ride);
-
-
                   }}
                   type={"to"}
                   location={{

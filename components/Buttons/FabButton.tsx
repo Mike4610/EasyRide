@@ -84,7 +84,7 @@ const FabButton: React.FC<Props> = ({ visible, onRequest, onGive }) => {
             onPress: () => {},
           }}
         >
-          <Text>No rides to be shown...</Text>
+          <Text style={{color: "white"}}>No rides to be shown...</Text>
         </Snackbar>
       </Portal>
     </Provider>

@@ -22,7 +22,7 @@ interface Props {
 const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
   const [userData, setUserData] = useState({} as User);
   const [driverData, setDriverData] = useState({} as User);
-  const [passengers] = useState<User[]>([] as User[]);
+  const [passengersData, setPassengerData] = useState<User[]>([] as User[]);
   const [getUser] = useAsyncStorage();
 
   useEffect(() => {
@@ -50,6 +50,7 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
   }, [visible]);
 
   useEffect(() => {
+    let passengerDataAux: User[] = [];
     if (userData) {
       if (route.driverId === userData.id) {
         route.passengersId?.forEach(async (id) => {
@@ -59,7 +60,8 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
               .collection("users")
               .doc(id)
               .get();
-            passengers.push(response.data());
+            passengerDataAux.push(response.data());
+            setPassengerData(passengerDataAux);
           } catch (error) {
             console.error(error);
           }
@@ -72,15 +74,16 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
     <Provider>
       <Portal>
         {/* @ts-ignore */}
-        <Dialog onDismiss={onDismiss} visible={visible} style={{ backgroundColor: 'transparent' }}>
+        <Dialog
+          onDismiss={onDismiss}
+          visible={visible}
+          style={{ backgroundColor: "transparent" }}
+        >
           <View style={styles.container}>
             <View>
               <Text style={styles.title}>Ride Details</Text>
             </View>
             <ScrollView style={styles.view}>
-
-
-
               <View style={styles.card}>
                 <Text style={styles.text}>
                   <FontAwesome name="car" size={20} color="#fd4d4d" />{" "}
@@ -95,13 +98,20 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
                 <Text style={styles.text}>
                   <AntDesign name="calendar" size={20} color="#fd4d4d" />{" "}
                   <Text style={styles.boldText}>Date:</Text>{" "}
+                  {new Date(route.date?.seconds * 1000).toLocaleDateString() +
+                    " " +
+                    new Date(route.date?.seconds * 1000).getHours() +
+                    ":" +
+                    new Date(route.date?.seconds * 1000).getMinutes() +
+                    "h"}
                 </Text>
                 <Text style={styles.text}>
                   <MaterialCommunityIcons
                     name="map-marker-distance"
                     size={16}
                     color="#fd4d4d"
-                  />{"  "}
+                  />
+                  {"  "}
                   <Text style={styles.boldText}>Distance:</Text>{" "}
                   {route.distance} Km{" "}
                 </Text>
@@ -136,18 +146,62 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
                       </Text>
                     </View>
                   )}
-                  {route.passengersId?.map((passenger) => { })}
+                  {passengersData.map(
+                    ({ fullName, birthDate, phoneNumber, profileImgURL }) => {
+                      return (
+                        <View style={{ margin: 10 }}>
+                          <View style={styles.card}>
+                            {profileImgURL === "" ? (
+                              <Avatar.Text
+                                label={"?"}
+                                style={styles.profileImg}
+                              />
+                            ) : (
+                              <Image
+                                style={styles.profileImg}
+                                source={{ uri: profileImgURL }}
+                              />
+                            )}
+
+                            <Text style={styles.text}>
+                              <AntDesign
+                                name="user"
+                                size={20}
+                                color="#fd4d4d"
+                              />{" "}
+                              <Text style={styles.boldText}>Name:</Text>{" "}
+                              {fullName}{" "}
+                            </Text>
+                            <Text style={styles.text}>
+                              <AntDesign
+                                name="calendar"
+                                size={20}
+                                color="#fd4d4d"
+                              />{" "}
+                              <Text style={styles.boldText}>Birth Date:</Text>{" "}
+                              {birthDate}{" "}
+                            </Text>
+                            <Text style={styles.text}>
+                              <AntDesign
+                                name="phone"
+                                size={20}
+                                color="#fd4d4d"
+                              />{" "}
+                              <Text style={styles.boldText}>Phone Number:</Text>
+                              {phoneNumber}
+                            </Text>
+                          </View>
+                        </View>
+                      );
+                    }
+                  )}
                 </View>
               ) : (
                 <View>
                   <Text style={styles.title}>Driver Info</Text>
                   <View style={styles.card}>
-
                     {driverData.profileImgURL === "" ? (
-                      <Avatar.Text
-                        label={"?"}
-                        style={styles.profileImg}
-                      />
+                      <Avatar.Text label={"?"} style={styles.profileImg} />
                     ) : (
                       <Image
                         style={styles.profileImg}
@@ -192,7 +246,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20
+    marginBottom: 20,
   },
   text: { fontSize: 14, textAlign: "left" },
   boldText: { fontWeight: "bold" },
@@ -221,8 +275,3 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 });
-
-
-
-
-

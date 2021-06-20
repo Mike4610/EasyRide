@@ -11,12 +11,12 @@ import { useFetch } from "../../hooks/useFetch";
 import { ScreenNavigationProps, User } from "../../types";
 
 const VerifyPhoneNumberScreen: React.FC<ScreenNavigationProps> = ({
-  routeProp,
+  route,
   navigation,
 }) => {
   const [code, setCode] = useState("");
-  const [superUser] = useState(routeProp?.params?.userData);
-  const [verificationId] = useState(routeProp?.params?.verificationId);
+  const [superUser] = useState(route?.params?.userData);
+  const [verificationId] = useState(route?.params?.verificationId);
   //SNACKBAR
   const [visible, setVisible] = useState(false);
   const [message, setMessage] = useState("");

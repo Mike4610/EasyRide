@@ -14,7 +14,10 @@ import "firebase/auth";
 import { Route, ScreenNavigationProps } from "../../types";
 import { VehicleContext } from "../../context/VehicleContext";
 
-const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation, routeProp }) => {
+const HomeScreen: React.FC<ScreenNavigationProps> = ({
+  navigation,
+  routeProp,
+}) => {
   //POPUP
   const [requestVisible, setRequestVisible] = useState(false);
   const [giveVisible, setGiveVisible] = useState(false);
@@ -24,19 +27,37 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation, routeProp }) 
     returnButton: false,
     closeButton: false,
   });
-  const [myRidesAsPassenger,setMyRidesAsPassenger] = useState<object[]|undefined>([]);
-  const [myRidesAsDriver,setMyRidesAsDriver] = useState<object[]|undefined>([]);
-  const [fetchData, updateData, setData, getUserRidesAsPassenger,getUserRidesAsDriver] = useFetch();
+  const [myRidesAsPassenger, setMyRidesAsPassenger] = useState<
+    object[] | undefined
+  >([]);
+  const [myRidesAsDriver, setMyRidesAsDriver] = useState<object[] | undefined>(
+    []
+  );
+  const [
+    fetchData,
+    updateData,
+    setData,
+    getUserRidesAsPassenger,
+    getUserRidesAsDriver,
+  ] = useFetch();
   const [route, setRoute] = useState<Route | null>(null);
   const [requestRoute, setRequestRoute] = useState<Route | null>(null);
   const [viewRides, setViewRides] = useState<boolean>(false);
-  const [rides,setRides] = useState<Route[]|any[]>([]);
+  const [rides, setRides] = useState<Route[] | any[]>([]);
   const [visible, setVisible] = useState(true);
   const [routeFlag, setRouteFlag] = useState<number>(0);
   const [requestFlag, setRequestFlag] = useState<number>(0);
   const [returnFlag, setReturnFlag] = useState(false);
-  const [params, setParams] = useState(routeProp?.params?.route)
-  const [getValue, setValue, removeValue, setRidesAsDriver, setRidesAsPassenger,getRidesAsDriver,getRidesAsPassenger]=useAsyncStorage();
+  const [params, setParams] = useState(routeProp?.params?.route);
+  const [
+    getValue,
+    setValue,
+    removeValue,
+    setRidesAsDriver,
+    setRidesAsPassenger,
+    getRidesAsDriver,
+    getRidesAsPassenger,
+  ] = useAsyncStorage();
   const requestRideHandler = () => {
     setTransform({
       returnButton: true,
@@ -69,16 +90,18 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation, routeProp }) 
     setRouteFlag(1);
   }, [route]);
 
-  // useEffect(() => {
-    // if (requestFlag !== 0) {
-      // setTransform({
-        // ...transform,
-        // closeButton: !transform.closeButton,
-      // });
-      // setVisible(!visible);
-    // }
-    // setRequestFlag(1);
-  // }, [requestRoute]);
+  useEffect(() => {
+    if (!route) {
+      if (requestFlag !== 0) {
+        setTransform({
+          ...transform,
+          closeButton: !transform.closeButton,
+        });
+        setVisible(!visible);
+      }
+      setRequestFlag(1);
+    }
+  }, [requestRoute]);
 
   useEffect(() => {
     if (requestFlag !== 0) {
@@ -91,22 +114,21 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation, routeProp }) 
     setRequestFlag(1);
   }, [returnFlag]);
 
-  useEffect(()=>{
+  useEffect(() => {
     getUserRides();
-  },[]);
+  }, []);
 
-  const getUserRides = async() =>{
+  const getUserRides = async () => {
     const user = await getValue();
-    console.log("user id "+user.id+"\n");
+    console.log("user id " + user.id + "\n");
     const rad = await getUserRidesAsDriver(user.id);
     const rap = await getUserRidesAsDriver(user.id);
-    if(rad !== undefined && rap !== undefined){
+    if (rad !== undefined && rap !== undefined) {
       console.log(JSON.stringify(rad));
       console.log(JSON.stringify(rap));
       setRidesAsPassenger(rap);
       setRidesAsDriver(rad);
     }
-    
   };
 
   return (
