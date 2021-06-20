@@ -72,15 +72,15 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
     <Provider>
       <Portal>
         {/* @ts-ignore */}
-        <Dialog onDismiss={onDismiss} visible={visible} style={{backgroundColor:'transparent'}}>
+        <Dialog onDismiss={onDismiss} visible={visible} style={{ backgroundColor: 'transparent' }}>
           <View style={styles.container}>
             <View>
               <Text style={styles.title}>Ride Details</Text>
             </View>
             <ScrollView style={styles.view}>
-              
-              
-              
+
+
+
               <View style={styles.card}>
                 <Text style={styles.text}>
                   <FontAwesome name="car" size={20} color="#fd4d4d" />{" "}
@@ -142,14 +142,7 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
                 <View>
                   <Text style={styles.title}>Driver Info</Text>
                   <View style={styles.card}>
-                    {driverData.profileImgURL === "" ? (
-                      <Avatar.Text label={"?"} style={styles.profileImg} />
-                    ) : (
-                      <Image
-                        style={styles.profileImg}
-                        source={{ uri: driverData.profileImgURL }}
-                      />
-                    )} 
+
                     {driverData.profileImgURL === "" ? (
                       <Avatar.Text
                         label={"?"}
@@ -199,7 +192,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom:20
+    marginBottom: 20
   },
   text: { fontSize: 14, textAlign: "left" },
   boldText: { fontWeight: "bold" },
@@ -223,8 +216,8 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   view: {
-    height:200,
-    marginBottom:50,
+    height: 200,
+    marginBottom: 50,
     alignSelf: "center",
   },
 });
