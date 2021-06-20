@@ -69,16 +69,16 @@ const HomeScreen: React.FC<ScreenNavigationProps> = ({ navigation, routeProp }) 
     setRouteFlag(1);
   }, [route]);
 
-  useEffect(() => {
-    if (requestFlag !== 0) {
-      setTransform({
-        ...transform,
-        closeButton: !transform.closeButton,
-      });
-      setVisible(!visible);
-    }
-    setRequestFlag(1);
-  }, [requestRoute]);
+  // useEffect(() => {
+    // if (requestFlag !== 0) {
+      // setTransform({
+        // ...transform,
+        // closeButton: !transform.closeButton,
+      // });
+      // setVisible(!visible);
+    // }
+    // setRequestFlag(1);
+  // }, [requestRoute]);
 
   useEffect(() => {
     if (requestFlag !== 0) {

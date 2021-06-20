@@ -76,7 +76,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     setRouteDetails(route);
   }, [route]);
 
-  useEffect(() => {}, [toListRoute]);
+  useEffect(() => { }, [toListRoute]);
 
   useEffect(() => {
     setToListRoute(requestRoute);
@@ -158,9 +158,9 @@ const Map: React.FC<Props> = ({ setReturn }) => {
 
   const joinRide = async (ride: Route) => {
 
-    // setRoute(null);
+    setRoute(null);
     setVisible(true);
-
+    setToListRoute(null);
     setLoadingState({ ...loadingState, loading: true });
     ride.passengersId?.push(userData.id);
     let newSeatNumber = parseInt(ride.availableSeats) - 1;
@@ -172,10 +172,9 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     }
 
     setLoadingState({ ...loadingState, loading: false, correct: true });
-    await sleep(2000);
-    setRoute(null);
-    setToListRoute(null)
     setRouteDetails(null)
+
+    await sleep(2000);
     await fetchUserRides(userData.id);
     setVisible(false);
 
@@ -241,7 +240,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     ride.passengersId = ride.passengersId?.filter((id) => {
       return id != userData.id
     })
-    ride.availableSeats = ""+(Number(ride.availableSeats)+1);
+    ride.availableSeats = "" + (Number(ride.availableSeats) + 1);
     setRoute(null);
     setVisible(true);
     setLoadingState({ ...loadingState, loading: true });
