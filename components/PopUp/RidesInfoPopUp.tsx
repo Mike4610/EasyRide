@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dialog, Portal, Provider } from "react-native-paper";
+import { Avatar, Dialog, Portal, Provider } from "react-native-paper";
 import { Text, StyleSheet, View, ScrollView, Image } from "react-native";
 import { Route, User } from "../../types";
 import {
@@ -98,7 +98,8 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
                     name="map-marker-distance"
                     size={16}
                     color="#fd4d4d"
-                  />{"  "}
+                  />
+                  {"  "}
                   <Text style={styles.boldText}>Distance:</Text>{" "}
                   {route.distance} Km{" "}
                 </Text>
@@ -139,12 +140,14 @@ const RidesInfoPopUp: React.FC<Props> = ({ visible, route, onDismiss }) => {
                 <View>
                   <Text style={styles.title}>Driver Info</Text>
                   <View style={styles.card}>
-                    {/* {driverData.profileImgURL && (
+                    {driverData.profileImgURL === "" ? (
+                      <Avatar.Text label={"?"} style={styles.profileImg} />
+                    ) : (
                       <Image
                         style={styles.profileImg}
-                        source={{ uri: driverData.profileImgURL }}
+                        source={{ uri: driver.profileImgURL }}
                       />
-                    )} */}
+                    )}
 
                     <Text style={styles.text}>
                       <AntDesign name="user" size={20} color="#fd4d4d" />{" "}
