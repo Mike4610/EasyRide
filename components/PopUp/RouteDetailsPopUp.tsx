@@ -13,6 +13,7 @@ import Button from "../Buttons/Button";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { ScrollView } from "react-native-gesture-handler";
+import { Avatar } from "react-native-paper";
 
 interface Props {
   details: Route;
@@ -38,9 +39,10 @@ const RouteDetailsPopUp: React.FC<Props> = ({
 
   const [driver, setDriver] = useState<User>({} as User);
 
+
   useEffect(() => {
     (async () => {
-      if (type === "join") {
+      if (type === "join" || type == "leave") {
         const usersSnapshot = await firebase
           .firestore()
           .collection("users")
@@ -73,9 +75,8 @@ const RouteDetailsPopUp: React.FC<Props> = ({
           <Text style={styles.text}>
             <AntDesign name="calendar" size={20} color="#fd4d4d" />
             <Text style={styles.boldText}>Date:</Text>{" "}
-            {type === "view" || type === "join" || type === "leave" ? (
-              formattedDate.toLocaleString()
-
+            {type === "view" || type === "join" ? (
+              <Text>{formattedDate.toLocaleString()}</Text>
             ) : type === "create" ? (
               <Text>{details.date.toLocaleString()}</Text>
             ) : (
@@ -114,11 +115,16 @@ const RouteDetailsPopUp: React.FC<Props> = ({
           </Text>
         </View>
 
-        {type === "join" && (
+        {(type === "join" || type === "leave") && (
           <View>
             <Text style={styles.title}>Driver Info</Text>
             <View style={styles.card}>
-              {driver.profileImgURL && (
+              {driver.profileImgURL === "" ? (
+                <Avatar.Text
+                  label={"?"}
+                  style={styles.profileImg}
+                />
+              ) : (
                 <Image
                   style={styles.profileImg}
                   source={{ uri: driver.profileImgURL }}
@@ -136,7 +142,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({
               </Text>
               <Text style={styles.text}>
                 <AntDesign name="phone" size={20} color="#fd4d4d" />{" "}
-                <Text style={styles.boldText}>Phone Number:</Text>
+                <Text style={styles.boldText}>Phone Number:</Text>{" "}
                 {driver.phoneNumber}
               </Text>
             </View>
@@ -170,8 +176,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({
               text={"Leave ride"}
               full={true}
               press={() => {
-                
-                leaveRide(details);
+                joinRide(details);
               }}
             ></Button>
           </>
@@ -215,7 +220,3 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
 });
-function leaveRide(details: Route) {
-  throw new Error("Function not implemented.");
-}
-
