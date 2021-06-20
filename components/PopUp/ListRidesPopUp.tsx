@@ -51,6 +51,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
 
     availableRoutesFrom.forEach((rideFrom) => {
       availableRoutesTo.forEach((rideTo) => {
+        console.log("From", rideFrom.id, "To", rideTo.id);
         exists = false;
         if (
           rideFrom.id === rideTo.id &&
@@ -89,7 +90,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
 
   const fetchDestinationRides = async () => {
     const center = [requestRide.to.latitude, requestRide.to.longitude];
-    const radius = 1000;
+    const radius = 5000;
 
     const bounds = geofire.geohashQueryBounds(center, radius);
     const promises = [];
