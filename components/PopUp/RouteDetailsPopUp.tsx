@@ -42,7 +42,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({
 
   useEffect(() => {
     (async () => {
-      if (type === "join" || type == "leave") {
+      if (type === "join" || type === "leave") {
         const usersSnapshot = await firebase
           .firestore()
           .collection("users")
@@ -76,7 +76,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({
           <Text style={styles.text}>
             <AntDesign name="calendar" size={20} color="#fd4d4d" />
             <Text style={styles.boldText}>Date:</Text>{" "}
-            {type === "view" || type === "join" ? (
+            {(type === "view" || type === "join" || type === "leave") ? (
               <Text>{formattedDate.toLocaleString()}</Text>
             ) : type === "create" ? (
               <Text>{details.date.toLocaleString()}</Text>
@@ -177,7 +177,7 @@ const RouteDetailsPopUp: React.FC<Props> = ({
               text={"Leave ride"}
               full={true}
               press={() => {
-                joinRide(details);
+                leaveRide(details);
               }}
             ></Button>
           </>
