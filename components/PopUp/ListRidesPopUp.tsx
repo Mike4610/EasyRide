@@ -46,32 +46,36 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
 
   useEffect(() => {
     let ridesAux = [] as Route[];
-    var size = 0
+    let exists = false;
+
+
     availableRoutesFrom.forEach((rideFrom) => {
       availableRoutesTo.forEach((rideTo) => {
+        exists = false;
         if (
-          rideFrom.driverId === rideTo.driverId &&
-          rideFrom.from.latitude === rideTo.from.latitude &&
-          rideFrom.from.longitude === rideTo.from.longitude &&
-          rideFrom.to.latitude === rideTo.to.latitude &&
-          rideFrom.to.longitude === rideTo.to.longitude && 
-          // @ts-ignore
-          rideFrom.date.seconds === rideTo.date.seconds &&
-          rideFrom.driverId != userData.id
+          rideFrom.id === rideTo.id &&
+          rideFrom.driverId != userData.id &&
+          Number(rideFrom.availableSeats) > 0
         ) {
-          size++
-          console.log("SIZEEEEEEE " + size + "\n");
-          ridesAux.push(rideFrom);
+
+          ridesAux.forEach(rideAux => {
+            if(rideFrom.id === rideAux.id){
+              exists = true;
+            }
+          });
+          if(exists == false){
+            ridesAux.push(rideFrom);
+          }
+          
         }
       });
     });
+
 
     setAvailableRoutes(ridesAux);
   }, [availableRoutesTo]);
 
   useEffect(() => {
-    console.log("available", availableRoutes);
-    console.log(noResults);
     if (!availableRoutes.length) {
       setNoResults(true);
     } else {
@@ -80,7 +84,6 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
   }, [availableRoutes]);
 
   const chooseRoute = async (route: Route) => {
-    console.log("route escolhida", route);
     setRoute(route);
   };
 
@@ -94,7 +97,6 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
       const q = firebase
         .firestore()
         .collection("rides")
-        .where("availableSeats", ">", 0)
         .orderBy("to.geoHash")
         .startAt(b[0])
         .endAt(b[1]);
@@ -150,7 +152,6 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
       const q = firebase
         .firestore()
         .collection("rides")
-        .where("availableSeats", ">", 0)
         .orderBy("from.geoHash")
         .startAt(b[0])
         .endAt(b[1]);
