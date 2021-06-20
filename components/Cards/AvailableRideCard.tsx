@@ -8,6 +8,7 @@ import Button from "../Buttons/Button";
 
 interface Props {
   route: Route;
+
   chooseRoute: (route: Route) => void;
   setView?: (value: any) => void;
   moreInfo?: (route: Route) => void;
@@ -17,6 +18,7 @@ const AvailableRideCard: React.FC<Props> = ({
   route,
   chooseRoute,
   setView,
+
   moreInfo,
 }) => {
   const [formattedDate, setFormattedDate] = useState<Date>(
@@ -77,6 +79,7 @@ const AvailableRideCard: React.FC<Props> = ({
           press={() => {
             if (chooseRoute) chooseRoute(route);
             if (moreInfo) moreInfo(route);
+
             if (setView) setView("join");
           }}
           full={true}

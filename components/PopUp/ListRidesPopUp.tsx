@@ -20,10 +20,14 @@ const geofire = require("geofire-common");
 interface Props {
   requestRide: Route;
   setRoute: (route: Route) => void;
-  setView : (value:any) => void;
+  setView: (value: any) => void;
 }
 
-const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) => {
+const RouteDetailsPopUp: React.FC<Props> = ({
+  requestRide,
+  setRoute,
+  setView,
+}) => {
   const [availableRoutesFrom, setAvailableRoutesFrom] = useState<Route[]>([]);
   const [availableRoutesTo, setAvailableRoutesTo] = useState<Route[]>([]);
   const [availableRoutes, setAvailableRoutes] = useState<Route[]>([]);
@@ -31,7 +35,6 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
   const [noResults, setNoResults] = useState<boolean>(false);
   const [getUser] = useAsyncStorage();
   const { requestRoute, setRequestRoute } = useContext(RequestRouteContext);
-
 
   useEffect(() => {
     (async () => {
@@ -46,13 +49,18 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
 
   useEffect(() => {
     let ridesAux = [] as Route[];
+<<<<<<< Updated upstream
     let exists = false;
 
 
+=======
+    var size = 0;
+>>>>>>> Stashed changes
     availableRoutesFrom.forEach((rideFrom) => {
       availableRoutesTo.forEach((rideTo) => {
         exists = false;
         if (
+<<<<<<< Updated upstream
           rideFrom.id === rideTo.id &&
           rideFrom.driverId != userData.id &&
           Number(rideFrom.availableSeats) > 0
@@ -67,6 +75,18 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
             ridesAux.push(rideFrom);
           }
           
+=======
+          rideFrom.driverId === rideTo.driverId &&
+          rideFrom.from.latitude === rideTo.from.latitude &&
+          rideFrom.from.longitude === rideTo.from.longitude &&
+          rideFrom.to.latitude === rideTo.to.latitude &&
+          rideFrom.to.longitude === rideTo.to.longitude &&
+          rideFrom.date.seconds === rideTo.date.seconds
+        ) {
+          size++;
+          console.log("SIZEEEEEEE " + size + "\n");
+          ridesAux.push(rideFrom);
+>>>>>>> Stashed changes
         }
       });
     });
@@ -254,12 +274,20 @@ const RouteDetailsPopUp: React.FC<Props> = ({ requestRide, setRoute,setView }) =
         {availableRoutes.map((route, index) => {
           return (
             <AvailableRideCard
+<<<<<<< Updated upstream
               // @ts-ignore
               key={route.id}
               route={route}
               chooseRoute={setRoute}
               // @ts-ignore
               setView ={setView}
+=======
+              key={route.id}
+              route={route}
+              chooseRoute={setRoute}
+              moreInfo={() => {}}
+              setView={setView}
+>>>>>>> Stashed changes
             />
           );
         })}

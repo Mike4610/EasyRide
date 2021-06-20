@@ -1,7 +1,8 @@
 import React, { useState, useContext } from "react";
-import { FAB, Portal, Provider } from "react-native-paper";
-import { StyleSheet } from "react-native";
+import { FAB, Portal, Provider, Snackbar } from "react-native-paper";
+import { StyleSheet, Text } from "react-native";
 import { CurrentRidesContext } from "../../context/CurrentRidesContext";
+import { useAsyncStorage } from "../../hooks/useAsyncStorage";
 interface Props {
   visible: boolean;
   onRequest: () => void;
@@ -13,6 +14,25 @@ const FabButton: React.FC<Props> = ({ visible, onRequest, onGive }) => {
   const onStateChange = ({ open }: { open: boolean }) => setState({ open });
   const { open } = state;
   const { viewRides, setViewRides } = useContext(CurrentRidesContext);
+  const [snackVisible, setSnackVisible] = useState(false);
+
+  const [
+    getValue,
+    setValue,
+    removeValue,
+    setRidesAsDriver,
+    setRidesAsPassenger,
+    getRidesAsDriver,
+    getRidesAsPassenger,
+  ] = useAsyncStorage();
+
+  const checkUserRides = async () => {
+    const driverArray = await getRidesAsDriver();
+    const passangerArray = await getRidesAsPassenger();
+    if (driverArray?.length || passangerArray?.length) return true;
+    return false;
+  };
+
   return (
     <Provider>
       <Portal>
@@ -36,8 +56,12 @@ const FabButton: React.FC<Props> = ({ visible, onRequest, onGive }) => {
             {
               icon: viewRides ? "eye-off" : "eye",
               label: viewRides ? "Hide current rides" : "Show current rides",
-              onPress: () => {
-                setViewRides(!viewRides);
+              onPress: async () => {
+                if (await checkUserRides()) {
+                  setViewRides(!viewRides);
+                } else {
+                  setSnackVisible(true);
+                }
               },
             },
           ]}
@@ -48,6 +72,20 @@ const FabButton: React.FC<Props> = ({ visible, onRequest, onGive }) => {
             }
           }}
         />
+        <Snackbar
+          duration={3000}
+          visible={snackVisible}
+          onDismiss={() => {
+            setSnackVisible(false);
+          }}
+          style={{ backgroundColor: "#151a21" }}
+          action={{
+            label: "",
+            onPress: () => {},
+          }}
+        >
+          <Text>No rides to be shown...</Text>
+        </Snackbar>
       </Portal>
     </Provider>
   );

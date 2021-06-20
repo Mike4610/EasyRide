@@ -22,7 +22,6 @@ import { sleep } from "../../utils";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { useAsyncStorage } from "../../hooks/useAsyncStorage";
-import * as TaskManager from "expo-task-manager";
 import { CurrentRidesContext } from "../../context/CurrentRidesContext";
 
 interface Props {
@@ -49,7 +48,15 @@ const Map: React.FC<Props> = ({ setReturn }) => {
   const [toListRoute, setToListRoute] = useState<Route | null>(null);
   const [currentRides, setCurrentRides] = useState<Route[] | null>(null);
   const [userData, setUserData] = useState<User>({} as User);
-  const [getUser] = useAsyncStorage();
+  const [
+    getUser,
+    setValue,
+    removeValue,
+    setRidesAsDriver,
+    setRidesAsPassenger,
+    getRidesAsDriver,
+    getRidesAsPassenger,
+  ] = useAsyncStorage();
   const [detailsType, setDetailsType] = useState<string>("create");
   const [loadingMessage, setLoadingMessage] = useState(
     "Publishing your ride..."
@@ -108,7 +115,6 @@ const Map: React.FC<Props> = ({ setReturn }) => {
   // }, [currentRides]);
 
   useEffect(() => {
-    console.log("view", viewRides);
     (async () => {
       if (viewRides) {
         showUserRides();
@@ -132,11 +138,12 @@ const Map: React.FC<Props> = ({ setReturn }) => {
       });
 
       setCurrentRides(ridesAux);
+      setRidesAsDriver(ridesAux);
     }
   };
 
   const joinRide = async (ride: Route) => {
-    console.log("HEREEEE")
+    console.log("HEREEEE");
     ride.passengersId?.push(userData.id);
     let newSeatNumber = parseInt(ride.availableSeats) - 1;
     ride.availableSeats = String(newSeatNumber);
@@ -255,9 +262,6 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     return (
       <View>
         <MapView
-          onPress={() => {
-            console.log("PRESS");
-          }}
           ref={map}
           region={{
             //@ts-ignore
