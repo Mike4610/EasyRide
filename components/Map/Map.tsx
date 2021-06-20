@@ -67,7 +67,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     setRouteDetails(route);
   }, [route]);
 
-  useEffect(() => {}, [toListRoute]);
+  useEffect(() => { }, [toListRoute]);
 
   useEffect(() => {
     setToListRoute(requestRoute);
@@ -145,8 +145,9 @@ const Map: React.FC<Props> = ({ setReturn }) => {
     } catch (error) {
       console.error(error);
     }
+    setVisible(false);
   };
-  
+
   const toggleType = () => {
     if (detailsType === "view") {
       setDetailsType("create");
@@ -342,7 +343,7 @@ const Map: React.FC<Props> = ({ setReturn }) => {
         {toListRoute && (
           <ListRidesPopUp
             setRoute={setRouteDetails}
-            setView ={setDetailsType}
+            setView={setDetailsType}
             requestRide={toListRoute}
           />
         )}
