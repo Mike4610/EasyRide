@@ -51,11 +51,11 @@ const AvailableRideCard: React.FC<Props> = ({
         <AntDesign name="calendar" size={20} color="#fd4d4d" />
         <Text style={styles.textDescription}>
           <Text style={{ fontWeight: "bold" }}>Date:</Text>{" "}
-          {formattedDate.toLocaleDateString() +
+          {new Date(route.date.seconds*1000).toLocaleDateString() +
             " " +
-            formattedDate.getHours() +
+            new Date(route.date.seconds * 1000).getHours() +
             ":" +
-            formattedDate.getMinutes() +
+            new Date(route.date.seconds * 1000).getMinutes() +
             "h"}
         </Text>
       </View>
